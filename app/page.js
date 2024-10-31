@@ -59,16 +59,16 @@ export default function HomePage() {
             <main className="flex-1 w-full">
                 <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-blue-50">
                     <div className="container px-4 md:px-6">
-                        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-blue-900">Submit a Support Ticket</h1>
+                        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-blue-900">Изпратете билет за поддръжка</h1>
                         <p className="text-lg text-center mb-12 text-gray-600 max-w-2xl mx-auto">
-                            Need assistance? Fill out the form below and our support team will get back to you as soon as possible.
+                            Нуждаете се от помощ? Попълнете формуляра по-долу и нашият екип за поддръжка ще се свърже с вас възможно най-скоро.
                         </p>
                         <Card className="max-w-3xl mx-auto border-blue-100 shadow-lg">
                             <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
                             <CardHeader className="bg-blue-50 border-b border-blue-100">
-                                <CardTitle className="text-2xl text-center text-blue-800">New Support Ticket</CardTitle>
+                                <CardTitle className="text-2xl text-center text-blue-800">Нов билет за поддръжка</CardTitle>
                                 <CardDescription className="text-center text-blue-600">
-                                    Please provide details about your issue
+                                    Моля, предоставете подробности за вашия проблем
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6 pt-6">
