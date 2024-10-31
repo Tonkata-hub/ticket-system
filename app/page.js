@@ -73,15 +73,15 @@ export default function HomePage() {
                             </CardHeader>
                             <CardContent className="space-y-6 pt-6">
                                 <div className="space-y-2">
-                                    <label htmlFor="issue-type" className="text-sm font-medium text-gray-700">
-                                        Issue Type {errors.issueType && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
+                                    <label htmlFor="issue-type" className="text-md font-medium text-gray-700">
+                                        Избор на запитване {errors.issueType && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                                     </label>
                                     <Select onValueChange={(value) => { setIssueType(value); setErrors({ ...errors, issueType: false }) }}>
                                         <SelectTrigger
                                             id="issue-type"
                                             className={`w-full ${errors.issueType ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                         >
-                                            <SelectValue placeholder="Select issue type" />
+                                            <SelectValue placeholder="Избери запитване" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="pc">PC, компоненти и мобилни у-ва</SelectItem>
@@ -111,15 +111,15 @@ export default function HomePage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="condition" className="text-sm font-medium text-gray-700">
-                                        Current Condition {errors.condition && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
+                                    <label htmlFor="condition" className="text-md font-medium text-gray-700">
+                                        Състояние {errors.condition && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                                     </label>
                                     <Select onValueChange={(value) => { setCondition(value); setErrors({ ...errors, condition: false }) }}>
                                         <SelectTrigger
                                             id="condition"
                                             className={`w-full ${errors.condition ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                         >
-                                            <SelectValue placeholder="Describe the current state" />
+                                            <SelectValue placeholder="Опишете текущото състояние" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="not-working">Не работи, спря: у-во, услуга</SelectItem>
@@ -144,15 +144,15 @@ export default function HomePage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="priority" className="text-sm font-medium text-gray-700">
-                                        Priority {errors.priority && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
+                                    <label htmlFor="priority" className="text-md font-medium text-gray-700">
+                                        Приоритет {errors.priority && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                                     </label>
                                     <Select onValueChange={(value) => { setPriority(value); setErrors({ ...errors, priority: false }) }}>
                                         <SelectTrigger
                                             id="priority"
                                             className={`w-full ${errors.priority ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                         >
-                                            <SelectValue placeholder="Select priority level" />
+                                            <SelectValue placeholder="Изберете приоритет" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="urgent">Спешен</SelectItem>
@@ -164,7 +164,7 @@ export default function HomePage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="event" className="text-sm font-medium text-gray-700">
+                                    <label htmlFor="event" className="text-md font-medium text-gray-700">
                                         Събитие {errors.event && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                                     </label>
                                     <Select onValueChange={(value) => { setEvent(value); setErrors({ ...errors, event: false }) }}>
