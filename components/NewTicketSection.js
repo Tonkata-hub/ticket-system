@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
@@ -9,6 +10,9 @@ import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
 export default function NewTicketSection() {
+    const router = useRouter();
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [issueType, setIssueType] = useState("")
     const [condition, setCondition] = useState("")
     const [priority, setPriority] = useState("")
@@ -38,15 +42,28 @@ export default function NewTicketSection() {
     }
 
     return (
-        <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-blue-50">
+        <section className="w-full py-12 md:py-20 lg:py-26 flex justify-center bg-blue-50">
             <div className="container px-4 md:px-6">
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl text-center mb-8 text-blue-900">Изпратете билет за поддръжка</h1>
                 <p className="text-lg text-center mb-12 text-gray-600 max-w-2xl mx-auto">
                     Нуждаете се от помощ? Попълнете формуляра по-долу и нашият екип за поддръжка ще се свърже с вас възможно най-скоро.
                 </p>
+
+                {!isLoggedIn && (
+                    <div className="text-center text-red-600 mb-8 font-bold">
+                        Моля, влезте в профила си, за да изпратите билет!
+                        <Button
+                            onClick={() => router.push("/login")}
+                            className="mt-4 mx-4 bg-red-500 hover:bg-red-600 text-white"
+                        >
+                            Вход
+                        </Button>
+                    </div>
+                )}
+
                 <Card className="max-w-3xl mx-auto border-blue-100 shadow-lg">
                     <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-                    <CardHeader className="bg-blue-50 border-b border-blue-100">
+                    <CardHeader className="bg-blue-100 border-b border-blue-100">
                         <CardTitle className="text-2xl text-center text-blue-800">Нов билет за поддръжка</CardTitle>
                         <CardDescription className="text-center text-blue-600">
                             Моля, предоставете подробности за вашия проблем
@@ -57,7 +74,10 @@ export default function NewTicketSection() {
                             <label htmlFor="issue-type" className="text-md font-medium text-gray-700">
                                 Избор на запитване {errors.issueType && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
-                            <Select onValueChange={(value) => { setIssueType(value); setErrors({ ...errors, issueType: false }) }}>
+                            <Select
+                                disabled={!isLoggedIn}
+                                onValueChange={(value) => { setIssueType(value); setErrors({ ...errors, issueType: false }) }}
+                            >
                                 <SelectTrigger
                                     id="issue-type"
                                     className={`w-full ${errors.issueType ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
@@ -95,7 +115,10 @@ export default function NewTicketSection() {
                             <label htmlFor="condition" className="text-md font-medium text-gray-700">
                                 Състояние {errors.condition && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
-                            <Select onValueChange={(value) => { setCondition(value); setErrors({ ...errors, condition: false }) }}>
+                            <Select
+                                disabled={!isLoggedIn}
+                                onValueChange={(value) => { setCondition(value); setErrors({ ...errors, condition: false }) }}
+                            >
                                 <SelectTrigger
                                     id="condition"
                                     className={`w-full ${errors.condition ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
@@ -128,7 +151,10 @@ export default function NewTicketSection() {
                             <label htmlFor="priority" className="text-md font-medium text-gray-700">
                                 Приоритет {errors.priority && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
-                            <Select onValueChange={(value) => { setPriority(value); setErrors({ ...errors, priority: false }) }}>
+                            <Select
+                                disabled={!isLoggedIn}
+                                onValueChange={(value) => { setPriority(value); setErrors({ ...errors, priority: false }) }}
+                            >
                                 <SelectTrigger
                                     id="priority"
                                     className={`w-full ${errors.priority ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
@@ -148,7 +174,10 @@ export default function NewTicketSection() {
                             <label htmlFor="event" className="text-md font-medium text-gray-700">
                                 Събитие {errors.event && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
-                            <Select onValueChange={(value) => { setEvent(value); setErrors({ ...errors, event: false }) }}>
+                            <Select
+                                disabled={!isLoggedIn}
+                                onValueChange={(value) => { setEvent(value); setErrors({ ...errors, event: false }) }}
+                            >
                                 <SelectTrigger
                                     id="event"
                                     className={`w-full ${errors.event ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
@@ -163,7 +192,7 @@ export default function NewTicketSection() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button onClick={handleSubmit} className="w-full text-lg py-6 bg-blue-600 hover:bg-blue-700 text-white transition-colors">
+                        <Button disabled={!isLoggedIn} onClick={handleSubmit} className="w-full text-lg py-6 bg-blue-600 hover:bg-blue-700 text-white transition-colors">
                             Submit Ticket
                         </Button>
                     </CardFooter>
