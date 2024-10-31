@@ -153,11 +153,11 @@ export default function NewTicketSection() {
                                     id="event"
                                     className={`w-full ${errors.event ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                 >
-                                    <SelectValue placeholder="Have you tried any solutions?" />
+                                    <SelectValue placeholder="Опитвали ли сте някакви решения?" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="yes">Yes, I've attempted a solution</SelectItem>
-                                    <SelectItem value="no">No, I haven't tried anything yet</SelectItem>
+                                    <SelectItem value="yes">Да, опитах решение</SelectItem>
+                                    <SelectItem value="no">Не, още не съм пробвал нищо</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

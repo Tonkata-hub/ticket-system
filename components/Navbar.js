@@ -5,7 +5,7 @@ import { MessageSquare, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
-export default function Header() {
+export default function Navbar() {
     return (
         <header className="px-4 lg:px-6 h-16 flex items-center justify-between w-full bg-white shadow-sm sticky top-0 z-10">
             <Link className="flex items-center justify-center" href="/">
