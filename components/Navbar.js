@@ -40,10 +40,12 @@ export default function Navbar() {
                                 </DropdownMenuItem>
                             </>
                         ) : (
-                            <DropdownMenuItem onClick={handleLogOut} className="py-3 text-base text-green-600 focus:text-green-600 focus:bg-green-50 cursor-pointer">
-                                <LogIn className="mr-3 h-5 w-5" />
-                                <span>Log in</span>
-                            </DropdownMenuItem>
+                            <Link href="/login">
+                                <DropdownMenuItem onClick={handleLogOut} className="py-3 text-base text-green-600 focus:text-green-600 focus:bg-green-50 cursor-pointer">
+                                    <LogIn className="mr-3 h-5 w-5" />
+                                    <span>Log in</span>
+                                </DropdownMenuItem>
+                            </Link>
                         )}
                     </DropdownMenuContent>
                 </DropdownMenu>
