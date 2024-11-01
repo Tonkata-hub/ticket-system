@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from '@/lib/AuthContext';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -15,6 +16,8 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,7 +28,7 @@ export default function LoginPage() {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             if (email === 'admin@gmail.com' && password === 'test123123') {
-                router.push('/');
+                login();
             } else {
                 setError('Invalid email or password');
             }
