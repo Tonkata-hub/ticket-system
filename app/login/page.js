@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from '@/lib/AuthContext';
+import { useAuth } from '@/lib/authContext';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');

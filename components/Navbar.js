@@ -4,7 +4,7 @@ import Link from "next/link"
 import { MessageSquare, User, LogOut, LogIn } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { useAuth } from "@/lib/AuthContext"
+import { useAuth } from "@/lib/authContext"
 
 export default function Navbar() {
     const { logout, isLoggedIn } = useAuth();
