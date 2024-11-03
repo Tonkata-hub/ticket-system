@@ -51,14 +51,24 @@ export default function NewTicketSection() {
                 </p>
 
                 {!isLoggedIn && (
-                    <div className="text-center text-red-600 mb-8 font-bold">
-                        Моля, влезте в профила си, за да изпратите билет!
-                        <Button
-                            onClick={() => router.push("/login")}
-                            className="mt-4 mx-4 bg-red-500 hover:bg-red-600 text-white"
-                        >
-                            Вход
-                        </Button>
+                    <div className="text-center mb-8">
+                        <p className="text-xl font-bold text-red-600 mb-4">
+                            Моля, влезте в профила си или се регистрирайте, за да изпратите билет!
+                        </p>
+                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                            <Button
+                                onClick={() => router.push("/login")}
+                                className="bg-blue-500 hover:bg-blue-600 text-white text-lg py-2 px-6"
+                            >
+                                Вход
+                            </Button>
+                            <Button
+                                onClick={() => router.push("/signup")}
+                                className="bg-green-500 hover:bg-green-600 text-white text-lg py-2 px-6"
+                            >
+                                Регистрация
+                            </Button>
+                        </div>
                     </div>
                 )}
 
