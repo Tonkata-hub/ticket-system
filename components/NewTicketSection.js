@@ -117,6 +117,7 @@ export default function NewTicketSection() {
                                     placeholder="Please specify your issue"
                                     value={otherIssue}
                                     onChange={(e) => { setOtherIssue(e.target.value); setErrors({ ...errors, otherIssue: false }) }}
+                                    disabled={!isLoggedIn}
                                     className={`mt-2 ${errors.otherIssue ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                 />
                             )}
@@ -153,6 +154,7 @@ export default function NewTicketSection() {
                                     placeholder="Please describe the condition"
                                     value={otherCondition}
                                     onChange={(e) => { setOtherCondition(e.target.value); setErrors({ ...errors, otherCondition: false }) }}
+                                    disabled={!isLoggedIn}
                                     className={`mt-2 ${errors.otherCondition ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                 />
                             )}
