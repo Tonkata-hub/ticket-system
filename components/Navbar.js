@@ -20,7 +20,7 @@ export default function Navbar() {
                 <Link href="/tickets">
                     <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 w-full justify-start lg:w-auto lg:mr-4">
                         <Tag style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
-                        <span className="text-sm md:text-lg">My Tickets</span>
+                        <span className="text-sm md:text-lg">Моите билети</span>
                     </Button>
                 </Link>
             )}

@@ -12,11 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AlertCircle, CheckCircle, Clock, RefreshCw } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useAuth } from "@/lib/authContext";
 
-// Mock API function to fetch tickets (unchanged)
-const fetchTickets = async () => {
-    // Simulating API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+const fetchTickets = async (userID) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return [
         { id: '1', title: 'PC not working', status: 'open', createdAt: '2024-03-01', issueType: 'pc', condition: 'not-working', priority: 'urgent', event: 'no' },
         { id: '2', title: 'Software installation issue', status: 'in-progress', createdAt: '2024-03-02', issueType: 'apps', condition: 'slow-issues', priority: 'standard', event: 'yes' },
@@ -25,40 +24,40 @@ const fetchTickets = async () => {
 }
 
 export default function TicketDashboard() {
-    const [tickets, setTickets] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
-    const [selectedTicket, setSelectedTicket] = useState(null)
-    const [filterStatus, setFilterStatus] = useState('all')
-    const isLoggedIn = true
-    const router = useRouter()
+    const [tickets, setTickets] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    const [filterStatus, setFilterStatus] = useState('all');
+    const { isLoggedIn, loading: authLoading } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
+        if (authLoading) return;
+
         if (!isLoggedIn) {
-            router.push('/login')
+            router.push('/login');
         } else {
-            loadTickets()
+            loadTickets();
         }
-    }, [isLoggedIn, router])
+    }, [isLoggedIn, authLoading, router]);
 
     const loadTickets = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
-            const fetchedTickets = await fetchTickets('user123') // Replace with actual user ID
-            setTickets(fetchedTickets)
-            setError('')
+            const fetchedTickets = await fetchTickets('user123');
+            setTickets(fetchedTickets);
+            setError('');
         } catch (err) {
-            setError('Failed to load tickets. Please try again.')
+            setError('Failed to load tickets. Please try again.');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 
     const handleCloseTicket = (ticketId) => {
-        // Implement close ticket logic here
-        console.log('Closing ticket:', ticketId)
-        // After closing, refresh the tickets
-        loadTickets()
+        console.log('Closing ticket:', ticketId);
+        loadTickets();
     }
 
     const filteredTickets = tickets.filter(ticket =>
@@ -66,7 +65,7 @@ export default function TicketDashboard() {
     )
 
     if (!isLoggedIn) {
-        return null // Prevent rendering dashboard content for non-logged in users
+        return null;
     }
 
     return (
