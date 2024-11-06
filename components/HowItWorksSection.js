@@ -4,22 +4,22 @@ export default function HowItWorksSection() {
     return (
         <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-orange-50">
             <div className="container px-4 md:px-6">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-center mb-12 text-blue-900">How It Works</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-center mb-12 text-blue-900">Как работи</h2>
                 <div className="grid gap-8 md:grid-cols-3">
                     <StepCard
                         number="1"
-                        title="Submit a Ticket"
-                        description="Fill out the ticket form with details about your issue or request."
+                        title="Подайте билет"
+                        description="Попълнете формуляра за билет с подробности за вашия проблем или запитване."
                     />
                     <StepCard
                         number="2"
-                        title="Receive Confirmation"
-                        description="Get an immediate confirmation with your ticket number for reference."
+                        title="Получете потвърждение"
+                        description="Получете незабавно потвърждение с номера на вашия билет за справка."
                     />
                     <StepCard
                         number="3"
-                        title="Get Support"
-                        description="Our team reviews your ticket and provides timely assistance to resolve your issue."
+                        title="Очаквайте съдействие"
+                        description="Нашият екип преглежда вашия билет и осигурява навременна помощ за разрешаване на проблема."
                     />
                 </div>
             </div>
