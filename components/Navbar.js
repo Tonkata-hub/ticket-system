@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useAuth } from "@/lib/authContext"
+import { useState } from 'react';
 
 export default function Navbar() {
     const { logout, isLoggedIn } = useAuth();
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleLogOut = () => {
         logout();
@@ -69,9 +71,14 @@ export default function Navbar() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </nav>
-                <Sheet>
+                <Sheet open={isOpen} onOpenChange={setIsOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="lg:hidden text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="lg:hidden text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            onClick={() => setIsOpen(true)}
+                        >
                             <Menu style={{ height: "1.2rem", width: "1.2rem" }} className="h-6 w-6" />
                             <span className="sr-only">Open menu</span>
                         </Button>
@@ -81,18 +88,29 @@ export default function Navbar() {
                             {isLoggedIn ? (
                                 <>
                                     <Link href="/tickets" className="w-full">
-                                        <Button variant="ghost" className="justify-start text-base text-blue-600 hover:text-blue-700 hover:bg-blue-50 w-full">
+                                        <Button
+                                            variant="ghost"
+                                            className="justify-start text-base text-blue-600 hover:text-blue-700 hover:bg-blue-50 w-full"
+                                            onClick={() => setIsOpen(false)}
+                                        >
                                             <Tag style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
                                             <span>My Tickets</span>
                                         </Button>
                                     </Link>
-                                    <Button variant="ghost" className="justify-start text-base">
+                                    <Button
+                                        variant="ghost"
+                                        className="justify-start text-base"
+                                        onClick={() => setIsOpen(false)}
+                                    >
                                         <User style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
                                         <span>Profile</span>
                                     </Button>
                                     <Button
                                         variant="ghost"
-                                        onClick={handleLogOut}
+                                        onClick={() => {
+                                            handleLogOut();
+                                            setIsOpen(false);
+                                        }}
                                         className="justify-start text-base text-red-600 hover:text-red-700 hover:bg-red-50"
                                     >
                                         <LogOut style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
@@ -101,7 +119,11 @@ export default function Navbar() {
                                 </>
                             ) : (
                                 <Link href="/login" className="w-full">
-                                    <Button variant="ghost" className="w-full justify-start text-base text-green-600 hover:text-green-700 hover:bg-green-50">
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start text-base text-green-600 hover:text-green-700 hover:bg-green-50"
+                                        onClick={() => setIsOpen(false)}
+                                    >
                                         <LogIn className="mr-3 h-5 w-5" />
                                         <span>Log in</span>
                                     </Button>
