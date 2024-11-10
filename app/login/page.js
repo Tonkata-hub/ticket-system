@@ -23,15 +23,20 @@ export default function LoginPage() {
         setError('');
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const response = await fetch('/api/login', {
+                method: 'POST', // Ensure method is POST
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
 
-            if (email === 'admin@gmail.com' && password === 'test123123') {
-                login();
+            if (response.ok) {
+                login(); // Assuming `login` sets the state and redirects as needed
             } else {
-                setError('Невалиден имейл или парола');
+                const data = await response.json();
+                setError(data.error || 'Invalid email or password');
             }
         } catch (err) {
-            setError('Възникна грешка. Моля, опитайте отново.');
+            setError('An error occurred. Please try again.');
         } finally {
             setIsLoading(false);
         }

@@ -1,14 +1,26 @@
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
+import User from '@/models/User';
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { email, password } = req.body;
 
-        // Authenticate user (mock check; replace with actual authentication)
-        if (email === 'admin@gmail.com' && password === 'test123123') {
-            const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '15m' }); // Short-lived token
-            const refreshToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '7d' }); // Longer refresh token
+        try {
+            // Find the user by email
+            const user = await User.findOne({ where: { email } });
+            if (!user) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+
+            // Directly compare the plain-text passwords
+            if (password !== user.password) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+
+            // Generate JWT tokens
+            const token = jwt.sign({ email, id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
+            const refreshToken = jwt.sign({ email, id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
             // Set tokens as HTTP-only cookies
             res.setHeader('Set-Cookie', [
@@ -29,8 +41,9 @@ export default async function handler(req, res) {
             ]);
 
             return res.status(200).json({ message: 'Logged in successfully' });
-        } else {
-            return res.status(401).json({ error: 'Invalid credentials' });
+        } catch (error) {
+            console.error('Error logging in:', error);
+            return res.status(500).json({ error: 'Internal server error' });
         }
     } else {
         res.setHeader('Allow', ['POST']);
