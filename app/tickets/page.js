@@ -14,15 +14,6 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/lib/authContext";
 
-const fetchTickets = async (userID) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return [
-        { id: '1', title: 'PC not working', status: 'open', createdAt: '2024-03-01', issueType: 'pc', condition: 'not-working', priority: 'urgent', event: 'no' },
-        { id: '2', title: 'Software installation issue', status: 'in-progress', createdAt: '2024-03-02', issueType: 'apps', condition: 'slow-issues', priority: 'standard', event: 'yes' },
-        { id: '3', title: 'Network connectivity problem', status: 'resolved', createdAt: '2024-03-03', issueType: 'networks', condition: 'review-hardware', priority: 'standard', event: 'yes' },
-    ]
-}
-
 export default function TicketDashboard() {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,6 +24,8 @@ export default function TicketDashboard() {
     const router = useRouter();
 
     useEffect(() => {
+        const a = fetchTickets();
+        console.log(a);
         if (authLoading) return;
 
         if (!isLoggedIn) {
@@ -42,10 +35,36 @@ export default function TicketDashboard() {
         }
     }, [isLoggedIn, authLoading, router]);
 
+    const fetchTickets = async (userID) => {
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+        // return [
+        //     { id: '1', title: 'PC not working', status: 'open', createdAt: '2024-03-01', issueType: 'pc', condition: 'not-working', priority: 'urgent', event: 'no' },
+        //     { id: '2', title: 'Software installation issue', status: 'in-progress', createdAt: '2024-03-02', issueType: 'apps', condition: 'slow-issues', priority: 'standard', event: 'yes' },
+        //     { id: '3', title: 'Network connectivity problem', status: 'resolved', createdAt: '2024-03-03', issueType: 'networks', condition: 'review-hardware', priority: 'standard', event: 'yes' },
+        // ]
+        try {
+            const response = await fetch('/api/getTickets', {
+                method: 'GET',
+                credentials: 'include', // Include cookies for authentication
+            });
+
+            if (response.ok) {
+                const tickets = await response.json();
+                setTickets(tickets);
+                setError('');
+                return tickets;
+            } else {
+                setError('Failed to load tickets.');
+            }
+        } catch (error) {
+            setError('Error fetching tickets. Please try again.');
+        }
+    }
+
     const loadTickets = async () => {
         setLoading(true);
         try {
-            const fetchedTickets = await fetchTickets('user123');
+            const fetchedTickets = await fetchTickets();
             setTickets(fetchedTickets);
             setError('');
         } catch (err) {
@@ -247,9 +266,12 @@ function TicketTableSkeleton() {
         <div className="space-y-4 p-4">
             {[...Array(3)].map((_, i) => (
                 <div key={i} className="flex items-center space-x-4">
-                    <Skeleton className="h-12 w-12" />
-                    <Skeleton className="h-4 w-[250px]" />
-                    <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-10 w-10" />
+                    <Skeleton className="h-4 w-[300px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-[140px]" />
+                    <Skeleton className="h-4 w-[140px]" />
+                    <Skeleton className="h-4 w-[140px]" />
                     <Skeleton className="h-4 w-[100px]" />
                 </div>
             ))}
