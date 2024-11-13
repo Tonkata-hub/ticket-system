@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+// import { Input } from "@/components/ui/input"
+// import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertCircle, CheckCircle, Clock, RefreshCw } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -35,13 +35,7 @@ export default function TicketDashboard() {
         }
     }, [isLoggedIn, authLoading, router]);
 
-    const fetchTickets = async (userID) => {
-        // await new Promise(resolve => setTimeout(resolve, 1000));
-        // return [
-        //     { id: '1', title: 'PC not working', status: 'open', createdAt: '2024-03-01', issueType: 'pc', condition: 'not-working', priority: 'urgent', event: 'no' },
-        //     { id: '2', title: 'Software installation issue', status: 'in-progress', createdAt: '2024-03-02', issueType: 'apps', condition: 'slow-issues', priority: 'standard', event: 'yes' },
-        //     { id: '3', title: 'Network connectivity problem', status: 'resolved', createdAt: '2024-03-03', issueType: 'networks', condition: 'review-hardware', priority: 'standard', event: 'yes' },
-        // ]
+    const fetchTickets = async () => {
         try {
             const response = await fetch('/api/getTickets', {
                 method: 'GET',
@@ -74,10 +68,10 @@ export default function TicketDashboard() {
         }
     }
 
-    const handleCloseTicket = (ticketId) => {
-        console.log('Closing ticket:', ticketId);
-        loadTickets();
-    }
+    // const handleCloseTicket = (ticketId) => {
+    //     console.log('Closing ticket:', ticketId);
+    //     loadTickets();
+    // }
 
     const filteredTickets = tickets.filter(ticket =>
         filterStatus === 'all' || ticket.status === filterStatus
@@ -90,7 +84,7 @@ export default function TicketDashboard() {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-                <h1 className="text-3xl font-bold text-blue-600 mb-4 md:mb-0">Your Tickets</h1>
+                <h1 className="text-3xl font-bold text-blue-600 mb-4 md:mb-0">Твоите билети</h1>
                 <div className="flex flex-col sm:flex-row gap-2">
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
                         <SelectTrigger className="w-[180px]">
@@ -112,7 +106,7 @@ export default function TicketDashboard() {
 
             <Card className="border-blue-200 shadow-lg overflow-hidden">
                 <CardHeader className="bg-blue-50 border-b border-blue-200">
-                    <CardTitle className="text-2xl text-blue-600">Ticket Overview</CardTitle>
+                    <CardTitle className="text-2xl text-blue-600">Преглед на билетите</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     {loading ? (
@@ -125,28 +119,28 @@ export default function TicketDashboard() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="text-blue-600">ID</TableHead>
-                                        <TableHead className="text-blue-600">Title</TableHead>
-                                        <TableHead className="text-blue-600">Status</TableHead>
-                                        <TableHead className="text-blue-600 hidden md:table-cell">Created At</TableHead>
-                                        <TableHead className="text-blue-600 hidden lg:table-cell">Issue Type</TableHead>
-                                        <TableHead className="text-blue-600 hidden lg:table-cell">Priority</TableHead>
-                                        <TableHead className="text-blue-600">Actions</TableHead>
+                                        <TableHead className="text-blue-600">Запитване</TableHead>
+                                        <TableHead className="text-blue-600">Състояние</TableHead>
+                                        <TableHead className="text-blue-600">Приоритет</TableHead>
+                                        <TableHead className="text-blue-600">Събитие</TableHead>
+                                        <TableHead className="text-blue-600">Статус</TableHead>
+                                        {/* <TableHead className="text-blue-600">Actions</TableHead> */}
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filteredTickets.map((ticket) => (
                                         <TableRow key={ticket.id}>
                                             <TableCell>{ticket.id}</TableCell>
-                                            <TableCell>{ticket.title}</TableCell>
+                                            <TableCell>{ticket.issue_type}</TableCell>
                                             <TableCell>
                                                 <StatusBadge status={ticket.status} />
                                             </TableCell>
                                             <TableCell className="hidden md:table-cell">{new Date(ticket.createdAt).toLocaleDateString()}</TableCell>
-                                            <TableCell className="hidden lg:table-cell">{ticket.issueType}</TableCell>
+                                            <TableCell className="hidden lg:table-cell">{ticket.state}</TableCell>
                                             <TableCell className="hidden lg:table-cell">
                                                 <PriorityBadge priority={ticket.priority} />
                                             </TableCell>
-                                            <TableCell>
+                                            {/* <TableCell>
                                                 <Dialog>
                                                     <DialogTrigger asChild>
                                                         <Button variant="outline" onClick={() => setSelectedTicket(ticket)} className="hover:bg-blue-100">View</Button>
@@ -158,7 +152,7 @@ export default function TicketDashboard() {
                                                         <TicketDetails ticket={selectedTicket} onClose={handleCloseTicket} />
                                                     </DialogContent>
                                                 </Dialog>
-                                            </TableCell>
+                                            </TableCell> */}
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -202,64 +196,64 @@ function PriorityBadge({ priority }) {
     )
 }
 
-function TicketDetails({ ticket, onClose }) {
-    if (!ticket) return null
+// function TicketDetails({ ticket, onClose }) {
+//     if (!ticket) return null
 
-    return (
-        <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <Label className="text-blue-600">Ticket ID</Label>
-                    <Input value={ticket.id} readOnly />
-                </div>
-                <div>
-                    <Label className="text-blue-600">Title</Label>
-                    <Input value={ticket.title} readOnly />
-                </div>
-                <div>
-                    <Label className="text-blue-600">Status</Label>
-                    <div className="mt-1">
-                        <StatusBadge status={ticket.status} />
-                    </div>
-                </div>
-                <div>
-                    <Label className="text-blue-600">Created At</Label>
-                    <Input value={new Date(ticket.createdAt).toLocaleString()} readOnly />
-                </div>
-                <div>
-                    <Label className="text-blue-600">Issue Type</Label>
-                    <Input value={ticket.issueType} readOnly />
-                </div>
-                <div>
-                    <Label className="text-blue-600">Condition</Label>
-                    <Input value={ticket.condition} readOnly />
-                </div>
-                <div>
-                    <Label className="text-blue-600">Priority</Label>
-                    <div className="mt-1">
-                        <PriorityBadge priority={ticket.priority} />
-                    </div>
-                </div>
-                <div>
-                    <Label className="text-blue-600">Event</Label>
-                    <Input value={ticket.event} readOnly />
-                </div>
-            </div>
-            <div>
-                <Label className="text-blue-600">Description</Label>
-                <textarea
-                    className="w-full p-2 border rounded border-gray-300 bg-gray-50"
-                    rows={4}
-                    value="This is a sample description for the ticket. In a real application, this would contain detailed information about the issue."
-                    readOnly
-                />
-            </div>
-            {ticket.status !== 'resolved' && (
-                <Button onClick={() => onClose(ticket.id)} variant="destructive" className="bg-red-500 hover:bg-red-600 text-white">Close Ticket</Button>
-            )}
-        </div>
-    )
-}
+//     return (
+//         <div className="space-y-4">
+//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                 <div>
+//                     <Label className="text-blue-600">Ticket ID</Label>
+//                     <Input value={ticket.id} readOnly />
+//                 </div>
+//                 <div>
+//                     <Label className="text-blue-600">Title</Label>
+//                     <Input value={ticket.title} readOnly />
+//                 </div>
+//                 <div>
+//                     <Label className="text-blue-600">Status</Label>
+//                     <div className="mt-1">
+//                         <StatusBadge status={ticket.status} />
+//                     </div>
+//                 </div>
+//                 <div>
+//                     <Label className="text-blue-600">Created At</Label>
+//                     <Input value={new Date(ticket.createdAt).toLocaleString()} readOnly />
+//                 </div>
+//                 <div>
+//                     <Label className="text-blue-600">Issue Type</Label>
+//                     <Input value={ticket.issueType} readOnly />
+//                 </div>
+//                 <div>
+//                     <Label className="text-blue-600">Condition</Label>
+//                     <Input value={ticket.condition} readOnly />
+//                 </div>
+//                 <div>
+//                     <Label className="text-blue-600">Priority</Label>
+//                     <div className="mt-1">
+//                         <PriorityBadge priority={ticket.priority} />
+//                     </div>
+//                 </div>
+//                 <div>
+//                     <Label className="text-blue-600">Event</Label>
+//                     <Input value={ticket.event} readOnly />
+//                 </div>
+//             </div>
+//             <div>
+//                 <Label className="text-blue-600">Description</Label>
+//                 <textarea
+//                     className="w-full p-2 border rounded border-gray-300 bg-gray-50"
+//                     rows={4}
+//                     value="This is a sample description for the ticket. In a real application, this would contain detailed information about the issue."
+//                     readOnly
+//                 />
+//             </div>
+//             {ticket.status !== 'resolved' && (
+//                 <Button onClick={() => onClose(ticket.id)} variant="destructive" className="bg-red-500 hover:bg-red-600 text-white">Close Ticket</Button>
+//             )}
+//         </div>
+//     )
+// }
 
 function TicketTableSkeleton() {
     return (
