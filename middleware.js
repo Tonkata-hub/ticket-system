@@ -9,7 +9,7 @@ export function middleware(req) {
     if (protectedPaths.some(path => req.nextUrl.pathname.startsWith(path))) {
         // If there's no token, redirect to login
         if (!token) {
-            return NextResponse.redirect(new URL('/login', req.url));
+            return NextResponse.redirect(new URL('/', req.url));
         }
 
         try {
@@ -18,7 +18,7 @@ export function middleware(req) {
             return NextResponse.next();
         } catch (err) {
             // If the token is invalid, redirect to login
-            return NextResponse.redirect(new URL('/login', req.url));
+            return NextResponse.redirect(new URL('/', req.url));
         }
     }
 
