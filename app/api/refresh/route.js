@@ -35,7 +35,7 @@ export async function POST(req) {
 
         // Optionally: Create a new refresh token (extend expiry)
         const newRefreshToken = jwt.sign(
-            { id: decoded.id, email: decoded.email },
+            { id: decoded.id, email: decoded.email, role: decoded.role },
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );

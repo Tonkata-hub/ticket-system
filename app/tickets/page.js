@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertCircle, CheckCircle, Clock, RefreshCw } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/lib/authContext";
 
@@ -113,7 +114,7 @@ export default function TicketDashboard() {
                                         <TableHead className="text-blue-600 text-sm">Запитване</TableHead>
                                         <TableHead className="text-blue-600 text-sm">Състояние</TableHead>
                                         <TableHead className="text-blue-600 text-sm hidden md:table-cell">Приоритет</TableHead>
-                                        <TableHead className="text-blue-600 text-sm hidden lg:table-cell">Събитие</TableHead>
+                                        <TableHead className="text-blue-600 text-sm hidden lg:table-cell">Действие</TableHead>
                                         <TableHead className="text-blue-600 text-sm hidden lg:table-cell">Статус</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -121,14 +122,42 @@ export default function TicketDashboard() {
                                     {filteredTickets.map((ticket) => (
                                         <TableRow key={ticket.id} className="text-sm">
                                             <TableCell>{ticket.id}</TableCell>
-                                            <TableCell>{ticket.issue_type}</TableCell>
                                             <TableCell>
-                                                <StatusBadge status={ticket.status} />
+                                                {ticket.issue_description ? (
+                                                    <Collapsible>
+                                                        <CollapsibleTrigger className="cursor-pointer underline">
+                                                            {ticket.issue_type}
+                                                        </CollapsibleTrigger>
+                                                        <CollapsibleContent className="mt-2 text-gray-500">
+                                                            {ticket.issue_description}
+                                                        </CollapsibleContent>
+                                                    </Collapsible>
+                                                ) : (
+                                                    ticket.issue_type
+                                                )}
                                             </TableCell>
-                                            <TableCell className="hidden md:table-cell">{new Date(ticket.createdAt).toLocaleDateString()}</TableCell>
-                                            <TableCell className="hidden lg:table-cell">{ticket.state}</TableCell>
+                                            <TableCell>
+                                                {ticket.state_description ? (
+                                                    <Collapsible>
+                                                        <CollapsibleTrigger className="cursor-pointer underline">
+                                                            {ticket.state}
+                                                        </CollapsibleTrigger>
+                                                        <CollapsibleContent className="mt-2 text-gray-500">
+                                                            {ticket.state_description}
+                                                        </CollapsibleContent>
+                                                    </Collapsible>
+                                                ) : (
+                                                    ticket.state
+                                                )}
+                                            </TableCell>
                                             <TableCell className="hidden lg:table-cell">
                                                 <PriorityBadge priority={ticket.priority} />
+                                            </TableCell>
+                                            <TableCell className="hidden lg:table-cell">{ticket.event}</TableCell>
+                                            <TableCell>
+                                                <div className="max-w-32">
+                                                    <StatusBadge status={ticket.status} />
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -152,7 +181,7 @@ function StatusBadge({ status }) {
     const { icon: Icon, className } = statusConfig[status] || statusConfig.open
 
     return (
-        <Badge variant="outline" className={`${className} flex items-center gap-1 text-xs md:text-sm`}>
+        <Badge variant="outline" className={`${className} flex mx-auto items-center gap-1 text-xs md:text-sm`}>
             <Icon className="w-3 h-3" />
             <span>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
         </Badge>
@@ -162,8 +191,8 @@ function StatusBadge({ status }) {
 function PriorityBadge({ priority }) {
     const priorityConfig = {
         urgent: 'bg-red-100 text-red-800',
-        priority: 'bg-orange-100 text-orange-800',
-        standard: 'bg-green-100 text-green-800',
+        standard: 'bg-orange-100 text-orange-800',
+        low: 'bg-green-100 text-green-800',
     }
 
     return (
