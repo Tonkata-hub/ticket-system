@@ -17,7 +17,7 @@ export default function TicketDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
-    const { isLoggedIn, loading: authLoading } = useAuth();
+    const { isLoggedIn, loading: authLoading, logout } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -44,13 +44,17 @@ export default function TicketDashboard() {
                 setTickets(tickets);
                 setError('');
                 return tickets;
+            } else if (response.status === 401) {
+                // Unauthorized - Log out the user and redirect to login
+                await logout();
+                router.push('/login');
             } else {
                 setError('Failed to load tickets.');
             }
         } catch (error) {
             setError('Error fetching tickets. Please try again.');
         }
-    }
+    };
 
     const loadTickets = async () => {
         setLoading(true);
@@ -110,12 +114,12 @@ export default function TicketDashboard() {
                             <Table className="min-w-full">
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="text-blue-600 text-sm">ID</TableHead>
-                                        <TableHead className="text-blue-600 text-sm">Запитване</TableHead>
-                                        <TableHead className="text-blue-600 text-sm">Състояние</TableHead>
-                                        <TableHead className="text-blue-600 text-sm hidden md:table-cell">Приоритет</TableHead>
-                                        <TableHead className="text-blue-600 text-sm hidden lg:table-cell">Действие</TableHead>
-                                        <TableHead className="text-blue-600 text-sm hidden lg:table-cell">Статус</TableHead>
+                                        <TableHead className="w-[3%] text-blue-600 text-sm">ID</TableHead>
+                                        <TableHead className="w-[25%] text-blue-600 text-sm">Запитване</TableHead>
+                                        <TableHead className="w-[20%] text-blue-600 text-sm">Състояние</TableHead>
+                                        <TableHead className="w-[15%] text-blue-600 text-sm hidden md:table-cell">Приоритет</TableHead>
+                                        <TableHead className="w-[25%] text-blue-600 text-sm hidden lg:table-cell">Действие</TableHead>
+                                        <TableHead className="w-[15%] text-blue-600 text-sm hidden lg:table-cell">Статус</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

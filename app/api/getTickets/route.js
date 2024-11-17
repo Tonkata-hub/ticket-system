@@ -1,3 +1,4 @@
+// /api/getTickets
 import Ticket from '@/models/Ticket';
 import { getUserFromToken } from '@/lib/authHelpers';
 
@@ -9,6 +10,7 @@ export async function GET(req) {
 
     try {
         let tickets;
+        // console.log(user);
         if (user.role === 'admin') {
             // Admin can view all tickets
             tickets = await Ticket.findAll();
