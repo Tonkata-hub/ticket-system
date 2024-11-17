@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-// import { Input } from "@/components/ui/input"
-// import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertCircle, CheckCircle, Clock, RefreshCw } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -18,7 +15,6 @@ export default function TicketDashboard() {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [selectedTicket, setSelectedTicket] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all');
     const { isLoggedIn, loading: authLoading } = useAuth();
     const router = useRouter();
@@ -67,11 +63,6 @@ export default function TicketDashboard() {
             setLoading(false);
         }
     }
-
-    // const handleCloseTicket = (ticketId) => {
-    //     console.log('Closing ticket:', ticketId);
-    //     loadTickets();
-    // }
 
     const filteredTickets = tickets.filter(ticket =>
         filterStatus === 'all' || ticket.status === filterStatus
@@ -124,7 +115,6 @@ export default function TicketDashboard() {
                                         <TableHead className="text-blue-600">Приоритет</TableHead>
                                         <TableHead className="text-blue-600">Събитие</TableHead>
                                         <TableHead className="text-blue-600">Статус</TableHead>
-                                        {/* <TableHead className="text-blue-600">Actions</TableHead> */}
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -140,19 +130,6 @@ export default function TicketDashboard() {
                                             <TableCell className="hidden lg:table-cell">
                                                 <PriorityBadge priority={ticket.priority} />
                                             </TableCell>
-                                            {/* <TableCell>
-                                                <Dialog>
-                                                    <DialogTrigger asChild>
-                                                        <Button variant="outline" onClick={() => setSelectedTicket(ticket)} className="hover:bg-blue-100">View</Button>
-                                                    </DialogTrigger>
-                                                    <DialogContent className="bg-white max-w-3xl w-full">
-                                                        <DialogHeader>
-                                                            <DialogTitle className="text-2xl text-blue-600">Ticket Details</DialogTitle>
-                                                        </DialogHeader>
-                                                        <TicketDetails ticket={selectedTicket} onClose={handleCloseTicket} />
-                                                    </DialogContent>
-                                                </Dialog>
-                                            </TableCell> */}
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -196,65 +173,6 @@ function PriorityBadge({ priority }) {
     )
 }
 
-// function TicketDetails({ ticket, onClose }) {
-//     if (!ticket) return null
-
-//     return (
-//         <div className="space-y-4">
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//                 <div>
-//                     <Label className="text-blue-600">Ticket ID</Label>
-//                     <Input value={ticket.id} readOnly />
-//                 </div>
-//                 <div>
-//                     <Label className="text-blue-600">Title</Label>
-//                     <Input value={ticket.title} readOnly />
-//                 </div>
-//                 <div>
-//                     <Label className="text-blue-600">Status</Label>
-//                     <div className="mt-1">
-//                         <StatusBadge status={ticket.status} />
-//                     </div>
-//                 </div>
-//                 <div>
-//                     <Label className="text-blue-600">Created At</Label>
-//                     <Input value={new Date(ticket.createdAt).toLocaleString()} readOnly />
-//                 </div>
-//                 <div>
-//                     <Label className="text-blue-600">Issue Type</Label>
-//                     <Input value={ticket.issueType} readOnly />
-//                 </div>
-//                 <div>
-//                     <Label className="text-blue-600">Condition</Label>
-//                     <Input value={ticket.condition} readOnly />
-//                 </div>
-//                 <div>
-//                     <Label className="text-blue-600">Priority</Label>
-//                     <div className="mt-1">
-//                         <PriorityBadge priority={ticket.priority} />
-//                     </div>
-//                 </div>
-//                 <div>
-//                     <Label className="text-blue-600">Event</Label>
-//                     <Input value={ticket.event} readOnly />
-//                 </div>
-//             </div>
-//             <div>
-//                 <Label className="text-blue-600">Description</Label>
-//                 <textarea
-//                     className="w-full p-2 border rounded border-gray-300 bg-gray-50"
-//                     rows={4}
-//                     value="This is a sample description for the ticket. In a real application, this would contain detailed information about the issue."
-//                     readOnly
-//                 />
-//             </div>
-//             {ticket.status !== 'resolved' && (
-//                 <Button onClick={() => onClose(ticket.id)} variant="destructive" className="bg-red-500 hover:bg-red-600 text-white">Close Ticket</Button>
-//             )}
-//         </div>
-//     )
-// }
-
 function TicketTableSkeleton() {
     return (
         <div className="space-y-4 p-4">
@@ -267,6 +185,8 @@ function TicketTableSkeleton() {
                     <Skeleton className="h-4 w-[140px]" />
                     <Skeleton className="h-4 w-[140px]" />
                     <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-4 w-[140px]" />
+                    <Skeleton className="h-4 w-[120px]" />
                 </div>
             ))}
         </div>
