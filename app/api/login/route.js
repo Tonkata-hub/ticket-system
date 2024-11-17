@@ -1,3 +1,4 @@
+// /api/login
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import bcrypt from 'bcrypt';

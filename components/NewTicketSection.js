@@ -93,22 +93,20 @@ export default function NewTicketSection() {
                                     id="issue-type"
                                     className={`w-full ${errors.issueType ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                 >
-                                    <SelectValue placeholder="Избери запитване" />
+                                    <SelectValue placeholder="Изберете запитване" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="pc">PC, компоненти и мобилни у-ва</SelectItem>
-                                    <SelectItem value="win-os">Win, OS, Users</SelectItem>
-                                    <SelectItem value="share">Share</SelectItem>
-                                    <SelectItem value="db">ДБ Принтер Копир Сканер</SelectItem>
-                                    <SelectItem value="apps">Приложения</SelectItem>
-                                    <SelectItem value="accounting-software">Счетоводен софтуер</SelectItem>
-                                    <SelectItem value="digital-signatures">Електронни подписи и сертификати</SelectItem>
+                                    <SelectItem value="pc-components">PC компютри, компоненти и мобилни у-ва</SelectItem>
+                                    <SelectItem value="servers-vms">Сървъри и вирт. машини, достъп до папки</SelectItem>
+                                    <SelectItem value="printing">Принтиране Копиране Сканиране</SelectItem>
+                                    <SelectItem value="networks-vpn">Мрежи и Мрежово оборудване, VPN</SelectItem>
+                                    <SelectItem value="security-gdpr">Сигурност и Сертифициране, GDPR</SelectItem>
+                                    <SelectItem value="windows-db">Windows, OS, Users, Share, база данни</SelectItem>
+                                    <SelectItem value="accounting-software">Приложения, Счетоводен софтуер</SelectItem>
                                     <SelectItem value="office-apps">Офис приложения, ms365</SelectItem>
-                                    <SelectItem value="other">Други</SelectItem>
-                                    <SelectItem value="servers">Сървъри и вирт. машини, достъп</SelectItem>
-                                    <SelectItem value="networks">Мрежи, оборудване, VPN</SelectItem>
-                                    <SelectItem value="security-gdpr">Сигурност и Сертификати, GDPR</SelectItem>
+                                    <SelectItem value="digital-signatures">Електронни подписи и сертификати</SelectItem>
                                     <SelectItem value="hosting">Хостинг, сайт, имейли, акаунти</SelectItem>
+                                    <SelectItem value="other">Др.</SelectItem>
                                 </SelectContent>
                             </Select>
                             {issueType === "other" && (
@@ -138,14 +136,14 @@ export default function NewTicketSection() {
                                     <SelectValue placeholder="Опишете текущото състояние" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="not-working">Не работи, спря: у-во, услуга</SelectItem>
-                                    <SelectItem value="review-hardware">За преглед hardware</SelectItem>
-                                    <SelectItem value="review-software">За преглед software</SelectItem>
+                                    <SelectItem value="not-working">Не работи, спря: устройство, услуга</SelectItem>
+                                    <SelectItem value="review-hardware">За преглед hardware, [или фабрични настройки]</SelectItem>
+                                    <SelectItem value="review-software">За преглед software, [или преинсталация]</SelectItem>
                                     <SelectItem value="slow-issues">Работи бавно, забива, дава грешки</SelectItem>
-                                    <SelectItem value="change-device">Промяна на pc, user, у-во, app</SelectItem>
+                                    <SelectItem value="change-device">Промяна на у-во, потребител, приложение</SelectItem>
                                     <SelectItem value="replace-supply">За смяна на консуматив</SelectItem>
                                     <SelectItem value="project-discussion">Проект (изисква обсъждане)</SelectItem>
-                                    <SelectItem value="other">Други</SelectItem>
+                                    <SelectItem value="other">Др.</SelectItem>
                                 </SelectContent>
                             </Select>
                             {condition === "other" && (
@@ -175,17 +173,31 @@ export default function NewTicketSection() {
                                     <SelectValue placeholder="Изберете приоритет" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="urgent">Спешен</SelectItem>
-                                    <SelectItem value="priority">Приоритетен</SelectItem>
-                                    <SelectItem value="standard">Стандартен</SelectItem>
-                                    <SelectItem value="low-priority">Нисък приоритет</SelectItem>
+                                    <SelectItem
+                                        value="urgent"
+                                        className="text-red-600 hover:bg-red-100 focus:bg-red-100"
+                                    >
+                                        Спешен
+                                    </SelectItem>
+                                    <SelectItem
+                                        value="standard"
+                                        className="text-yellow-600 hover:bg-yellow-100 focus:bg-yellow-100"
+                                    >
+                                        Стандартен
+                                    </SelectItem>
+                                    <SelectItem
+                                        value="low-priority"
+                                        className="text-green-600 hover:bg-green-100 focus:bg-green-100"
+                                    >
+                                        Нисък приоритет
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
                             <label htmlFor="event" className="text-md font-medium text-gray-700">
-                                Събитие {errors.event && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
+                                Действие {errors.event && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
                             <Select
                                 disabled={!isLoggedIn}
@@ -195,11 +207,15 @@ export default function NewTicketSection() {
                                     id="event"
                                     className={`w-full ${errors.event ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                 >
-                                    <SelectValue placeholder="Опитвали ли сте някакви решения?" />
+                                    <SelectValue placeholder="Изберете действие" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="yes">Да, опитах решение</SelectItem>
-                                    <SelectItem value="no">Не, още не съм пробвал нищо</SelectItem>
+                                    <SelectItem value="it-support">IT поддръжка</SelectItem>
+                                    <SelectItem value="it-archive">IT архив</SelectItem>
+                                    <SelectItem value="pc-preparation">PC подготовка за офис работа</SelectItem>
+                                    <SelectItem value="equipment-management">Взимане/даване ИТ оборудване / ремонт / консуматив</SelectItem>
+                                    <SelectItem value="ticket-review">Преглед и анализ на ticket</SelectItem>
+                                    <SelectItem value="it-consultation">IT консултация</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

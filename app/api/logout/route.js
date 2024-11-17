@@ -1,3 +1,4 @@
+// /api/logout
 import { serialize } from 'cookie';
 
 export async function POST() {
