@@ -7,49 +7,96 @@ const Ticket = sequelize.define('Ticket', {
         primaryKey: true,
         autoIncrement: true,
     },
-    user_id: {
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+        comment: 'Дата на съставяне',
+    },
+    author: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        comment: 'Съставител',
+    },
+    queryType: {
+        type: DataTypes.ENUM('PC компютри, компоненти и мобилни у-ва', 'Сървъри и вирт. машини, достъп до папки', 'Принтиране Копиране Сканиране', 'Мрежи и Мрежово оборудване, VPN', 'Сигурност и Сертифициране, GDPR', 'Windows, OS, Users, Share, база данни', 'Приложения, Счетоводен софтуер', 'Офис приложения, ms365', 'Електронни подписи и сертификати', 'Хостинг, сайт, имейли, акаунти', 'Др.'),
+        allowNull: false,
+        comment: 'Избор на запитване',
+    },
+    queryDesc: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Описание на запитването',
+    },
+    authorId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-    },
-    issue_type: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    issue_description: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    state: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    state_description: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    priority: {
-        type: DataTypes.ENUM('urgent', 'priority', 'standard', 'low-priority'),
-        allowNull: false,
-    },
-    event: {
-        type: DataTypes.STRING,
-        allowNull: true,
+        comment: 'ID на съставителя',
     },
     status: {
-        type: DataTypes.ENUM('open', 'in-progress', 'closed'),
+        type: DataTypes.ENUM('Не работи: спря устройство, услуга', 'За преглед hardware, [или фабрични настройки]', 'За преглед software, [или преинсталация]', 'Работи бавно, забива, дава грешки', 'Промяна на у-во, потребител, приложение', 'За смяна на консуматив', 'Проект (изисква обсъждане)', 'Др.'),
         allowNull: false,
-        defaultValue: 'open',
+        comment: 'Състояние',
     },
-    created_at: {
-        type: DataTypes.DATE,
+    priority: {
+        type: DataTypes.ENUM('Спешен', 'Стандартен', 'Нисък приоритет'),
         allowNull: false,
-        defaultValue: DataTypes.NOW,
+        comment: 'Priority',
     },
-    updated_at: {
+    statusDesc: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Описание на състоянието',
+    },
+    signOff: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Sign off',
+    },
+    actionStartDate: {
         type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-        onUpdate: DataTypes.NOW,
+        allowNull: true,
+        comment: 'Дата на започване на действие (адм.)',
+    },
+    admin: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Кой администратор',
+    },
+    dispatcher: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Диспечер (ако е разпределил задачата)',
+    },
+    adminStatus: {
+        type: DataTypes.ENUM('Не работи: спря устройство, услуга', 'За преглед hardware, [или фабрични настройки]', 'За преглед software, [или преинсталация]', 'Работи бавно, забива, дава грешки', 'Промяна на у-во, потребител, приложение', 'За смяна на консуматив', 'Проект (изисква обсъждане)', 'Др.'),
+        allowNull: true,
+        comment: 'Състояние - статус от администратора',
+    },
+    supportType: {
+        type: DataTypes.ENUM('Място', 'Дистанционно'),
+        allowNull: true,
+        comment: 'Как съдейства за проблема',
+    },
+    actionPerformed: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'Действие - Какво е извършено?',
+    },
+    timeSpent: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        comment: 'Колко време? (цифри)',
+    },
+    steps: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'Конкретни стъпки',
+    },
+    ghost: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Ghost - няма връзка',
     },
 }, {
     tableName: 'Tickets',

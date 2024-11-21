@@ -1,68 +1,60 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useRouter } from 'next/navigation'
-import { useAuth } from "@/lib/authContext"
+
+const mockTickets = [
+    {
+        id: '1',
+        createdAt: new Date('2023-05-01T10:30:00'),
+        author: 'John Doe',
+        queryType: 'PC, components and mobile devices',
+        status: 'Open',
+        priority: 'High',
+        title: 'For hardware review',
+        clientNote: 'New gaming PC not booting up',
+        ghost: false,
+        signOff: 'Pending',
+        actionStartDate: new Date('2023-05-01T11:00:00'),
+        admin: 'Alice Johnson',
+        dispatcher: 'Bob Smith',
+        adminStatus: 'Investigating',
+        supportType: 'Remote',
+        actionPerformed: 'Guided client through BIOS check',
+        timeSpent: 45,
+        steps: ['Verified all components are properly connected', 'Checked BIOS settings', 'Attempted boot from recovery media']
+    },
+    {
+        id: '2',
+        createdAt: new Date('2023-05-02T09:15:00'),
+        author: 'Jane Smith',
+        queryType: 'Software and applications',
+        status: 'In Progress',
+        priority: 'Medium',
+        title: 'Software installation issue',
+        clientNote: 'Unable to install design software',
+        ghost: false,
+        signOff: 'N/A',
+        actionStartDate: new Date('2023-05-02T10:00:00'),
+        admin: 'Charlie Brown',
+        dispatcher: 'Diana Prince',
+        adminStatus: 'Working on solution',
+        supportType: 'Remote',
+        actionPerformed: 'Troubleshooting installation errors',
+        timeSpent: 30,
+        steps: ['Checked system requirements', 'Attempted clean install', 'Investigating compatibility issues']
+    },
+]
 
 export default function TicketsPage() {
-    const [tickets, setTickets] = useState([]);
+    const [tickets, setTickets] = useState(mockTickets);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedTicket, setSelectedTicket] = useState(null);
-    const router = useRouter();
-    const { isLoggedIn, loading: authLoading, logout } = useAuth();
-
-    useEffect(() => {
-        if (authLoading) return;
-
-        if (!isLoggedIn) {
-            router.push('/login');
-        } else {
-            loadTickets();
-        }
-    }, [isLoggedIn, authLoading, router]);
-
-    const fetchTickets = async () => {
-        try {
-            const response = await fetch('/api/getTickets', {
-                method: 'GET',
-                credentials: 'include', // Include cookies for authentication
-            });
-
-            if (response.ok) {
-                const tickets = await response.json();
-                setTickets(tickets);
-                setError('');
-            } else if (response.status === 401) {
-                await logout();
-                router.push('/login');
-            } else {
-                setError('Failed to load tickets.');
-            }
-        } catch {
-            setError('Error fetching tickets. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const loadTickets = async () => {
-        setLoading(true);
-        try {
-            await fetchTickets();
-        } catch {
-            setError('Failed to load tickets.');
-        } finally {
-            setLoading(false);
-        }
-        console.log(tickets);
-    };
 
     const handleTicketClick = (ticket) => {
         setSelectedTicket(ticket);
@@ -76,16 +68,16 @@ export default function TicketsPage() {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Tickets</h1>
             <div className="flex flex-col lg:flex-row gap-4">
-                <div className="w-full lg:w-3/5">
+                <div className="w-full lg:w-1/2">
                     {loading ? (
-                        <TicketListSkeleton />
+                        <p>Loading tickets...</p>
                     ) : error ? (
                         <p className="text-red-500">{error}</p>
                     ) : (
                         <TicketList tickets={tickets} onTicketClick={handleTicketClick} />
                     )}
                 </div>
-                <div className="w-full lg:w-2/5">
+                <div className="w-full lg:w-1/2">
                     {selectedTicket ? (
                         <TicketDetails ticket={selectedTicket} onClose={handleCloseDetails} />
                     ) : (
@@ -105,34 +97,6 @@ function TicketList({ tickets, onTicketClick }) {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Дата</TableHead>
-                        <TableHead>Запитване</TableHead>
-                        <TableHead>Състояние</TableHead>
-                        <TableHead>Приоритет</TableHead>
-                        <TableHead>Действие</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {tickets.map((ticket) => (
-                        <TableRow key={ticket.id} onClick={() => onTicketClick(ticket)} className="cursor-pointer hover:bg-muted">
-                            <TableCell>{ticket.createdAt}</TableCell>
-                            <TableCell>{ticket.queryType}</TableCell>
-                            <TableCell>{ticket.status}</TableCell>
-                            <TableCell>-</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </ScrollArea>
-    );
-}
-
-function TicketListSkeleton() {
-    return (
-        <ScrollArea className="h-[calc(100vh-200px)]">
-            <Table>
-                <TableHeader>
-                    <TableRow>
                         <TableHead>Title</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Priority</TableHead>
@@ -140,12 +104,20 @@ function TicketListSkeleton() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {[...Array(5)].map((_, index) => (
-                        <TableRow key={index}>
-                            <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
-                            <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                            <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                            <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                    {tickets.map((ticket) => (
+                        <TableRow key={ticket.id} onClick={() => onTicketClick(ticket)} className="cursor-pointer hover:bg-muted">
+                            <TableCell>{ticket.issue_type}</TableCell>
+                            <TableCell>
+                                <Badge variant={ticket.status === 'open' ? 'default' : ticket.status === 'in-progress' ? 'secondary' : 'outline'}>
+                                    {ticket.status}
+                                </Badge>
+                            </TableCell>
+                            <TableCell>
+                                <Badge variant={ticket.priority === 'urgent' ? 'destructive' : ticket.priority === 'standard' ? 'warning' : 'default'}>
+                                    {ticket.priority}
+                                </Badge>
+                            </TableCell>
+                            <TableCell>{new Date(ticket.created_at).toLocaleDateString()}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
