@@ -43,6 +43,11 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false,
         comment: 'Priority',
     },
+    category: {
+        type: DataTypes.ENUM('IT поддръжка', 'IT архив', 'PC подготовка за офис работа', 'Взимане/даване ИТ оборудване / ремонт / консуматив', 'Преглед и анализ на ticket', 'IT консултация'),
+        allowNull: false,
+        comment: '4th thing on homepage',
+    },
     statusDesc: {
         type: DataTypes.STRING(255),
         allowNull: true,

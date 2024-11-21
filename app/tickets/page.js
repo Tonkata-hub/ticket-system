@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from 'next/navigation'
+import dayjs from 'dayjs'
 import { useAuth } from "@/lib/authContext"
 
 export default function TicketsPage() {
@@ -61,7 +62,6 @@ export default function TicketsPage() {
         } finally {
             setLoading(false);
         }
-        console.log(tickets);
     };
 
     const handleTicketClick = (ticket) => {
@@ -115,10 +115,13 @@ function TicketList({ tickets, onTicketClick }) {
                 <TableBody>
                     {tickets.map((ticket) => (
                         <TableRow key={ticket.id} onClick={() => onTicketClick(ticket)} className="cursor-pointer hover:bg-muted">
-                            <TableCell>{ticket.createdAt}</TableCell>
+                            <TableCell>
+                                {dayjs(ticket.created_at).format('DD MMMM YYYY, hh:mm')}
+                            </TableCell>
                             <TableCell>{ticket.queryType}</TableCell>
                             <TableCell>{ticket.status}</TableCell>
-                            <TableCell>-</TableCell>
+                            <TableCell>{ticket.priority}</TableCell>
+                            <TableCell>{ticket.category}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -133,10 +136,11 @@ function TicketListSkeleton() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Priority</TableHead>
-                        <TableHead>Created</TableHead>
+                        <TableHead>Дата</TableHead>
+                        <TableHead>Запитване</TableHead>
+                        <TableHead>Състояние</TableHead>
+                        <TableHead>Приоритет</TableHead>
+                        <TableHead>Действие</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
