@@ -18,6 +18,11 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false,
         comment: 'Съставител',
     },
+    authorId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        comment: 'ID на съставителя',
+    },
     queryType: {
         type: DataTypes.ENUM('PC компютри, компоненти и мобилни у-ва', 'Сървъри и вирт. машини, достъп до папки', 'Принтиране Копиране Сканиране', 'Мрежи и Мрежово оборудване, VPN', 'Сигурност и Сертифициране, GDPR', 'Windows, OS, Users, Share, база данни', 'Приложения, Счетоводен софтуер', 'Офис приложения, ms365', 'Електронни подписи и сертификати', 'Хостинг, сайт, имейли, акаунти', 'Др.'),
         allowNull: false,
@@ -28,15 +33,15 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: true,
         comment: 'Описание на запитването',
     },
-    authorId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        comment: 'ID на съставителя',
-    },
     status: {
         type: DataTypes.ENUM('Не работи: спря устройство, услуга', 'За преглед hardware, [или фабрични настройки]', 'За преглед software, [или преинсталация]', 'Работи бавно, забива, дава грешки', 'Промяна на у-во, потребител, приложение', 'За смяна на консуматив', 'Проект (изисква обсъждане)', 'Др.'),
         allowNull: false,
         comment: 'Състояние',
+    },
+    statusDesc: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Описание на състоянието',
     },
     priority: {
         type: DataTypes.ENUM('Спешен', 'Стандартен', 'Нисък приоритет'),
@@ -47,11 +52,6 @@ const Ticket = sequelize.define('Ticket', {
         type: DataTypes.ENUM('IT поддръжка', 'IT архив', 'PC подготовка за офис работа', 'Взимане/даване ИТ оборудване / ремонт / консуматив', 'Преглед и анализ на ticket', 'IT консултация'),
         allowNull: false,
         comment: '4th thing on homepage',
-    },
-    statusDesc: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        comment: 'Описание на състоянието',
     },
     signOff: {
         type: DataTypes.STRING(255),
