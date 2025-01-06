@@ -23,7 +23,7 @@ export default function NewTicketSection() {
 
     const [errors, setErrors] = useState({})
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const newErrors = {
             issueType: !issueType,
             condition: !condition,
@@ -31,16 +31,87 @@ export default function NewTicketSection() {
             event: !event,
             otherIssue: issueType === "other" && !otherIssue,
             otherCondition: condition === "other" && !otherCondition,
-        }
+        };
 
         if (Object.values(newErrors).some(Boolean)) {
-            setErrors(newErrors)
-            toast.error("Please complete all required fields.")
-        } else {
-            setErrors({})
-            toast.success("Ticket submitted successfully!")
+            setErrors(newErrors);
+            toast.error("Please complete all required fields.");
+            return;
         }
-    }
+
+        setErrors({});
+
+        try {
+            // Create mappings for issueType, condition, priority, and event
+            const issueMap = {
+                "pc-components": "PC компютри, компоненти и мобилни у-ва",
+                "servers-vms": "Сървъри и вирт. машини, достъп до папки",
+                "printing": "Принтиране Копиране Сканиране",
+                "networks-vpn": "Мрежи и Мрежово оборудване, VPN",
+                "security-gdpr": "Сигурност и Сертифициране, GDPR",
+                "windows-db": "Windows, OS, Users, Share, база данни",
+                "accounting-software": "Приложения, Счетоводен софтуер",
+                "office-apps": "Офис приложения, ms365",
+                "digital-signatures": "Електронни подписи и сертификати",
+                "hosting": "Хостинг, сайт, имейли, акаунти",
+                "other": otherIssue, // Use custom text for "other"
+            };
+
+            const conditionMap = {
+                "not-working": "Не работи, спря: устройство, услуга",
+                "review-hardware": "За преглед hardware, [или фабрични настройки]",
+                "review-software": "За преглед software, [или преинсталация]",
+                "slow-issues": "Работи бавно, забива, дава грешки",
+                "change-device": "Промяна на у-во, потребител, приложение",
+                "replace-supply": "За смяна на консуматив",
+                "project-discussion": "Проект (изисква обсъждане)",
+                "other": otherCondition, // Use custom text for "other"
+            };
+
+            const priorityMap = {
+                urgent: "Спешен",
+                standard: "Стандартен",
+                low: "Нисък приоритет",
+            };
+
+            const eventMap = {
+                "it-support": "IT поддръжка",
+                "it-archive": "IT архив",
+                "pc-preparation": "PC подготовка за офис работа",
+                "ticket-review": "Преглед и анализ на ticket",
+                "it-consultation": "IT консултация",
+            };
+
+            // Prepare the data for the API
+            const requestData = {
+                issueType: issueMap[issueType] || issueType,
+                condition: conditionMap[condition] || condition,
+                priority: priorityMap[priority] || priority,
+                event: eventMap[event] || event,
+                author: 'John Doe', // Replace with actual user data
+                authorId: 123, // Replace with actual user ID
+            };
+
+            // Send data to the API
+            const response = await fetch('/api/addTicket', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                toast.success("Ticket submitted successfully!");
+                console.log('New ticket added:', data);
+            } else {
+                const error = await response.json();
+                toast.error(error.error || 'Failed to submit ticket.');
+            }
+        } catch (error) {
+            console.error('Error submitting ticket:', error);
+            toast.error('An error occurred. Please try again.');
+        }
+    };
 
     return (
         <section className="w-full py-12 md:py-20 lg:py-26 flex justify-center bg-blue-50">

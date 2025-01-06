@@ -1,4 +1,4 @@
-export default function LoginPage() {
+export default function ProtectedPage() {
 
     return (
         <div>asdf</div>

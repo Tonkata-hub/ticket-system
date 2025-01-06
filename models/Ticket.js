@@ -24,7 +24,7 @@ const Ticket = sequelize.define('Ticket', {
         comment: 'ID на съставителя',
     },
     queryType: {
-        type: DataTypes.ENUM('PC компютри, компоненти и мобилни у-ва', 'Сървъри и вирт. машини, достъп до папки', 'Принтиране Копиране Сканиране', 'Мрежи и Мрежово оборудване, VPN', 'Сигурност и Сертифициране, GDPR', 'Windows, OS, Users, Share, база данни', 'Приложения, Счетоводен софтуер', 'Офис приложения, ms365', 'Електронни подписи и сертификати', 'Хостинг, сайт, имейли, акаунти', 'Др.'),
+        type: DataTypes.STRING(255),
         allowNull: false,
         comment: 'Избор на запитване',
     },
@@ -34,7 +34,7 @@ const Ticket = sequelize.define('Ticket', {
         comment: 'Описание на запитването',
     },
     status: {
-        type: DataTypes.ENUM('Не работи: спря устройство, услуга', 'За преглед hardware, [или фабрични настройки]', 'За преглед software, [или преинсталация]', 'Работи бавно, забива, дава грешки', 'Промяна на у-во, потребител, приложение', 'За смяна на консуматив', 'Проект (изисква обсъждане)', 'Др.'),
+        type: DataTypes.STRING(255),
         allowNull: false,
         comment: 'Състояние',
     },
@@ -44,14 +44,14 @@ const Ticket = sequelize.define('Ticket', {
         comment: 'Описание на състоянието',
     },
     priority: {
-        type: DataTypes.ENUM('Спешен', 'Стандартен', 'Нисък приоритет'),
+        type: DataTypes.STRING(255),
         allowNull: false,
-        comment: 'Priority',
+        comment: 'Приоритет',
     },
     category: {
-        type: DataTypes.ENUM('IT поддръжка', 'IT архив', 'PC подготовка за офис работа', 'Взимане/даване ИТ оборудване / ремонт / консуматив', 'Преглед и анализ на ticket', 'IT консултация'),
+        type: DataTypes.STRING(255),
         allowNull: false,
-        comment: '4th thing on homepage',
+        comment: 'Категория',
     },
     signOff: {
         type: DataTypes.STRING(255),
@@ -74,12 +74,12 @@ const Ticket = sequelize.define('Ticket', {
         comment: 'Диспечер (ако е разпределил задачата)',
     },
     adminStatus: {
-        type: DataTypes.ENUM('Не работи: спря устройство, услуга', 'За преглед hardware, [или фабрични настройки]', 'За преглед software, [или преинсталация]', 'Работи бавно, забива, дава грешки', 'Промяна на у-во, потребител, приложение', 'За смяна на консуматив', 'Проект (изисква обсъждане)', 'Др.'),
+        type: DataTypes.STRING(255),
         allowNull: true,
         comment: 'Състояние - статус от администратора',
     },
     supportType: {
-        type: DataTypes.ENUM('Място', 'Дистанционно'),
+        type: DataTypes.STRING(255),
         allowNull: true,
         comment: 'Как съдейства за проблема',
     },
@@ -105,7 +105,7 @@ const Ticket = sequelize.define('Ticket', {
     },
 }, {
     tableName: 'Tickets',
-    timestamps: false,
+    timestamps: false, // Disable Sequelize's automatic timestamps
 });
 
 export default Ticket;
