@@ -40,9 +40,9 @@ export default function NewTicketSection() {
         }
 
         setErrors({});
+        const toastId = toast.loading("Submitting your ticket...");
 
         try {
-            // Create mappings for issueType, condition, priority, and event
             const issueMap = {
                 "pc-components": "PC компютри, компоненти и мобилни у-ва",
                 "servers-vms": "Сървъри и вирт. машини, достъп до папки",
@@ -82,7 +82,6 @@ export default function NewTicketSection() {
                 "it-consultation": "IT консултация",
             };
 
-            // Prepare the data for the API
             const requestData = {
                 issueType: issueMap[issueType] || issueType,
                 condition: conditionMap[condition] || condition,
@@ -92,7 +91,6 @@ export default function NewTicketSection() {
                 authorId: 123, // Replace with actual user ID
             };
 
-            // Send data to the API
             const response = await fetch('/api/addTicket', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -101,15 +99,38 @@ export default function NewTicketSection() {
 
             if (response.ok) {
                 const data = await response.json();
-                toast.success("Ticket submitted successfully!");
+                toast.update(toastId, {
+                    render: "Ticket submitted successfully!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 3000
+                });
                 console.log('New ticket added:', data);
+
+                // Clear the form
+                setIssueType("");
+                setCondition("");
+                setPriority("");
+                setEvent("");
+                setOtherIssue("");
+                setOtherCondition("");
             } else {
                 const error = await response.json();
-                toast.error(error.error || 'Failed to submit ticket.');
+                toast.update(toastId, {
+                    render: error.error || 'Failed to submit ticket.',
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 3000
+                });
             }
         } catch (error) {
             console.error('Error submitting ticket:', error);
-            toast.error('An error occurred. Please try again.');
+            toast.update(toastId, {
+                render: 'An error occurred. Please try again.',
+                type: "error",
+                isLoading: false,
+                autoClose: 3000
+            });
         }
     };
 
@@ -157,6 +178,7 @@ export default function NewTicketSection() {
                                 Избор на запитване {errors.issueType && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
                             <Select
+                                value={issueType}
                                 disabled={!isLoggedIn}
                                 onValueChange={(value) => { setIssueType(value); setErrors({ ...errors, issueType: false }) }}
                             >
@@ -197,6 +219,7 @@ export default function NewTicketSection() {
                                 Състояние {errors.condition && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
                             <Select
+                                value={condition}
                                 disabled={!isLoggedIn}
                                 onValueChange={(value) => { setCondition(value); setErrors({ ...errors, condition: false }) }}
                             >
@@ -234,6 +257,7 @@ export default function NewTicketSection() {
                                 Приоритет {errors.priority && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
                             <Select
+                                value={priority}
                                 disabled={!isLoggedIn}
                                 onValueChange={(value) => { setPriority(value); setErrors({ ...errors, priority: false }) }}
                             >
@@ -271,6 +295,7 @@ export default function NewTicketSection() {
                                 Действие {errors.event && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                             </label>
                             <Select
+                                value={event}
                                 disabled={!isLoggedIn}
                                 onValueChange={(value) => { setEvent(value); setErrors({ ...errors, event: false }) }}
                             >
