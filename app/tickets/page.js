@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
-// import { useAuth } from "@/lib/authContext"
+import { useAuth } from "@/lib/AuthContext"
 
 export default function TicketsPage() {
     const [tickets, setTickets] = useState([]);
@@ -17,10 +17,11 @@ export default function TicketsPage() {
     const [error, setError] = useState('');
     const [selectedTicket, setSelectedTicket] = useState(null);
     const router = useRouter();
-    // const { isLoggedIn, loading: authLoading, logout } = useAuth();
-    const isLoggedIn = true, authLoading = false;
+    const { isLoggedIn, loading: authLoading, logout } = useAuth();
+    // const isLoggedIn = true, authLoading = false;
 
     useEffect(() => {
+        console.log("test");
         if (authLoading) return;
 
         if (!isLoggedIn) {

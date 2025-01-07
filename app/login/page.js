@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from '@/lib/authContext';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -15,7 +16,14 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const { login } = useAuth();
+    const { login, isLoggedIn } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push('/'); // Redirect to the homepage or another appropriate page
+        }
+    }, [isLoggedIn, router]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

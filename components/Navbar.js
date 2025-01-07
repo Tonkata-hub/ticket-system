@@ -5,7 +5,7 @@ import { MessageSquare, User, LogOut, LogIn, Tag, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useAuth } from "@/lib/authContext"
+import { useAuth } from "@/lib/AuthContext"
 import { useState } from 'react';
 
 export default function Navbar() {

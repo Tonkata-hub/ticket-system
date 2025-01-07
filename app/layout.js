@@ -1,7 +1,7 @@
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { AuthProvider } from '@/lib/authContext';
+import { AuthProvider } from '@/lib/AuthContext';
 
 export const metadata = {
     title: "Ticket system",

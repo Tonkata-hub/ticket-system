@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { useAuth } from "@/lib/authContext";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function NewTicketSection() {
     const router = useRouter();
