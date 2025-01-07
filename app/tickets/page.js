@@ -21,7 +21,6 @@ export default function TicketsPage() {
     // const isLoggedIn = true, authLoading = false;
 
     useEffect(() => {
-        console.log("test");
         if (authLoading) return;
 
         if (!isLoggedIn) {
