@@ -45,6 +45,7 @@ export default function TicketsPage() {
                 await logout();
                 router.push('/login');
             } else {
+                console.log(tickets);
                 setError('Failed to load tickets.');
             }
         } catch {

@@ -16,7 +16,7 @@ export async function GET(req) {
             tickets = await Ticket.findAll();
         } else {
             // Client can only view their own tickets
-            tickets = await Ticket.findAll({ where: { user_id: user.id } });
+            tickets = await Ticket.findAll({ where: { authorId: user.id } });
         }
 
         return new Response(JSON.stringify(tickets), {
