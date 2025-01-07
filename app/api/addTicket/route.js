@@ -1,3 +1,4 @@
+// /api/addTicket
 import Ticket from '@/models/Ticket';
 
 export async function POST(req) {

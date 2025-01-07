@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -22,6 +22,28 @@ export default function NewTicketSection() {
     const [otherCondition, setOtherCondition] = useState("")
 
     const [errors, setErrors] = useState({})
+
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (isLoggedIn) {
+                try {
+                    const response = await fetch('/api/getUser');
+                    if (response.ok) {
+                        const data = await response.json();
+                        setUserData(data);
+                    } else {
+                        console.error('Failed to fetch user data');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            }
+        };
+
+        fetchUserData();
+    }, [isLoggedIn]);
 
     const handleSubmit = async () => {
         const newErrors = {
@@ -87,8 +109,8 @@ export default function NewTicketSection() {
                 condition: conditionMap[condition] || condition,
                 priority: priorityMap[priority] || priority,
                 event: eventMap[event] || event,
-                author: 'John Doe', // Replace with actual user data
-                authorId: 123, // Replace with actual user ID
+                author: userData?.email || 'Anonymous',
+                authorId: userData?.id || 0,
             };
 
             const response = await fetch('/api/addTicket', {
