@@ -288,14 +288,9 @@ export default function NewTicketSection() {
                                     <SelectValue placeholder="Опишете текущото състояние" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="not-working">Не работи, спря: устройство, услуга</SelectItem>
-                                    <SelectItem value="review-hardware">За преглед hardware, [или фабрични настройки]</SelectItem>
-                                    <SelectItem value="review-software">За преглед software, [или преинсталация]</SelectItem>
-                                    <SelectItem value="slow-issues">Работи бавно, забива, дава грешки</SelectItem>
-                                    <SelectItem value="change-device">Промяна на у-во, потребител, приложение</SelectItem>
-                                    <SelectItem value="replace-supply">За смяна на консуматив</SelectItem>
-                                    <SelectItem value="project-discussion">Проект (изисква обсъждане)</SelectItem>
-                                    <SelectItem value="other">Др.</SelectItem>
+                                    {conditions.map((item) => (
+                                        <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             {condition === "other" && (
@@ -326,24 +321,19 @@ export default function NewTicketSection() {
                                     <SelectValue placeholder="Изберете приоритет" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem
-                                        value="urgent"
-                                        className="text-red-600 hover:bg-red-100 focus:bg-red-100"
-                                    >
-                                        Спешен
-                                    </SelectItem>
-                                    <SelectItem
-                                        value="standard"
-                                        className="text-yellow-600 hover:bg-yellow-100 focus:bg-yellow-100"
-                                    >
-                                        Стандартен
-                                    </SelectItem>
-                                    <SelectItem
-                                        value="low-priority"
-                                        className="text-green-600 hover:bg-green-100 focus:bg-green-100"
-                                    >
-                                        Нисък приоритет
-                                    </SelectItem>
+                                    {priorities.map((item) => (
+                                        <SelectItem
+                                            key={item.value}
+                                            value={item.value}
+                                            className={`
+                                                ${item.value === "urgent" ? "text-red-600 hover:bg-red-100 focus:bg-red-100" : ""}
+                                                ${item.value === "standard" ? "text-yellow-600 hover:bg-yellow-100 focus:bg-yellow-100" : ""}
+                                                ${item.value === "low-priority" ? "text-green-600 hover:bg-green-100 focus:bg-green-100" : ""}
+                                            `}
+                                        >
+                                            {item.label}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -364,12 +354,9 @@ export default function NewTicketSection() {
                                     <SelectValue placeholder="Изберете действие" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="it-support">IT поддръжка</SelectItem>
-                                    <SelectItem value="it-archive">IT архив</SelectItem>
-                                    <SelectItem value="pc-preparation">PC подготовка за офис работа</SelectItem>
-                                    <SelectItem value="equipment-management">Взимане/даване ИТ оборудване / ремонт / консуматив</SelectItem>
-                                    <SelectItem value="ticket-review">Преглед и анализ на ticket</SelectItem>
-                                    <SelectItem value="it-consultation">IT консултация</SelectItem>
+                                    {events.map((item) => (
+                                        <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
