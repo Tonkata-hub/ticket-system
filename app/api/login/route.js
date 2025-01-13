@@ -22,7 +22,7 @@ export async function POST(req) {
 
         // Generate JWT tokens
         const token = jwt.sign({ email, id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ email, id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const refreshToken = jwt.sign({ email, id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         // Set tokens as HTTP-only cookies
         return new Response(JSON.stringify({ message: 'Logged in successfully' }), {

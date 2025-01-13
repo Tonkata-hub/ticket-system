@@ -1,16 +1,36 @@
 "use client"
 
+import { useState, useEffect } from 'react';
 import Link from "next/link"
-import { MessageSquare, User, LogOut, LogIn, Tag, Menu } from "lucide-react"
+import { MessageSquare, User, LogOut, LogIn, Tag, Menu, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useAuth } from "@/lib/AuthContext"
-import { useState } from 'react';
 
 export default function Navbar() {
     const { logout, isLoggedIn } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('/api/getUser');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const data = await response.json();
+                setUserData(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        if (isLoggedIn) {
+            fetchUserData();
+        }
+    }, [isLoggedIn]);
 
     const handleLogOut = () => {
         logout();
@@ -19,15 +39,28 @@ export default function Navbar() {
     const NavItems = () => (
         <>
             {isLoggedIn && (
-                <Link href="/tickets">
-                    <Button
-                        variant="ghost"
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4"
-                    >
-                        <Tag style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
-                        <span className="text-sm md:text-lg">Моите билети</span>
-                    </Button>
-                </Link>
+                <>
+                    {userData?.role === "admin" && (
+                        <Link href="/admin-edit">
+                            <Button
+                                variant="ghost"
+                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4"
+                            >
+                                <Pencil style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
+                                <span className="text-sm md:text-lg">Редактиране</span>
+                            </Button>
+                        </Link>
+                    )}
+                    <Link href="/tickets">
+                        <Button
+                            variant="ghost"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4"
+                        >
+                            <Tag style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
+                            <span className="text-sm md:text-lg">Моите билети</span>
+                        </Button>
+                    </Link>
+                </>
             )}
         </>
     )

@@ -1,0 +1,38 @@
+{
+  "issueTypes": [
+    { "value": "pc-components", "label": "PC компютри, компоненти и мобилни у-ва" },
+    { "value": "servers-vms", "label": "Сървъри и вирт. машини, достъп до папки" },
+    { "value": "printing", "label": "Принтиране Копиране Сканиране" },
+    { "value": "networks-vpn", "label": "Мрежи и Мрежово оборудване, VPN" },
+    { "value": "security-gdpr", "label": "Сигурност и Сертифициране, GDPR" },
+    { "value": "windows-db", "label": "Windows, OS, Users, Share, база данни" },
+    { "value": "accounting-software", "label": "Приложения, Счетоводен софтуер" },
+    { "value": "office-apps", "label": "Офис приложения, ms365" },
+    { "value": "digital-signatures", "label": "Електронни подписи и сертификати" },
+    { "value": "hosting", "label": "Хостинг, сайт, имейли, акаунти" },
+    { "value": "other", "label": "Др." }
+  ],
+  "conditions": [
+    { "value": "not-working", "label": "Не работи, спря: устройство, услуга" },
+    { "value": "review-hardware", "label": "За преглед hardware, [или фабрични настройки]" },
+    { "value": "review-software", "label": "За преглед software, [или преинсталация]" },
+    { "value": "slow-issues", "label": "Работи бавно, забива, дава грешки" },
+    { "value": "change-device", "label": "Промяна на у-во, потребител, приложение" },
+    { "value": "replace-supply", "label": "За смяна на консуматив" },
+    { "value": "project-discussion", "label": "Проект (изисква обсъждане)" },
+    { "value": "other", "label": "Др." }
+  ],
+  "priorities": [
+    { "value": "urgent", "label": "Спешен" },
+    { "value": "standard", "label": "Стандартен" },
+    { "value": "low-priority", "label": "Нисък приоритет" }
+  ],
+  "events": [
+    { "value": "it-support", "label": "IT поддръжка" },
+    { "value": "it-archive", "label": "IT архив" },
+    { "value": "pc-preparation", "label": "PC подготовка за офис работа" },
+    { "value": "equipment-management", "label": "Взимане/даване ИТ оборудване / ремонт / консуматив" },
+    { "value": "ticket-review", "label": "Преглед и анализ на ticket" },
+    { "value": "it-consultation", "label": "IT консултация" }
+  ]
+}

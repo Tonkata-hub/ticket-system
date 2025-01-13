@@ -10,6 +10,46 @@ import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useAuth } from "@/lib/AuthContext";
 
+// const issueTypes = [
+//     { value: "pc-components", label: "PC компютри, компоненти и мобилни у-ва" },
+//     { value: "servers-vms", label: "Сървъри и вирт. машини, достъп до папки" },
+//     { value: "printing", label: "Принтиране Копиране Сканиране" },
+//     { value: "networks-vpn", label: "Мрежи и Мрежово оборудване, VPN" },
+//     { value: "security-gdpr", label: "Сигурност и Сертифициране, GDPR" },
+//     { value: "windows-db", label: "Windows, OS, Users, Share, база данни" },
+//     { value: "accounting-software", label: "Приложения, Счетоводен софтуер" },
+//     { value: "office-apps", label: "Офис приложения, ms365" },
+//     { value: "digital-signatures", label: "Електронни подписи и сертификати" },
+//     { value: "hosting", label: "Хостинг, сайт, имейли, акаунти" },
+//     { value: "other", label: "Др." },
+// ];
+
+// const conditions = [
+//     { value: "not-working", label: "Не работи, спря: устройство, услуга" },
+//     { value: "review-hardware", label: "За преглед hardware, [или фабрични настройки]" },
+//     { value: "review-software", label: "За преглед software, [или преинсталация]" },
+//     { value: "slow-issues", label: "Работи бавно, забива, дава грешки" },
+//     { value: "change-device", label: "Промяна на у-во, потребител, приложение" },
+//     { value: "replace-supply", label: "За смяна на консуматив" },
+//     { value: "project-discussion", label: "Проект (изисква обсъждане)" },
+//     { value: "other", label: "Др." },
+// ];
+
+// const priorities = [
+//     { value: "urgent", label: "Спешен" },
+//     { value: "standard", label: "Стандартен" },
+//     { value: "low-priority", label: "Нисък приоритет" },
+// ];
+
+// const events = [
+//     { value: "it-support", label: "IT поддръжка" },
+//     { value: "it-archive", label: "IT архив" },
+//     { value: "pc-preparation", label: "PC подготовка за офис работа" },
+//     { value: "equipment-management", label: "Взимане/даване ИТ оборудване / ремонт / консуматив" },
+//     { value: "ticket-review", label: "Преглед и анализ на ticket" },
+//     { value: "it-consultation", label: "IT консултация" },
+// ];
+
 export default function NewTicketSection() {
     const router = useRouter();
 
@@ -24,6 +64,33 @@ export default function NewTicketSection() {
     const [errors, setErrors] = useState({})
 
     const [userData, setUserData] = useState(null);
+
+    const [adminData, setAdminData] = useState({
+        issueTypes: [],
+        conditions: [],
+        priorities: [],
+        events: []
+    });
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const res = await fetch("/api/admin-data"); // Use the GET API to fetch data
+                if (!res.ok) {
+                    throw new Error("Failed to load data");
+                }
+                const jsonData = await res.json();
+                setAdminData(jsonData);
+            } catch (error) {
+                toast.error("Failed to load data");
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+    const { issueTypes, conditions, priorities, events } = adminData;
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -65,57 +132,34 @@ export default function NewTicketSection() {
         const toastId = toast.loading("Submitting your ticket...");
 
         try {
-            const issueMap = {
-                "pc-components": "PC компютри, компоненти и мобилни у-ва",
-                "servers-vms": "Сървъри и вирт. машини, достъп до папки",
-                "printing": "Принтиране Копиране Сканиране",
-                "networks-vpn": "Мрежи и Мрежово оборудване, VPN",
-                "security-gdpr": "Сигурност и Сертифициране, GDPR",
-                "windows-db": "Windows, OS, Users, Share, база данни",
-                "accounting-software": "Приложения, Счетоводен софтуер",
-                "office-apps": "Офис приложения, ms365",
-                "digital-signatures": "Електронни подписи и сертификати",
-                "hosting": "Хостинг, сайт, имейли, акаунти",
-                "other": otherIssue, // Use custom text for "other"
-            };
+            const issueLabel =
+                issueType === "other"
+                    ? otherIssue
+                    : issueTypes.find((type) => type.value === issueType)?.label || issueType;
 
-            const conditionMap = {
-                "not-working": "Не работи, спря: устройство, услуга",
-                "review-hardware": "За преглед hardware, [или фабрични настройки]",
-                "review-software": "За преглед software, [или преинсталация]",
-                "slow-issues": "Работи бавно, забива, дава грешки",
-                "change-device": "Промяна на у-во, потребител, приложение",
-                "replace-supply": "За смяна на консуматив",
-                "project-discussion": "Проект (изисква обсъждане)",
-                "other": otherCondition, // Use custom text for "other"
-            };
+            const conditionLabel =
+                condition === "other"
+                    ? otherCondition
+                    : conditions.find((cond) => cond.value === condition)?.label || condition;
 
-            const priorityMap = {
-                urgent: "Спешен",
-                standard: "Стандартен",
-                low: "Нисък приоритет",
-            };
+            const priorityLabel =
+                priorities.find((prio) => prio.value === priority)?.label || priority;
 
-            const eventMap = {
-                "it-support": "IT поддръжка",
-                "it-archive": "IT архив",
-                "pc-preparation": "PC подготовка за офис работа",
-                "ticket-review": "Преглед и анализ на ticket",
-                "it-consultation": "IT консултация",
-            };
+            const eventLabel =
+                events.find((ev) => ev.value === event)?.label || event;
 
             const requestData = {
-                issueType: issueMap[issueType] || issueType,
-                condition: conditionMap[condition] || condition,
-                priority: priorityMap[priority] || priority,
-                event: eventMap[event] || event,
-                author: userData?.email || 'Anonymous',
+                issueType: issueLabel,
+                condition: conditionLabel,
+                priority: priorityLabel,
+                event: eventLabel,
+                author: userData?.email || "Anonymous",
                 authorId: userData?.id || 0,
             };
 
-            const response = await fetch('/api/addTicket', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("/api/addTicket", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestData),
             });
 
@@ -125,9 +169,9 @@ export default function NewTicketSection() {
                     render: "Ticket submitted successfully!",
                     type: "success",
                     isLoading: false,
-                    autoClose: 3000
+                    autoClose: 3000,
                 });
-                console.log('New ticket added:', data);
+                console.log("New ticket added:", data);
 
                 // Clear the form
                 setIssueType("");
@@ -139,19 +183,19 @@ export default function NewTicketSection() {
             } else {
                 const error = await response.json();
                 toast.update(toastId, {
-                    render: error.error || 'Failed to submit ticket.',
+                    render: error.error || "Failed to submit ticket.",
                     type: "error",
                     isLoading: false,
-                    autoClose: 3000
+                    autoClose: 3000,
                 });
             }
         } catch (error) {
-            console.error('Error submitting ticket:', error);
+            console.error("Error submitting ticket:", error);
             toast.update(toastId, {
-                render: 'An error occurred. Please try again.',
+                render: "An error occurred. Please try again.",
                 type: "error",
                 isLoading: false,
-                autoClose: 3000
+                autoClose: 3000,
             });
         }
     };
@@ -211,17 +255,9 @@ export default function NewTicketSection() {
                                     <SelectValue placeholder="Изберете запитване" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="pc-components">PC компютри, компоненти и мобилни у-ва</SelectItem>
-                                    <SelectItem value="servers-vms">Сървъри и вирт. машини, достъп до папки</SelectItem>
-                                    <SelectItem value="printing">Принтиране Копиране Сканиране</SelectItem>
-                                    <SelectItem value="networks-vpn">Мрежи и Мрежово оборудване, VPN</SelectItem>
-                                    <SelectItem value="security-gdpr">Сигурност и Сертифициране, GDPR</SelectItem>
-                                    <SelectItem value="windows-db">Windows, OS, Users, Share, база данни</SelectItem>
-                                    <SelectItem value="accounting-software">Приложения, Счетоводен софтуер</SelectItem>
-                                    <SelectItem value="office-apps">Офис приложения, ms365</SelectItem>
-                                    <SelectItem value="digital-signatures">Електронни подписи и сертификати</SelectItem>
-                                    <SelectItem value="hosting">Хостинг, сайт, имейли, акаунти</SelectItem>
-                                    <SelectItem value="other">Др.</SelectItem>
+                                    {issueTypes.map((item) => (
+                                        <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             {issueType === "other" && (
