@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect } from 'react';
 import Link from "next/link"
-import { MessageSquare, User, LogOut, LogIn, Tag, Menu, Pencil } from "lucide-react"
+import { MessageSquare, User, LogOut, LogIn, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
