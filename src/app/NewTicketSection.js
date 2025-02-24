@@ -1,22 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function NewTicketSection() {
     const isLoggedIn = true;
 
-    const [issueType, setIssueType] = useState("");
-    const [condition, setCondition] = useState("");
-    const [priority, setPriority] = useState("");
-    const [event, setEvent] = useState("");
-    const [otherIssue, setOtherIssue] = useState("");
-    const [otherCondition, setOtherCondition] = useState("");
+    const [formData, setFormData] = useState({
+        issueType: "",
+        condition: "",
+        priority: "",
+        event: "",
+        otherIssue: "",
+        otherCondition: "",
+    });
 
     const [errors, setErrors] = useState({});
 
@@ -60,14 +62,21 @@ export default function NewTicketSection() {
         { value: "it-consultation", text: "IT консултация" }
     ];
 
+    const handleChange = (field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
     const handleSubmit = () => {
         const newErrors = {
-            issueType: !issueType,
-            condition: !condition,
-            priority: !priority,
-            event: !event,
-            otherIssue: issueType === "other" && !otherIssue,
-            otherCondition: condition === "other" && !otherCondition,
+            issueType: !formData.issueType,
+            condition: !formData.condition,
+            priority: !formData.priority,
+            event: !formData.event,
+            otherIssue: formData.issueType === "other" && !formData.otherIssue,
+            otherCondition: formData.condition === "other" && !formData.otherCondition,
         };
 
         if (Object.values(newErrors).some(Boolean)) {
@@ -90,33 +99,45 @@ export default function NewTicketSection() {
                 </p>
 
                 <Card className="max-w-3xl mx-auto border-blue-100 shadow-lg">
-                    <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+                    <ToastContainer position="top-center" autoClose={3000} />
+
                     <CardHeader className="bg-blue-100 border-b border-blue-100">
                         <CardTitle className="text-2xl text-center text-blue-800">Нов билет за поддръжка</CardTitle>
                         <CardDescription className="text-center text-blue-600">Моля, предоставете подробности за вашия проблем</CardDescription>
                     </CardHeader>
+
                     <CardContent className="space-y-6 pt-6">
-                        {[{ label: "Избор на запитване", options: issueTypes, state: issueType, setState: setIssueType, extraInput: otherIssue, setExtraInput: setOtherIssue, error: errors.issueType, extraError: errors.otherIssue },
-                        { label: "Състояние", options: conditions, state: condition, setState: setCondition, extraInput: otherCondition, setExtraInput: setOtherCondition, error: errors.condition, extraError: errors.otherCondition },
-                        { label: "Приоритет", options: priorities, state: priority, setState: setPriority, error: errors.priority },
-                        { label: "Действие", options: events, state: event, setState: setEvent, error: errors.event }]
-                            .map(({ label, options, state, setState, extraInput, setExtraInput, error, extraError }, index) => (
+                        {[{ label: "Избор на запитване", options: issueTypes, field: "issueType", extraField: "otherIssue" },
+                        { label: "Състояние", options: conditions, field: "condition", extraField: "otherCondition" },
+                        { label: "Приоритет", options: priorities, field: "priority" },
+                        { label: "Действие", options: events, field: "event" }]
+                            .map(({ label, options, field, extraField }, index) => (
                                 <div key={index} className="space-y-2">
-                                    <label className="text-md font-medium text-gray-700">{label} {error && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}</label>
-                                    <Select disabled={!isLoggedIn} onValueChange={(value) => { setState(value); setErrors({ ...errors, [label]: false }); if (value === "other") setExtraInput(""); }}>
-                                        <SelectTrigger className={`w-full ${error ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}>
+                                    <label className="text-md font-medium text-gray-700">
+                                        {label} {errors[field] && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
+                                    </label>
+                                    <Select onValueChange={(value) => handleChange(field, value)} disabled={!isLoggedIn}>
+                                        <SelectTrigger className={`w-full ${errors[field] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}>
                                             <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {options.map(option => <SelectItem key={option.value} value={option.value}>{option.text}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
-                                    {state === "other" && <Input value={extraInput} onChange={(e) => setExtraInput(e.target.value)} placeholder={`Моля, уточнете ${label.toLowerCase()}`} className={`mt-2 ${extraError ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`} />}
+                                    {formData[field] === "other" && extraField && (
+                                        <Input
+                                            value={formData[extraField]}
+                                            onChange={(e) => handleChange(extraField, e.target.value)}
+                                            placeholder={`Моля, уточнете ${label.toLowerCase()}`}
+                                            className={`mt-2 ${errors[extraField] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                                        />
+                                    )}
                                 </div>
                             ))}
                     </CardContent>
+
                     <CardFooter>
-                        <Button disabled={!isLoggedIn} onClick={handleSubmit} className="w-full text-lg py-6 bg-blue-600 hover:bg-blue-700 text-white transition-colors">
+                        <Button onClick={handleSubmit} disabled={!isLoggedIn} className="w-full text-lg py-6 bg-blue-600 hover:bg-blue-700 text-white">
                             Submit Ticket
                         </Button>
                     </CardFooter>
