@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function Navbar() {
-    const isLoggedIn = true;
+    const isLoggedIn = true
 
     const handleLogOut = () => {
-        console.log("logging out");
+        console.log("logging out")
     }
 
     return (
@@ -23,10 +23,7 @@ export default function Navbar() {
                 <nav className="hidden items-center lg:flex">
                     {isLoggedIn && (
                         <Link href="/tickets">
-                            <Button
-                                variant="ghost"
-                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4"
-                            >
+                            <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4">
                                 <Tag style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
                                 <span className="text-sm md:text-lg">Моите билети</span>
                             </Button>
@@ -34,14 +31,21 @@ export default function Navbar() {
                     )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-10 w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
                                 <User style={{ height: "1.5rem", width: "1.5rem" }} className="h-5 w-5" />
                                 <span className="sr-only">Account menu</span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56">
                             {isLoggedIn ? (
-                                <DropdownMenuItem onClick={handleLogOut} className="py-3 text-base text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
+                                <DropdownMenuItem
+                                    onClick={handleLogOut}
+                                    className="py-3 text-base text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                                >
                                     <LogOut style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
                                     <span>Log out</span>
                                 </DropdownMenuItem>
@@ -62,3 +66,4 @@ export default function Navbar() {
         </header>
     )
 }
+
