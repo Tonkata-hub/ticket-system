@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import mockTickets from "./mock-tickets"
 
 // Temporary admin variable
-const isAdmin = true
+const isAdmin = true;
 
 export default function TicketsDashboard() {
     const [searchTerm, setSearchTerm] = useState("")
