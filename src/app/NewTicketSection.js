@@ -20,6 +20,8 @@ export default function NewTicketSection() {
         otherCondition: "",
     });
 
+    const [formKey, setFormKey] = useState(0);
+
     const [errors, setErrors] = useState({});
 
     const issueTypes = [
@@ -85,6 +87,16 @@ export default function NewTicketSection() {
         } else {
             setErrors({});
             toast.success("Ticket submitted successfully!");
+
+            setFormData({
+                issueType: "",
+                condition: "",
+                priority: "",
+                event: "",
+                otherIssue: "",
+                otherCondition: "",
+            });
+            setFormKey(prev => prev + 1);
         }
     };
 
@@ -116,7 +128,10 @@ export default function NewTicketSection() {
                                     <label className="text-md font-medium text-gray-700">
                                         {label} {errors[field] && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
                                     </label>
-                                    <Select onValueChange={(value) => handleChange(field, value)} disabled={!isLoggedIn}>
+                                    <Select
+                                        key={formKey + field}
+                                        onValueChange={(value) => handleChange(field, value)}
+                                        disabled={!isLoggedIn}>
                                         <SelectTrigger className={`w-full ${errors[field] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}>
                                             <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
                                         </SelectTrigger>
