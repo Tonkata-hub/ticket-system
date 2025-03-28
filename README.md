@@ -9,7 +9,7 @@
 - [X] Make sure mobile also looks half decent
 
 - [X] Add Login Page
-- [ ] Add authentication to Login Page
+- [X] Add authentication to Login Page
 
 - [ ] Actually set up a database
 - [ ] Attach database to the UI

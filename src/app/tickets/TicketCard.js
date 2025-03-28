@@ -17,9 +17,7 @@ export default function TicketCard({ ticket, onClick }) {
 
   return (
     <div
-      className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${
-        ticket.statusBadge === "Closed" ? "border-2 border-green-500 bg-gray-100" : ""
-      }`}
+      className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${ticket.statusBadge === "Closed" ? "border-2 border-green-500 bg-gray-100" : ""}`}
       onClick={onClick}
     >
       <div className="flex justify-between items-start mb-4">
