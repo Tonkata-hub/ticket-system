@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { createSession, deleteSession } from "../auth-helpers/session";
+import { createSession, deleteSession } from "../lib/session";
 import { redirect } from "next/navigation";
 
 const testUser = {
@@ -31,9 +31,7 @@ export async function login(prevState, formData) {
 
     if (email !== testUser.email || password !== testUser.password) {
         return {
-            errors: {
-                email: ["Ivnalid email or password"],
-            },
+            error: ["Ivnalid email or password"],
         };
     }
 

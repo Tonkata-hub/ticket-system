@@ -1,17 +1,18 @@
-"use client";
+"use client"
 
-import { useActionState, useState } from "react";
-import Link from "next/link";
-import { Eye, EyeOff, MessageSquare } from "lucide-react";
-import { login } from "./actions";
-import { useFormStatus } from "react-dom";
+import { useActionState, useState } from "react"
+import Link from "next/link"
+import { Eye, EyeOff, AlertCircle } from "lucide-react"
+import { login } from "./actions"
+import { useFormStatus } from "react-dom"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function LoginPage() {
-    const [state, loginAction] = useActionState(login, undefined);
+    const [state, loginAction] = useActionState(login, undefined)
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false)
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
     return (
         <div className="w-full min-h-[calc(100vh-64px-69px)] bg-blue-50 flex items-center justify-center">
@@ -19,9 +20,7 @@ export default function LoginPage() {
                 <div className="max-w-lg mx-auto bg-white rounded-lg shadow-lg p-8">
                     <h1 className="text-2xl font-bold text-center text-[#3056d3] mb-8">Вход в системата</h1>
 
-                    <p className="text-center text-gray-600 mb-8">
-                        Въведете вашите данни за достъп до системата за билети
-                    </p>
+                    <p className="text-center text-gray-600 mb-8">Въведете вашите данни за достъп до системата за билети</p>
 
                     <form action={loginAction} className="space-y-6">
                         <div className="space-y-2">
@@ -34,11 +33,12 @@ export default function LoginPage() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3056d3]"
+                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3056d3] ${state?.errors?.email ? "border-red-300" : "border-gray-300"
+                                    }`}
                                 placeholder="example@company.com"
                             />
+                            <ErrorMessage error={state?.errors?.email} />
                         </div>
-                        {state?.errors?.email && <p className="text-red-500">{state.errors.email}</p>}
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
@@ -56,7 +56,8 @@ export default function LoginPage() {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3056d3]"
+                                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#3056d3] ${state?.errors?.password ? "border-red-300" : "border-gray-300"
+                                        }`}
                                     placeholder="••••••••"
                                 />
                                 <button
@@ -67,8 +68,34 @@ export default function LoginPage() {
                                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                 </button>
                             </div>
-                            {state?.errors?.password && <p className="text-red-500">{state.errors.password}</p>}
+                            <ErrorMessage error={state?.errors?.password} />
                         </div>
+
+                        <AnimatePresence>
+                            {state?.error && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                                    animate={{ opacity: 1, height: "auto", marginBottom: "auto" }}
+                                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                                    transition={{
+                                        duration: 0.2,
+                                        ease: "easeInOut",
+                                    }}
+                                    className="overflow-hidden"
+                                >
+                                    <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                                        <div className="flex">
+                                            <div className="flex-shrink-0">
+                                                <AlertCircle className="h-5 w-5 text-red-500" />
+                                            </div>
+                                            <div className="ml-3">
+                                                <p className="text-sm text-red-700">{state.error}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <SubmitButton />
                     </form>
@@ -84,11 +111,30 @@ export default function LoginPage() {
                 </div>
             </main>
         </div>
-    );
+    )
+}
+
+function ErrorMessage({ error }) {
+    return (
+        <AnimatePresence>
+            {error && (
+                <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-start mt-1.5"
+                >
+                    <AlertCircle className="h-4 w-4 text-red-500 mr-1.5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-red-600">{error}</span>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    )
 }
 
 function SubmitButton() {
-    const { pending } = useFormStatus();
+    const { pending } = useFormStatus()
 
     return (
         <button
@@ -98,5 +144,6 @@ function SubmitButton() {
         >
             Вход
         </button>
-    );
+    )
 }
+

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -9,20 +9,18 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function NewTicketSection() {
-    const isLoggedIn = true;
+    const [isLoggedIn, setIsLoggedIn] = useState(null); //null is loading
 
-    const [formData, setFormData] = useState({
-        issueType: "",
-        condition: "",
-        priority: "",
-        event: "",
-        otherIssue: "",
-        otherCondition: "",
-    });
-
+    const [formData, setFormData] = useState({ issueType: "", condition: "", priority: "", event: "", otherIssue: "", otherCondition: "", });
     const [formKey, setFormKey] = useState(0);
-
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        fetch("/api/session")
+            .then(res => res.json())
+            .then(data => setIsLoggedIn(data.isLoggedIn))
+            .catch(() => setIsLoggedIn(false));
+    }, []);
 
     const issueTypes = [
         { value: "pc-components", text: "PC компютри, компоненти и мобилни у-ва" },
@@ -117,6 +115,19 @@ export default function NewTicketSection() {
                         <CardTitle className="text-2xl text-center text-blue-800">Нов билет за поддръжка</CardTitle>
                         <CardDescription className="text-center text-blue-600">Моля, предоставете подробности за вашия проблем</CardDescription>
                     </CardHeader>
+
+                    {isLoggedIn === false && ( //if the user is not logged in (not when its loading)
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 bg-red-50 p-4 rounded-md my-3 border border-red-200">
+                            <p className="text-center text-md text-red-600">Моля, влезте в системата, за да изпратите билет!</p>
+                            <Button
+                                variant="outline"
+                                className="border-red-500 text-red-600 hover:bg-red-100 hover:text-red-700"
+                                onClick={() => (window.location.href = "/login")}
+                            >
+                                Вход в системата
+                            </Button>
+                        </div>
+                    )}
 
                     <CardContent className="space-y-6 pt-6">
                         {[{ label: "Избор на запитване", options: issueTypes, field: "issueType", extraField: "otherIssue" },
