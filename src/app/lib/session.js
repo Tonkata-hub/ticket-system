@@ -35,6 +35,6 @@ export async function decrypt(session = "") {
         });
         return payload;
     } catch (error) {
-        console.log("Failed to verify session");
+        // console.log("Failed to verify session");
     }
 }

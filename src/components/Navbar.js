@@ -5,13 +5,20 @@ import { MessageSquare, User, LogOut, LogIn, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { logout } from "@/app/login/actions";
+import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-    const isLoggedIn = true;
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const router = useRouter();
 
-    const handleLogOut = () => {
-        logout();
-    }
+    const handleLogOut = async () => {
+        const res = await logout();
+        if (res.success) {
+            setIsLoggedIn(false); // Update global state immediately
+            router.push("/login");
+        }
+    };
 
     return (
         <header className="sticky top-0 z-10 w-full bg-white shadow-sm">

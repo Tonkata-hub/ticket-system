@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import { createSession, deleteSession } from "../lib/session";
-import { redirect } from "next/navigation";
 
 const testUser = {
     id: "1",
@@ -31,16 +30,16 @@ export async function login(prevState, formData) {
 
     if (email !== testUser.email || password !== testUser.password) {
         return {
-            error: ["Ivnalid email or password"],
+            error: "Invalid email or password",
         };
     }
 
     await createSession(testUser.id);
 
-    redirect("/tickets");
+    return { success: true };
 }
 
 export async function logout() {
     await deleteSession();
-    redirect("/login");
+    return { success: true };
 }

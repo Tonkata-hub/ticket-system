@@ -7,20 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "./context/AuthContext";
 
 export default function NewTicketSection() {
-    const [isLoggedIn, setIsLoggedIn] = useState(null); //null is loading
+    const { isLoggedIn } = useAuth();
 
     const [formData, setFormData] = useState({ issueType: "", condition: "", priority: "", event: "", otherIssue: "", otherCondition: "", });
     const [formKey, setFormKey] = useState(0);
     const [errors, setErrors] = useState({});
-
-    useEffect(() => {
-        fetch("/api/session")
-            .then(res => res.json())
-            .then(data => setIsLoggedIn(data.isLoggedIn))
-            .catch(() => setIsLoggedIn(false));
-    }, []);
 
     const issueTypes = [
         { value: "pc-components", text: "PC компютри, компоненти и мобилни у-ва" },
@@ -116,7 +110,7 @@ export default function NewTicketSection() {
                         <CardDescription className="text-center text-blue-600">Моля, предоставете подробности за вашия проблем</CardDescription>
                     </CardHeader>
 
-                    {isLoggedIn === false && ( //if the user is not logged in (not when its loading)
+                    {!isLoggedIn && (
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 bg-red-50 p-4 rounded-md my-3 border border-red-200">
                             <p className="text-center text-md text-red-600">Моля, влезте в системата, за да изпратите билет!</p>
                             <Button

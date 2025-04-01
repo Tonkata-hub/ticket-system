@@ -3,7 +3,8 @@ import { decrypt } from "@/app/lib/session";
 import { cookies } from "next/headers";
 
 export async function GET() {
-    const sessionCookie = cookies().get("session")?.value;
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get("session")?.value;
 
     if (!sessionCookie) {
         return Response.json({ isLoggedIn: false }, { status: 200 });
