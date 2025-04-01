@@ -11,5 +11,9 @@
 - [X] Add Login Page
 - [X] Add authentication to Login Page
 
+- [ ] Add global context
+
+- [ ] Add server.js file and deploy it
+
 - [ ] Actually set up a database
 - [ ] Attach database to the UI
