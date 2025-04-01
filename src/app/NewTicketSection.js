@@ -110,7 +110,7 @@ export default function NewTicketSection() {
                         <CardDescription className="text-center text-blue-600">Моля, предоставете подробности за вашия проблем</CardDescription>
                     </CardHeader>
 
-                    {!isLoggedIn && (
+                    {isLoggedIn === false && (
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 bg-red-50 p-4 rounded-md my-3 border border-red-200">
                             <p className="text-center text-md text-red-600">Моля, влезте в системата, за да изпратите билет!</p>
                             <Button

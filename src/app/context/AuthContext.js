@@ -4,12 +4,12 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 const AuthContext = createContext({
-    isLoggedIn: false,
+    isLoggedIn: null,
     setIsLoggedIn: () => { },
 });
 
 export function AuthProvider({ children }) {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(null);
     const pathname = usePathname();
 
     // Fetch session on mount and whenever the route changes
