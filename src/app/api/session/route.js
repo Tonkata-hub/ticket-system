@@ -1,3 +1,4 @@
+// /src/app/api/session/route.js
 import { decrypt } from "@/app/lib/session";
 import { cookies } from "next/headers";
 
