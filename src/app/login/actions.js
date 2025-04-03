@@ -3,7 +3,8 @@
 
 import { z } from "zod";
 import { createSession, deleteSession } from "../../lib/session";
-import User from "@/models/User"; // Adjust path if needed
+import User from "@/models/User";
+import bcrypt from "bcrypt";
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }).trim(),
@@ -24,7 +25,15 @@ export async function login(prevState, formData) {
     const { email, password } = result.data;
 
     const user = await User.findOne({ where: { email } });
-    if (!user || user.password !== password) {
+    if (!user) {
+        return {
+            error: "Invalid email or password",
+        };
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
         return {
             error: "Invalid email or password",
         };
