@@ -110,11 +110,9 @@ export default function LoginPage() {
                         <AnimatePresence>
                             {serverError && (
                                 <motion.div
-                                    initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                    animate={{ opacity: 1, height: "auto", marginBottom: "auto" }}
-                                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                                    className="overflow-hidden"
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
                                 >
                                     <div className="bg-red-50 border border-red-200 rounded-md p-4">
                                         <div className="flex">

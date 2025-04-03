@@ -1,5 +1,5 @@
 // /src/app/api/session/route.js
-import { decrypt } from "@/app/lib/session";
+import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
 
 export async function GET() {

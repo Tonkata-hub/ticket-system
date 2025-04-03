@@ -1,13 +1,9 @@
+// app/login/actions.js
 "use server";
 
 import { z } from "zod";
-import { createSession, deleteSession } from "../lib/session";
-
-const testUser = {
-    id: "1",
-    email: "admin@gmail.com",
-    password: "test123123",
-};
+import { createSession, deleteSession } from "../../lib/session";
+import User from "@/models/User"; // Adjust path if needed
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }).trim(),
@@ -19,7 +15,6 @@ const loginSchema = z.object({
 
 export async function login(prevState, formData) {
     const result = loginSchema.safeParse(Object.fromEntries(formData));
-
     if (!result.success) {
         return {
             errors: result.error.flatten().fieldErrors,
@@ -28,14 +23,14 @@ export async function login(prevState, formData) {
 
     const { email, password } = result.data;
 
-    if (email !== testUser.email || password !== testUser.password) {
+    const user = await User.findOne({ where: { email } });
+    if (!user || user.password !== password) {
         return {
             error: "Invalid email or password",
         };
     }
 
-    await createSession(testUser.id);
-
+    await createSession(user.id);
     return { success: true };
 }
 
