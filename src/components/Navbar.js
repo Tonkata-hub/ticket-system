@@ -1,33 +1,72 @@
 "use client"
 
-import Link from "next/link";
-import { MessageSquare, User, LogOut, LogIn, Tag } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { logout } from "@/app/login/actions";
-import { useAuth } from "@/app/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useState } from "react"
+import Link from "next/link"
+import { MessageSquare, User, LogOut, LogIn, Tag, Menu, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { logout } from "@/app/login/actions"
+import { useAuth } from "@/app/context/AuthContext"
+import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function Navbar() {
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
-    const router = useRouter();
+    const { isLoggedIn, setIsLoggedIn } = useAuth()
+    const router = useRouter()
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     const handleLogOut = async () => {
-        const res = await logout();
+        const res = await logout()
         if (res.success) {
-            setIsLoggedIn(false); // Update global state immediately
-            router.push("/login");
+            setIsLoggedIn(false) // Update global state immediately
+            router.push("/login")
+            setMobileMenuOpen(false) // Close mobile menu if open
         }
-    };
+    }
+
+    const toggleMobileMenu = () => {
+        setMobileMenuOpen(!mobileMenuOpen)
+    }
+
+    // Animation variants
+    const menuVariants = {
+        closed: {
+            height: 0,
+            opacity: 0,
+            y: -10,
+            transition: {
+                duration: 0.3,
+                ease: "easeInOut",
+                when: "afterChildren",
+            },
+        },
+        open: {
+            height: "auto",
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.3,
+                ease: "easeInOut",
+                when: "beforeChildren",
+                staggerChildren: 0.05,
+            },
+        },
+    }
+
+    const itemVariants = {
+        closed: { opacity: 0, x: -10 },
+        open: { opacity: 1, x: 0 },
+    }
 
     return (
         <header className="sticky top-0 z-10 w-full bg-white shadow-sm">
-            {/* Desktop Navigation */}
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
                 <Link className="flex items-center justify-center" href="/">
                     <MessageSquare className="h-8 w-8 text-blue-600" />
                     <span className="ml-2 text-xl font-bold text-blue-600">TicketSystem</span>
                 </Link>
+
+                {/* Desktop Navigation */}
                 <nav className="hidden items-center lg:flex">
                     {isLoggedIn && (
                         <Link href="/tickets">
@@ -69,8 +108,85 @@ export default function Navbar() {
                     </DropdownMenu>
                 </nav>
 
-                {/* /* Mobile Navigation */}
+                {/* Mobile Navigation Toggle */}
+                <div className="flex lg:hidden">
+                    <Button variant="ghost" size="icon" className="text-blue-600 hover:text-blue-600 active:text-blue-600 focus:text-blue-600" onClick={toggleMobileMenu}>
+                        <motion.div initial={false} animate={{ rotate: mobileMenuOpen ? 90 : 0 }} transition={{ duration: 0.3 }}>
+                            {mobileMenuOpen
+                                ? <X style={{ height: "1.2rem", width: "1.2rem" }} />
+                                : <Menu style={{ height: "1.2rem", width: "1.2rem" }} />
+                            }
+                        </motion.div>
+                        <span className="sr-only">Toggle menu</span>
+                    </Button>
+                </div>
             </div>
+
+            {/* Mobile Navigation Menu with Framer Motion */}
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <motion.div
+                        className="lg:hidden border-t border-gray-200 bg-white shadow-md overflow-hidden"
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
+                        variants={menuVariants}
+                    >
+                        <div className="container mx-auto px-4 py-2">
+                            <nav className="flex flex-col space-y-3 py-3">
+                                <motion.div variants={itemVariants}>
+                                    <Link
+                                        href="/"
+                                        className="flex items-center py-2 px-3 rounded-md hover:bg-blue-50"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        <MessageSquare className="h-5 w-5 mr-3 text-blue-600" />
+                                        <span className="text-base font-medium">Home</span>
+                                    </Link>
+                                </motion.div>
+
+                                {isLoggedIn && (
+                                    <motion.div variants={itemVariants}>
+                                        <Link
+                                            href="/tickets"
+                                            className="flex items-center py-2 px-3 rounded-md hover:bg-blue-50"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            <Tag className="h-5 w-5 mr-3 text-blue-600" />
+                                            <span className="text-base font-medium">Моите билети</span>
+                                        </Link>
+                                    </motion.div>
+                                )}
+
+                                <motion.div variants={itemVariants} className="border-t my-2"></motion.div>
+
+                                {isLoggedIn ? (
+                                    <motion.div variants={itemVariants}>
+                                        <button
+                                            onClick={handleLogOut}
+                                            className="flex items-center py-2 px-3 rounded-md text-red-600 hover:bg-red-50 w-full text-left"
+                                        >
+                                            <LogOut className="h-5 w-5 mr-3" />
+                                            <span className="text-base font-medium">Log out</span>
+                                        </button>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div variants={itemVariants}>
+                                        <Link
+                                            href="/login"
+                                            className="flex items-center py-2 px-3 rounded-md text-green-600 hover:bg-green-50"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            <LogIn className="h-5 w-5 mr-3" />
+                                            <span className="text-base font-medium">Log in</span>
+                                        </Link>
+                                    </motion.div>
+                                )}
+                            </nav>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header>
     )
 }
