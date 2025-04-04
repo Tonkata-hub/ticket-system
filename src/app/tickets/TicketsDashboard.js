@@ -74,9 +74,9 @@ export default function TicketsDashboard() {
                     />
                     <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
                 </div>
-                <div className="flex flex-wrap gap-4 items-center">
+                <div className="grid grid-cols-2 gap-4 items-center sm:flex sm:flex-wrap w-full sm:w-auto">
                     <Select value={filters.statusBadge} onValueChange={(value) => setFilters({ ...filters, statusBadge: value })}>
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-full sm:w-[180px]">
                             <SelectValue placeholder="All Statuses" />
                         </SelectTrigger>
                         <SelectContent>
@@ -90,7 +90,7 @@ export default function TicketsDashboard() {
                     </Select>
 
                     <Select value={filters.priority} onValueChange={(value) => setFilters({ ...filters, priority: value })}>
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-full sm:w-[180px]">
                             <SelectValue placeholder="All Priorities" />
                         </SelectTrigger>
                         <SelectContent>
@@ -104,7 +104,7 @@ export default function TicketsDashboard() {
                     </Select>
 
                     <Select value={filters.createdBy} onValueChange={(value) => setFilters({ ...filters, createdBy: value })}>
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-full sm:w-[180px]">
                             <SelectValue placeholder="All Creators" />
                         </SelectTrigger>
                         <SelectContent>
@@ -121,7 +121,7 @@ export default function TicketsDashboard() {
                         variant="outline"
                         size="sm"
                         onClick={resetFilters}
-                        className="flex items-center bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
+                        className="w-full sm:w-auto flex items-center bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                     >
                         <X className="mr-2 h-4 w-4" />
                         Reset Filters
