@@ -1,6 +1,6 @@
 const mockTickets = [
     {
-        uid: "TKT-001",
+        uid: "T-001",
         createdAt: "2023-06-01T10:30:00Z",
         createdBy: "John Doe",
         issueType: "Hardware",
@@ -15,12 +15,12 @@ const mockTickets = [
         problemSolvedAt: "On-site",
         actionTaken: null,
         timeTakenToSolve: null,
-        relatedTickets: ["TKT-005"],
+        relatedTickets: ["T-005"],
         attachments: ["screenshot.png", "error_log.txt"],
         comments: [{ author: "Jane Smith", content: "Investigating the issue", timestamp: "2023-06-01 14:30" }],
     },
     {
-        uid: "TKT-002",
+        uid: "T-002",
         createdAt: "2023-06-02T14:45:00Z",
         createdBy: "Alice Johnson",
         issueType: "Software",
@@ -35,14 +35,14 @@ const mockTickets = [
         problemSolvedAt: "Remotely",
         actionTaken: "Updated application code",
         timeTakenToSolve: "6 hours",
-        relatedTickets: ["TKT-007"],
+        relatedTickets: ["T-007"],
         attachments: ["sync_log.txt"],
         comments: [
             { author: "Bob Wilson", content: "Identified the sync issue, working on a fix", timestamp: "2023-06-03 10:15" },
         ],
     },
     {
-        uid: "TKT-003",
+        uid: "T-003",
         createdAt: "2023-06-03T09:00:00Z",
         createdBy: "Emma Davis",
         issueType: "Feature Request",
@@ -62,7 +62,7 @@ const mockTickets = [
         comments: [],
     },
     {
-        uid: "TKT-004",
+        uid: "T-004",
         createdAt: "2023-06-04T11:15:00Z",
         createdBy: "Michael Brown",
         issueType: "Payment",
@@ -77,14 +77,14 @@ const mockTickets = [
         problemSolvedAt: null,
         actionTaken: null,
         timeTakenToSolve: null,
-        relatedTickets: ["TKT-008"],
+        relatedTickets: ["T-008"],
         attachments: ["error_screenshot.png", "transaction_log.txt"],
         comments: [
             { author: "Sarah Lee", content: "Investigating with payment gateway provider", timestamp: "2023-06-04 09:45" },
         ],
     },
     {
-        uid: "TKT-005",
+        uid: "T-005",
         createdAt: "2023-06-05T15:20:00Z",
         createdBy: "David Wilson",
         issueType: "Performance",
@@ -99,7 +99,7 @@ const mockTickets = [
         problemSolvedAt: "Remotely",
         actionTaken: "Optimized code and database queries",
         timeTakenToSolve: "10 hours",
-        relatedTickets: ["TKT-001"],
+        relatedTickets: ["T-001"],
         attachments: ["performance_report.pdf"],
         comments: [
             { author: "Emily Clark", content: "Profiling the app to identify bottlenecks", timestamp: "2023-06-06 11:20" },

@@ -15,6 +15,14 @@ export default function TicketCard({ ticket, onClick }) {
     Low: "bg-green-100 text-green-800 hover:bg-green-200",
   }
 
+  function formatDate(isoDate) {
+    const date = new Date(isoDate)
+    const day = date.getDate().toString().padStart(2, "0")
+    const month = (date.getMonth() + 1).toString().padStart(2, "0")
+    const year = date.getFullYear()
+    return `${day}.${month}.${year}`
+  }
+
   return (
     <div
       className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${ticket.statusBadge === "Closed" ? "border-2 border-green-500 bg-gray-100" : ""}`}
@@ -26,7 +34,9 @@ export default function TicketCard({ ticket, onClick }) {
         >
           {ticket.selectedEvent}
         </h3>
-        <span className="text-sm text-gray-500">{ticket.uid}</span>
+        <span className="text-sm text-gray-500">
+          {ticket.uid} - {formatDate(ticket.createdAt)}
+        </span>
       </div>
       <p className={`mb-4 line-clamp-2 ${ticket.statusBadge === "Closed" ? "text-gray-500" : "text-gray-600"}`}>
         {ticket.clientNote}
@@ -60,4 +70,3 @@ export default function TicketCard({ ticket, onClick }) {
     </div>
   )
 }
-
