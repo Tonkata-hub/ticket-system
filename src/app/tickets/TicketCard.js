@@ -35,7 +35,10 @@ export default function TicketCard({ ticket, onClick }) {
           {ticket.selectedEvent}
         </h3>
         <span className="text-sm text-gray-500">
-          {ticket.uid} - {formatDate(ticket.createdAt)}
+          {ticket.uid} -{" "}
+          <span className="inline-block bg-blue-50 text-blue-700 text-sm px-2 py-1 rounded">
+            {formatDate(ticket.createdAt)}
+          </span>
         </span>
       </div>
       <p className={`mb-4 line-clamp-2 ${ticket.statusBadge === "Closed" ? "text-gray-500" : "text-gray-600"}`}>
