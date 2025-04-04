@@ -17,6 +17,10 @@
 
 - [X] Actually set up a database
 - [X] Users database
-- [ ] Add password protection
+
+ - [X] Fix database on server!
+
+- [X] Add password protection
+
 - [ ] Tickets database
 - [ ] Attach database to the UI

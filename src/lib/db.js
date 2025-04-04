@@ -1,3 +1,4 @@
+// /src/lib/db.js
 const mysql2 = require('mysql2');
 const { Sequelize } = require('sequelize');
 
