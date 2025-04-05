@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import RefreshButton from "./RefreshButton"
 
 import mockTickets from "./mock-tickets"
+import AdminBadge from "@/components/AdminBadge"
 
 // Temporary admin variable
 const isAdmin = true
@@ -169,14 +170,18 @@ export default function TicketsDashboard() {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-8">
-                <motion.h1
-                    className="text-3xl font-bold text-blue-800"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    Tickets Dashboard
-                </motion.h1>
+                <div className="flex items-center">
+                    <motion.h1
+                        className="text-3xl font-bold text-blue-800"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        Tickets Dashboard
+                    </motion.h1>
+                    {isAdmin && <AdminBadge className="ml-3" />}
+                </div>
+
                 <RefreshButton onRefresh={refreshData} disabled={loading} />
             </div>
             <motion.div
