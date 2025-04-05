@@ -30,12 +30,39 @@ export default function TicketsDashboard() {
     useEffect(() => {
         const fetchTickets = async () => {
             setLoading(true)
+            try {
+                const res = await fetch("/api/getTickets");
+                const data = await res.json();
 
-            // Simulate API call with 1 second delay
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+                if (data?.tickets) {
+                    const parsed = data.tickets.map((t) => ({
+                        ...t,
+                        uid: t.uid,
+                        createdAt: t.created_at,
+                        createdBy: t.created_by,
+                        issueType: t.issue_type,
+                        currentCondition: t.current_condition,
+                        priority: t.priority,
+                        statusBadge: t.status_badge,
+                        selectedEvent: t.selected_event,
+                        clientNote: t.client_note,
+                        dateOfStartingWork: t.date_of_starting_work,
+                        assignee: t.assignee,
+                        currentConditionByAdmin: t.current_condition_admin,
+                        problemSolvedAt: t.problem_solved_at,
+                        actionTaken: t.action_taken,
+                        timeTakenToSolve: t.time_taken_to_solve,
+                        relatedTickets: t.related_tickets ? t.related_tickets.split(",") : [],
+                        attachments: t.attachments ? t.attachments.split(",") : [],
+                        comments: t.comments ? JSON.parse(t.comments) : [],
+                        updatedAt: t.updated_at,
+                    }));
 
-            // Set the tickets data
-            setTickets(mockTickets)
+                    setTickets(parsed);
+                }
+            } catch (error) {
+                console.error("Error fetching tickets", error);
+            }
             setLoading(false)
         }
 
@@ -43,14 +70,7 @@ export default function TicketsDashboard() {
     }, [])
 
     const refreshData = async () => {
-        setLoading(true)
-
-        // Simulate API call with 1 second delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        // Set the tickets data (in a real app, you would fetch fresh data here)
-        setTickets([...mockTickets])
-        setLoading(false)
+        console.log("refreshing tickets");
     }
 
     const filteredTickets = tickets
