@@ -1,5 +1,8 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge"
 import { User, CheckCircle } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function TicketCard({ ticket, onClick }) {
   const statusColor = {
@@ -24,9 +27,17 @@ export default function TicketCard({ ticket, onClick }) {
   }
 
   return (
-    <div
+    <motion.div
       className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${ticket.statusBadge === "Closed" ? "border-2 border-green-500 bg-gray-100" : ""}`}
       onClick={onClick}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.15 }}
+      whileHover={{
+        scale: 1.02,
+        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        transition: { duration: 0.15 },
+      }}
     >
       <div className="flex justify-between items-start mb-4">
         <h3
@@ -45,16 +56,20 @@ export default function TicketCard({ ticket, onClick }) {
         {ticket.clientNote}
       </p>
       <div className="flex justify-between items-center mb-4">
-        <Badge
-          className={`${statusColor[ticket.statusBadge]} capitalize ${ticket.statusBadge === "Closed" ? "opacity-60" : ""}`}
-        >
-          {ticket.statusBadge}
-        </Badge>
-        <Badge
-          className={`${priorityColor[ticket.priority]} capitalize ${ticket.statusBadge === "Closed" ? "opacity-60" : ""}`}
-        >
-          {ticket.priority}
-        </Badge>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
+          <Badge
+            className={`${statusColor[ticket.statusBadge]} capitalize ${ticket.statusBadge === "Closed" ? "opacity-60" : ""}`}
+          >
+            {ticket.statusBadge}
+          </Badge>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
+          <Badge
+            className={`${priorityColor[ticket.priority]} capitalize ${ticket.statusBadge === "Closed" ? "opacity-60" : ""}`}
+          >
+            {ticket.priority}
+          </Badge>
+        </motion.div>
       </div>
       <div className="flex items-center justify-between">
         <div
@@ -70,6 +85,7 @@ export default function TicketCard({ ticket, onClick }) {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
+
