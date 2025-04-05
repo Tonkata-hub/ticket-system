@@ -22,5 +22,10 @@
 
 - [X] Add password protection
 
-- [ ] Tickets database
-- [ ] Attach database to the UI
+- [X] Tickets database
+- [X] Attach database to the UI
+
+- [ ] Secure db calls
+- [ ] Filter tickets in getTickets call based on user role (admin sees all, client sees own)
+
+- [ ] Make homepage New Ticket form submit to the database (with user ID and validation)
