@@ -25,7 +25,9 @@
 - [X] Tickets database
 - [X] Attach database to the UI
 
-- [ ] Secure db calls
-- [ ] Filter tickets in getTickets call based on user role (admin sees all, client sees own)
+- [X] Secure db calls
+- [X] Filter tickets in getTickets call based on user role (admin sees all, client sees own)
+
+- [ ] Only display the AdminBadge if the user is an admin
 
 - [ ] Make homepage New Ticket form submit to the database (with user ID and validation)
