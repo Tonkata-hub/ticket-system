@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { motion, AnimatePresence } from "framer-motion";
 import RefreshButton from "./RefreshButton";
 
-import AdminBadge from "@/components/AdminBadge";
+import AdminBadge from "@/app/tickets/AdminBadge";
 
 // Temporary admin variable
 const isAdmin = true;
