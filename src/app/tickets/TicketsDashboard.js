@@ -1,36 +1,35 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Search, X } from "lucide-react"
-import TicketCard from "./TicketCard"
-import TicketModal from "./TicketModal"
-import TicketSkeleton from "./TicketSkeleton"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { motion, AnimatePresence } from "framer-motion"
-import RefreshButton from "./RefreshButton"
+import { useState, useEffect } from "react";
+import { Search, X } from "lucide-react";
+import TicketCard from "./TicketCard";
+import TicketModal from "./TicketModal";
+import TicketSkeleton from "./TicketSkeleton";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { motion, AnimatePresence } from "framer-motion";
+import RefreshButton from "./RefreshButton";
 
-import mockTickets from "./mock-tickets"
-import AdminBadge from "@/components/AdminBadge"
+import AdminBadge from "@/components/AdminBadge";
 
 // Temporary admin variable
-const isAdmin = true
+const isAdmin = true;
 
 export default function TicketsDashboard() {
-    const [searchTerm, setSearchTerm] = useState("")
-    const [selectedTicket, setSelectedTicket] = useState(null)
-    const [tickets, setTickets] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    const [tickets, setTickets] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
         statusBadge: "all",
         priority: "all",
         createdBy: "all",
-    })
+    });
 
     // Simulate fetching data with a delay
     useEffect(() => {
         const fetchTickets = async () => {
-            setLoading(true)
+            setLoading(true);
             try {
                 const res = await fetch("/api/getTickets");
                 const data = await res.json();
@@ -139,24 +138,24 @@ export default function TicketsDashboard() {
         })
 
     // Get unique values for filters from the loaded tickets, not the mock data directly
-    const uniqueStatuses = [...new Set(tickets.map((ticket) => ticket?.statusBadge).filter(Boolean))]
-    const uniquePriorities = [...new Set(tickets.map((ticket) => ticket?.priority).filter(Boolean))]
-    const uniqueCreators = [...new Set(tickets.map((ticket) => ticket?.createdBy).filter(Boolean))]
+    const uniqueStatuses = [...new Set(tickets.map((ticket) => ticket?.statusBadge).filter(Boolean))];
+    const uniquePriorities = [...new Set(tickets.map((ticket) => ticket?.priority).filter(Boolean))];
+    const uniqueCreators = [...new Set(tickets.map((ticket) => ticket?.createdBy).filter(Boolean))];
 
     const resetFilters = () => {
         setFilters({
             statusBadge: "all",
             priority: "all",
             createdBy: "all",
-        })
-        setSearchTerm("")
+        });
+        setSearchTerm("");
     }
 
     const handleTicketUpdate = (updatedTicket) => {
         // In a real application, you would update the ticket in your database here
-        console.log("Updating ticket:", updatedTicket)
+        console.log("Updating ticket:", updatedTicket);
         // For now, we'll just update the selectedTicket state
-        setSelectedTicket(updatedTicket)
+        setSelectedTicket(updatedTicket);
 
         // Also update the ticket in our local state
         setTickets((prevTickets) =>

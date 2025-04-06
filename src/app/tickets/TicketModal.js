@@ -1,49 +1,49 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { X, Paperclip, LinkIcon, Plus } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useRef, useState } from "react";
+import { X, Paperclip, LinkIcon, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate }) {
-    const [editMode, setEditMode] = useState(false)
-    const [editedTicket, setEditedTicket] = useState({ ...ticket })
-    const modalRef = useRef(null)
-    const modalContentRef = useRef(null)
+    const [editMode, setEditMode] = useState(false);
+    const [editedTicket, setEditedTicket] = useState({ ...ticket });
+    const modalRef = useRef(null);
+    const modalContentRef = useRef(null);
 
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
                 // Check if the click is on a dropdown or its children
-                const isDropdownClick = event.target.closest('[role="listbox"]') !== null
+                const isDropdownClick = event.target.closest('[role="listbox"]') !== null;
                 if (!isDropdownClick) {
-                    onClose()
+                    onClose();
                 }
             }
         }
 
         const handleInsideClick = (event) => {
-            event.stopPropagation()
+            event.stopPropagation();
         }
 
         if (isOpen) {
-            document.addEventListener("mousedown", handleOutsideClick)
-            modalContentRef.current?.addEventListener("mousedown", handleInsideClick)
+            document.addEventListener("mousedown", handleOutsideClick);
+            modalContentRef.current?.addEventListener("mousedown", handleInsideClick);
         }
 
         return () => {
-            document.removeEventListener("mousedown", handleOutsideClick)
-            modalContentRef.current?.removeEventListener("mousedown", handleInsideClick)
+            document.removeEventListener("mousedown", handleOutsideClick);
+            modalContentRef.current?.removeEventListener("mousedown", handleInsideClick);
         }
     }, [isOpen, onClose])
 
-    if (!isOpen) return null
+    if (!isOpen) return null;
 
     const statusColor = {
         Open: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
@@ -59,29 +59,29 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
     }
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target
-        setEditedTicket((prev) => ({ ...prev, [name]: value }))
+        const { name, value } = e.target;
+        setEditedTicket((prev) => ({ ...prev, [name]: value }));
     }
 
     const handleSelectChange = (name, value) => {
-        setEditedTicket((prev) => ({ ...prev, [name]: value }))
+        setEditedTicket((prev) => ({ ...prev, [name]: value }));
     }
 
     const handleUpdate = () => {
-        onUpdate(editedTicket)
-        setEditMode(false)
+        onUpdate(editedTicket);
+        setEditMode(false);
     }
 
     const handleStatusChange = (checked) => {
-        const updatedTicket = { ...editedTicket, statusBadge: checked ? "Closed" : "Open" }
-        setEditedTicket(updatedTicket)
-        onUpdate(updatedTicket)
+        const updatedTicket = { ...editedTicket, statusBadge: checked ? "Closed" : "Open" };
+        setEditedTicket(updatedTicket);
+        onUpdate(updatedTicket);
     }
 
     const handleCommentChange = (index, value) => {
-        const updatedComments = [...editedTicket.comments]
-        updatedComments[index] = { ...updatedComments[index], content: value }
-        setEditedTicket((prev) => ({ ...prev, comments: updatedComments }))
+        const updatedComments = [...editedTicket.comments];
+        updatedComments[index] = { ...updatedComments[index], content: value };
+        setEditedTicket((prev) => ({ ...prev, comments: updatedComments }));
     }
 
     const handleAddComment = () => {

@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { RefreshCw } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import { useState } from "react";
+import { RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 export default function RefreshButton({ onRefresh, disabled = false }) {
-    const [isRefreshing, setIsRefreshing] = useState(false)
-    const [iconColor, setIconColor] = useState("#000000") // default color (black)
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [iconColor, setIconColor] = useState("#000000"); // default color (black)
 
     // Array of colors (Tailwind colors in hex format)
     const colors = [
@@ -23,18 +23,18 @@ export default function RefreshButton({ onRefresh, disabled = false }) {
         "#4CAF50", // green
         "#03A9F4", // light blue
         "#FF9800", // orange
-    ]
+    ];
 
     const handleRefresh = async () => {
-        if (isRefreshing || disabled) return
+        if (isRefreshing || disabled) return;
 
         // Pick a random color from the array
-        const randomColor = colors[Math.floor(Math.random() * colors.length)]
-        setIconColor(randomColor)
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        setIconColor(randomColor);
 
-        setIsRefreshing(true)
-        await onRefresh()
-        setIsRefreshing(false)
+        setIsRefreshing(true);
+        await onRefresh();
+        setIsRefreshing(false);
     }
 
     return (
