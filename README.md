@@ -28,6 +28,7 @@
 - [X] Secure db calls
 - [X] Filter tickets in getTickets call based on user role (admin sees all, client sees own)
 
-- [ ] Only display the AdminBadge if the user is an admin
+- [X] Only display the AdminBadge if the user is an admin
+- [ ] Alternative solution for different sized tickets
 
 - [ ] Make homepage New Ticket form submit to the database (with user ID and validation)

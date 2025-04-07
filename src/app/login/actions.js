@@ -39,7 +39,7 @@ export async function login(prevState, formData) {
         };
     }
 
-    await createSession(user.id);
+    await createSession(user.id, user.role);
     return { success: true };
 }
 

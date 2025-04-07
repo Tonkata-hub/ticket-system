@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion, AnimatePresence } from "framer-motion";
 import RefreshButton from "./RefreshButton";
-
 import AdminBadge from "@/app/tickets/AdminBadge";
-
-// Temporary admin variable
-const isAdmin = true;
+import { useAuth } from "../context/AuthContext";
 
 export default function TicketsDashboard() {
+    const { role } = useAuth();
+    const isAdmin = role === "admin";
+
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [tickets, setTickets] = useState([]);

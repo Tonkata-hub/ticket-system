@@ -12,5 +12,8 @@ export async function GET() {
 
     const session = await decrypt(sessionCookie);
 
-    return Response.json({ isLoggedIn: !!session?.userId }, { status: 200 });
+    return Response.json({
+        isLoggedIn: !!session?.userId,
+        role: session?.role || "client"
+    }, { status: 200 });
 }
