@@ -28,7 +28,7 @@ export default function TicketCard({ ticket, onClick }) {
 
   return (
     <motion.div
-      className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${ticket.statusBadge === "Closed" ? "border-2 border-green-500 bg-gray-100" : ""}`}
+      className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col justify-between ${ticket.statusBadge === "Closed" ? "border-2 border-green-500 bg-gray-100" : ""}`}
       onClick={onClick}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -52,9 +52,11 @@ export default function TicketCard({ ticket, onClick }) {
           </span>
         </span>
       </div>
+
       <p className={`mb-4 line-clamp-2 ${ticket.statusBadge === "Closed" ? "text-gray-500" : "text-gray-600"}`}>
         {ticket.clientNote}
       </p>
+
       <div className="flex justify-between items-center mb-4">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.1 }}>
           <Badge
@@ -71,6 +73,7 @@ export default function TicketCard({ ticket, onClick }) {
           </Badge>
         </motion.div>
       </div>
+
       <div className="flex items-center justify-between">
         <div
           className={`flex items-center text-sm font-medium ${ticket.statusBadge === "Closed" ? "text-gray-500" : "text-blue-600"}`}
