@@ -96,6 +96,9 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
         }))
     }
 
+    // Ensure values are never null for input fields
+    const safeValue = (value) => (value === null || value === undefined ? "" : value)
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -119,12 +122,12 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                     {editMode ? (
                                         <Input
                                             name="selectedEvent"
-                                            value={editedTicket.selectedEvent}
+                                            value={safeValue(editedTicket.selectedEvent)}
                                             onChange={handleInputChange}
                                             className="font-bold text-2xl"
                                         />
                                     ) : (
-                                        editedTicket.selectedEvent
+                                        editedTicket.selectedEvent || "No Event Specified"
                                     )}
                                 </h2>
                                 <motion.button
@@ -191,12 +194,13 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                             {editMode ? (
                                 <Textarea
                                     name="clientNote"
-                                    value={editedTicket.clientNote}
+                                    value={safeValue(editedTicket.clientNote)}
                                     onChange={handleInputChange}
                                     className="mb-6"
+                                    placeholder="No description provided"
                                 />
                             ) : (
-                                <p className="text-gray-600 mb-6">{editedTicket.clientNote}</p>
+                                <p className="text-gray-600 mb-6">{editedTicket.clientNote || "No description provided"}</p>
                             )}
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div>
@@ -210,25 +214,29 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                 <div>
                                     <h3 className="text-sm font-semibold text-gray-500">Issue Type</h3>
                                     {editMode ? (
-                                        <Input name="issueType" value={editedTicket.issueType} onChange={handleInputChange} />
+                                        <Input name="issueType" value={safeValue(editedTicket.issueType)} onChange={handleInputChange} />
                                     ) : (
-                                        <p className="text-gray-700">{editedTicket.issueType}</p>
+                                        <p className="text-gray-700">{editedTicket.issueType || "Not specified"}</p>
                                     )}
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-semibold text-gray-500">Current Condition</h3>
                                     {editMode ? (
-                                        <Input name="currentCondition" value={editedTicket.currentCondition} onChange={handleInputChange} />
+                                        <Input
+                                            name="currentCondition"
+                                            value={safeValue(editedTicket.currentCondition)}
+                                            onChange={handleInputChange}
+                                        />
                                     ) : (
-                                        <p className="text-gray-700">{editedTicket.currentCondition}</p>
+                                        <p className="text-gray-700">{editedTicket.currentCondition || "Not specified"}</p>
                                     )}
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-semibold text-gray-500">Assignee</h3>
                                     {editMode ? (
-                                        <Input name="assignee" value={editedTicket.assignee} onChange={handleInputChange} />
+                                        <Input name="assignee" value={safeValue(editedTicket.assignee)} onChange={handleInputChange} />
                                     ) : (
-                                        <p className="text-gray-700">{editedTicket.assignee}</p>
+                                        <p className="text-gray-700">{editedTicket.assignee || "Not assigned"}</p>
                                     )}
                                 </div>
                                 <div>
@@ -237,7 +245,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                         <Input
                                             name="dateOfStartingWork"
                                             type="datetime-local"
-                                            value={editedTicket.dateOfStartingWork || ""}
+                                            value={safeValue(editedTicket.dateOfStartingWork)}
                                             onChange={handleInputChange}
                                         />
                                     ) : (
@@ -253,7 +261,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                     {editMode ? (
                                         <Input
                                             name="currentConditionByAdmin"
-                                            value={editedTicket.currentConditionByAdmin || ""}
+                                            value={safeValue(editedTicket.currentConditionByAdmin)}
                                             onChange={handleInputChange}
                                         />
                                     ) : (
@@ -264,7 +272,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                     <h3 className="text-sm font-semibold text-gray-500">Problem Solved At</h3>
                                     {editMode ? (
                                         <Select
-                                            value={editedTicket.problemSolvedAt}
+                                            value={editedTicket.problemSolvedAt || ""}
                                             onValueChange={(value) => handleSelectChange("problemSolvedAt", value)}
                                         >
                                             <SelectTrigger>
@@ -276,13 +284,17 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                             </SelectContent>
                                         </Select>
                                     ) : (
-                                        <p className="text-gray-700">{editedTicket.problemSolvedAt}</p>
+                                        <p className="text-gray-700">{editedTicket.problemSolvedAt || "Not solved yet"}</p>
                                     )}
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-semibold text-gray-500">Action Taken</h3>
                                     {editMode ? (
-                                        <Textarea name="actionTaken" value={editedTicket.actionTaken || ""} onChange={handleInputChange} />
+                                        <Textarea
+                                            name="actionTaken"
+                                            value={safeValue(editedTicket.actionTaken)}
+                                            onChange={handleInputChange}
+                                        />
                                     ) : (
                                         <p className="text-gray-700">{editedTicket.actionTaken || "No action taken yet"}</p>
                                     )}
@@ -292,7 +304,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                     {editMode ? (
                                         <Input
                                             name="timeTakenToSolve"
-                                            value={editedTicket.timeTakenToSolve || ""}
+                                            value={safeValue(editedTicket.timeTakenToSolve)}
                                             onChange={handleInputChange}
                                             placeholder="e.g. 2 hours"
                                         />
@@ -303,7 +315,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                             </div>
                             <div className="mb-6">
                                 <h3 className="text-sm font-semibold text-gray-500 mb-2">Related Tickets</h3>
-                                {editedTicket.relatedTickets.length > 0 ? (
+                                {editedTicket.relatedTickets && editedTicket.relatedTickets.length > 0 ? (
                                     <ul className="list-disc list-inside">
                                         {editedTicket.relatedTickets.map((ticketId) => (
                                             <li key={ticketId} className="text-blue-600 hover:underline">
@@ -318,7 +330,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                             </div>
                             <div className="mb-6">
                                 <h3 className="text-sm font-semibold text-gray-500 mb-2">Attachments</h3>
-                                {editedTicket.attachments.length > 0 ? (
+                                {editedTicket.attachments && editedTicket.attachments.length > 0 ? (
                                     <ul className="list-disc list-inside">
                                         {editedTicket.attachments.map((attachment) => (
                                             <li key={attachment} className="text-blue-600 hover:underline">
@@ -334,7 +346,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                             <div className="space-y-4">
                                 <div>
                                     <h3 className="text-lg font-semibold text-blue-800 mb-2">Comments</h3>
-                                    {editedTicket.comments.length > 0 ? (
+                                    {editedTicket.comments && editedTicket.comments.length > 0 ? (
                                         <motion.ul className="space-y-2">
                                             {editedTicket.comments.map((comment, index) => (
                                                 <motion.li
@@ -350,7 +362,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                                 >
                                                     {editMode ? (
                                                         <Textarea
-                                                            value={comment.content}
+                                                            value={safeValue(comment.content)}
                                                             onChange={(e) => handleCommentChange(index, e.target.value)}
                                                             className="mb-2"
                                                         />

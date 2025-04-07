@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('@/lib/db');
+const { DataTypes } = require("sequelize")
+const sequelize = require("@/lib/db")
 
 const Ticket = sequelize.define('Ticket', {
     id: {
@@ -43,7 +43,7 @@ const Ticket = sequelize.define('Ticket', {
     },
     client_note: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true, // Changed from false to true to make it optional
     },
     date_of_starting_work: {
         type: DataTypes.DATE,
@@ -91,4 +91,5 @@ const Ticket = sequelize.define('Ticket', {
     timestamps: false,
 });
 
-module.exports = Ticket;
+module.exports = Ticket
+
