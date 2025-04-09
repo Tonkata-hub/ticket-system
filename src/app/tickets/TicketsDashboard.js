@@ -1,82 +1,43 @@
 "use client"
 
-import { useState, useEffect } from "react";
-import { Search, X } from "lucide-react";
-import TicketCard from "./TicketCard";
-import TicketModal from "./TicketModal";
-import TicketSkeleton from "./TicketSkeleton";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { motion, AnimatePresence } from "framer-motion";
-import RefreshButton from "./RefreshButton";
-import AdminBadge from "@/app/tickets/AdminBadge";
-import { useAuth } from "../context/AuthContext";
+import { useState, useEffect } from "react"
+import { Search, X } from "lucide-react"
+import TicketCard from "./TicketCard"
+import TicketModal from "./TicketModal"
+import TicketSkeleton from "./TicketSkeleton"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { motion, AnimatePresence } from "framer-motion"
+import RefreshButton from "./RefreshButton"
+import AdminBadge from "@/app/tickets/AdminBadge"
+import { useAuth } from "../context/AuthContext"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export default function TicketsDashboard() {
-    const { role } = useAuth();
-    const isAdmin = role === "admin";
+    const { role } = useAuth()
+    const isAdmin = role === "admin"
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedTicket, setSelectedTicket] = useState(null);
-    const [tickets, setTickets] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("")
+    const [selectedTicket, setSelectedTicket] = useState(null)
+    const [tickets, setTickets] = useState([])
+    const [loading, setLoading] = useState(true)
     const [filters, setFilters] = useState({
         statusBadge: "all",
         priority: "all",
         createdBy: "all",
-    });
+    })
 
-    // Simulate fetching data with a delay
+    // Fetch tickets on component mount
     useEffect(() => {
-        const fetchTickets = async () => {
-            setLoading(true);
-            try {
-                const res = await fetch("/api/getTickets");
-                const data = await res.json();
-
-                if (data?.tickets) {
-                    const parsed = data.tickets.map((t) => ({
-                        ...t,
-                        uid: t.uid,
-                        createdAt: t.created_at,
-                        createdBy: t.created_by,
-                        issueType: t.issue_type,
-                        currentCondition: t.current_condition,
-                        priority: t.priority,
-                        statusBadge: t.status_badge,
-                        selectedEvent: t.selected_event,
-                        clientNote: t.client_note,
-                        dateOfStartingWork: t.date_of_starting_work,
-                        assignee: t.assignee,
-                        currentConditionByAdmin: t.current_condition_admin,
-                        problemSolvedAt: t.problem_solved_at,
-                        actionTaken: t.action_taken,
-                        timeTakenToSolve: t.time_taken_to_solve,
-                        relatedTickets: t.related_tickets ? t.related_tickets.split(",") : [],
-                        attachments: t.attachments ? t.attachments.split(",") : [],
-                        comments: t.comments ? JSON.parse(t.comments) : [],
-                        updatedAt: t.updated_at,
-                    }));
-
-                    setTickets(parsed);
-                }
-            } catch (error) {
-                console.error("Error fetching tickets", error);
-            }
-            setLoading(false)
-        }
-
         fetchTickets()
     }, [])
 
-    const refreshData = async () => {
-        setLoading(true);
-
+    const fetchTickets = async () => {
+        setLoading(true)
         try {
-            // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            const res = await fetch("/api/getTickets");
-            const data = await res.json();
+            const res = await fetch("/api/getTickets")
+            const data = await res.json()
 
             if (data?.tickets) {
                 const parsed = data.tickets.map((t) => ({
@@ -96,26 +57,33 @@ export default function TicketsDashboard() {
                     problemSolvedAt: t.problem_solved_at,
                     actionTaken: t.action_taken,
                     timeTakenToSolve: t.time_taken_to_solve,
-                    relatedTickets: t.related_tickets
-                        ? t.related_tickets.split(",")
-                        : [],
-                    attachments: t.attachments
-                        ? t.attachments.split(",")
-                        : [],
-                    comments: t.comments
-                        ? JSON.parse(t.comments)
-                        : [],
+                    relatedTickets: t.related_tickets ? t.related_tickets.split(",") : [],
+                    attachments: t.attachments ? t.attachments.split(",") : [],
+                    comments: t.comments ? JSON.parse(t.comments) : [],
                     updatedAt: t.updated_at,
-                }));
+                }))
 
-                setTickets(parsed);
+                setTickets(parsed)
             }
+        } catch (error) {
+            console.error("Error fetching tickets", error)
+            toast.error("Failed to load tickets")
+        }
+        setLoading(false)
+    }
+
+    const refreshData = async () => {
+        setLoading(true)
+
+        try {
+            await fetchTickets()
         } catch (err) {
-            console.error("Error refreshing tickets:", err);
+            console.error("Error refreshing tickets:", err)
+            toast.error("Failed to refresh tickets")
         }
 
-        setLoading(false);
-    };
+        setLoading(false)
+    }
 
     const filteredTickets = tickets
         .filter((ticket) => ticket && typeof ticket === "object") // Filter out undefined or non-object tickets
@@ -137,30 +105,31 @@ export default function TicketsDashboard() {
             return 0
         })
 
-    // Get unique values for filters from the loaded tickets, not the mock data directly
-    const uniqueStatuses = [...new Set(tickets.map((ticket) => ticket?.statusBadge).filter(Boolean))];
-    const uniquePriorities = [...new Set(tickets.map((ticket) => ticket?.priority).filter(Boolean))];
-    const uniqueCreators = [...new Set(tickets.map((ticket) => ticket?.createdBy).filter(Boolean))];
+    // Get unique values for filters from the loaded tickets
+    const uniqueStatuses = [...new Set(tickets.map((ticket) => ticket?.statusBadge).filter(Boolean))]
+    const uniquePriorities = [...new Set(tickets.map((ticket) => ticket?.priority).filter(Boolean))]
+    const uniqueCreators = [...new Set(tickets.map((ticket) => ticket?.createdBy).filter(Boolean))]
+
+    // Get all ticket UIDs for the dropdown
+    const allTicketIds = tickets.map((ticket) => ticket.uid)
 
     const resetFilters = () => {
         setFilters({
             statusBadge: "all",
             priority: "all",
             createdBy: "all",
-        });
-        setSearchTerm("");
+        })
+        setSearchTerm("")
     }
 
-    const handleTicketUpdate = (updatedTicket) => {
-        // In a real application, you would update the ticket in your database here
-        console.log("Updating ticket:", updatedTicket);
-        // For now, we'll just update the selectedTicket state
-        setSelectedTicket(updatedTicket);
-
-        // Also update the ticket in our local state
+    const handleTicketUpdate = async (updatedTicket) => {
+        // Update the ticket in our local state
         setTickets((prevTickets) =>
             prevTickets.map((ticket) => (ticket.uid === updatedTicket.uid ? updatedTicket : ticket)),
         )
+
+        // Update the selected ticket state
+        setSelectedTicket(updatedTicket)
     }
 
     // Create an array of skeleton loaders based on the number of expected tickets
@@ -168,6 +137,7 @@ export default function TicketsDashboard() {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <ToastContainer position="top-center" />
             <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center">
                     <motion.h1
@@ -338,9 +308,9 @@ export default function TicketsDashboard() {
                     isOpen={!!selectedTicket}
                     isAdmin={isAdmin}
                     onUpdate={handleTicketUpdate}
+                    allTicketIds={allTicketIds}
                 />
             )}
         </div>
     )
 }
-
