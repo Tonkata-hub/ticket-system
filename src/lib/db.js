@@ -2,7 +2,7 @@
 const mysql2 = require('mysql2');
 const { Sequelize } = require('sequelize');
 
-console.log('DB_HOST:', process.env.DB_HOST);
+// console.log('DB_HOST:', process.env.DB_HOST);
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
