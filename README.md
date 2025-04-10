@@ -33,6 +33,13 @@
 
 - [X] Make homepage New Ticket form submit to the database (with user ID and validation)
 
-- [ ] Add ticket editing (only by admins)
+- [X] Add ticket editing (only by admins)
+
+- [X] Table view
+
+- [ ] Add data editing only by admins on diff page
+
+- [ ] /register page
+- [ ] /forgot-password page
 
 - [ ] Dark mode

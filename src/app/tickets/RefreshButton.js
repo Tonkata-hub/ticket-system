@@ -38,25 +38,25 @@ export default function RefreshButton({ onRefresh, disabled = false }) {
     }
 
     return (
-        <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
+        <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             disabled={disabled || isRefreshing}
-            className="relative"
+            onClick={handleRefresh}
+            className="relative inline-flex items-center px-3 py-2 border rounded-md text-sm font-medium hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
             <motion.div
                 animate={isRefreshing ? { rotate: 360 } : { rotate: 0 }}
                 transition={{
                     duration: 1,
-                    repeat: isRefreshing ? Number.POSITIVE_INFINITY : 0,
+                    repeat: isRefreshing ? Infinity : 0,
                     ease: "linear",
                 }}
             >
                 <RefreshCw style={{ color: iconColor }} className="h-4 w-4" />
             </motion.div>
             <span className="ml-2">Refresh</span>
-        </Button>
+        </motion.button>
     )
 }
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, X } from "lucide-react"
+import { Search, X, TableIcon, LayoutGridIcon } from "lucide-react"
 import TicketCard from "./TicketCard"
 import TicketModal from "./TicketModal"
 import TicketSkeleton from "./TicketSkeleton"
@@ -13,6 +13,7 @@ import AdminBadge from "@/app/tickets/AdminBadge"
 import { useAuth } from "../context/AuthContext"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import TicketTableView from "./TicketTableView"
 
 export default function TicketsDashboard() {
     const { role } = useAuth()
@@ -28,10 +29,27 @@ export default function TicketsDashboard() {
         createdBy: "all",
     })
 
+    const [viewMode, setViewMode] = useState("card")
+
+    useEffect(() => {
+        const savedViewMode = localStorage.getItem("ticketsViewMode")
+        if (savedViewMode) {
+            setViewMode(savedViewMode)
+        }
+    }, [])
+
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "ascending" })
+    const [currentPage, setCurrentPage] = useState(1)
+    const [itemsPerPage, setItemsPerPage] = useState(10)
+
     // Fetch tickets on component mount
     useEffect(() => {
         fetchTickets()
     }, [])
+
+    useEffect(() => {
+        localStorage.setItem("ticketsViewMode", viewMode)
+    }, [viewMode])
 
     const fetchTickets = async () => {
         setLoading(true)
@@ -113,6 +131,12 @@ export default function TicketsDashboard() {
     // Get all ticket UIDs for the dropdown
     const allTicketIds = tickets.map((ticket) => ticket.uid)
 
+    const toggleViewMode = () => {
+        setViewMode(viewMode === "card" ? "table" : "card")
+        // Reset pagination to first page when switching views
+        setCurrentPage(1)
+    }
+
     const resetFilters = () => {
         setFilters({
             statusBadge: "all",
@@ -120,6 +144,8 @@ export default function TicketsDashboard() {
             createdBy: "all",
         })
         setSearchTerm("")
+        setSortConfig({ key: null, direction: "ascending" })
+        setCurrentPage(1)
     }
 
     const handleTicketUpdate = async (updatedTicket) => {
@@ -151,7 +177,29 @@ export default function TicketsDashboard() {
                     {isAdmin && <AdminBadge className="ml-3" />}
                 </div>
 
-                <RefreshButton onRefresh={refreshData} disabled={loading} />
+                <div className="flex items-center space-x-2">
+                    <RefreshButton onRefresh={refreshData} disabled={loading} />
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={toggleViewMode}
+                            className="flex items-center gap-2"
+                        >
+                            {viewMode === "card" ? (
+                                <>
+                                    <TableIcon className="h-4 w-4" />
+                                    <span>Table View</span>
+                                </>
+                            ) : (
+                                <>
+                                    <LayoutGridIcon className="h-4 w-4" />
+                                    <span>Card View</span>
+                                </>
+                            )}
+                        </Button>
+                    </motion.div>
+                </div>
             </div>
             <motion.div
                 className="flex flex-col sm:flex-row justify-between items-center mb-6"
@@ -240,7 +288,6 @@ export default function TicketsDashboard() {
                 </div>
             </motion.div>
 
-            {/* Loading state */}
             {loading ? (
                 <motion.div
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -264,41 +311,56 @@ export default function TicketsDashboard() {
                 </motion.div>
             ) : (
                 /* Loaded content */
-                <motion.div
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                >
-                    <AnimatePresence mode="sync">
-                        {filteredTickets.length > 0 ? (
-                            filteredTickets.map((ticket, index) => (
-                                <motion.div
-                                    key={ticket.uid}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.15 } }}
-                                    transition={{
-                                        duration: 0.15,
-                                        delay: Math.min(index * 0.02, 0.1), // Cap the delay at 0.1s max
-                                    }}
-                                    layout
-                                >
-                                    <TicketCard ticket={ticket} onClick={() => setSelectedTicket(ticket)} />
-                                </motion.div>
-                            ))
-                        ) : (
-                            <motion.div
-                                className="col-span-full flex justify-center items-center py-10"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <p className="text-gray-500 text-lg">No tickets found matching your filters.</p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </motion.div>
+                <>
+                    {viewMode === "card" ? (
+                        <motion.div
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <AnimatePresence mode="sync">
+                                {filteredTickets.length > 0 ? (
+                                    filteredTickets.map((ticket, index) => (
+                                        <motion.div
+                                            key={ticket.uid}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.15 } }}
+                                            transition={{
+                                                duration: 0.15,
+                                                delay: Math.min(index * 0.02, 0.1), // Cap the delay at 0.1s max
+                                            }}
+                                            layout
+                                        >
+                                            <TicketCard ticket={ticket} onClick={() => setSelectedTicket(ticket)} />
+                                        </motion.div>
+                                    ))
+                                ) : (
+                                    <motion.div
+                                        className="col-span-full flex justify-center items-center py-10"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <p className="text-gray-500 text-lg">No tickets found matching your filters.</p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    ) : (
+                        <TicketTableView
+                            tickets={filteredTickets}
+                            onTicketClick={setSelectedTicket}
+                            sortConfig={sortConfig}
+                            setSortConfig={setSortConfig}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            itemsPerPage={itemsPerPage}
+                            setItemsPerPage={setItemsPerPage}
+                        />
+                    )}
+                </>
             )}
 
             {selectedTicket && (
