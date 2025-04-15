@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { MessageSquare, User, LogOut, LogIn, Tag, Menu, X } from "lucide-react"
+import { MessageSquare, User, LogOut, LogIn, Tag, Menu, X, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { logout } from "@/app/login/actions"
@@ -11,7 +11,8 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function Navbar() {
-    const { isLoggedIn, setIsLoggedIn } = useAuth()
+    const { isLoggedIn, setIsLoggedIn, role } = useAuth()
+    const isAdmin = role === "admin"
     const router = useRouter()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -69,12 +70,24 @@ export default function Navbar() {
                 {/* Desktop Navigation */}
                 <nav className="hidden items-center lg:flex">
                     {isLoggedIn && (
-                        <Link href="/tickets">
-                            <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4">
-                                <Tag style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
-                                <span className="text-sm md:text-lg">Моите билети</span>
-                            </Button>
-                        </Link>
+                        <>
+                            <Link href="/tickets">
+                                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4">
+                                    <Tag style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
+                                    <span className="text-sm md:text-lg">Моите билети</span>
+                                </Button>
+                            </Link>
+
+                            {/* Admin link - only visible to admins */}
+                            {isAdmin && (
+                                <Link href="/admin/categories">
+                                    <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 lg:mr-4">
+                                        <Settings style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
+                                        <span className="text-sm md:text-lg">Управление</span>
+                                    </Button>
+                                </Link>
+                            )}
+                        </>
                     )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -110,12 +123,18 @@ export default function Navbar() {
 
                 {/* Mobile Navigation Toggle */}
                 <div className="flex lg:hidden">
-                    <Button variant="ghost" size="icon" className="text-blue-600 hover:text-blue-600 active:text-blue-600 focus:text-blue-600" onClick={toggleMobileMenu}>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-blue-600 hover:text-blue-600 active:text-blue-600 focus:text-blue-600"
+                        onClick={toggleMobileMenu}
+                    >
                         <motion.div initial={false} animate={{ rotate: mobileMenuOpen ? 90 : 0 }} transition={{ duration: 0.3 }}>
-                            {mobileMenuOpen
-                                ? <X style={{ height: "1.2rem", width: "1.2rem" }} />
-                                : <Menu style={{ height: "1.2rem", width: "1.2rem" }} />
-                            }
+                            {mobileMenuOpen ? (
+                                <X style={{ height: "1.2rem", width: "1.2rem" }} />
+                            ) : (
+                                <Menu style={{ height: "1.2rem", width: "1.2rem" }} />
+                            )}
                         </motion.div>
                         <span className="sr-only">Toggle menu</span>
                     </Button>
@@ -146,16 +165,32 @@ export default function Navbar() {
                                 </motion.div>
 
                                 {isLoggedIn && (
-                                    <motion.div variants={itemVariants}>
-                                        <Link
-                                            href="/tickets"
-                                            className="flex items-center py-2 px-3 rounded-md hover:bg-blue-50"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            <Tag className="h-5 w-5 mr-3 text-blue-600" />
-                                            <span className="text-base font-medium">Моите билети</span>
-                                        </Link>
-                                    </motion.div>
+                                    <>
+                                        <motion.div variants={itemVariants}>
+                                            <Link
+                                                href="/tickets"
+                                                className="flex items-center py-2 px-3 rounded-md hover:bg-blue-50"
+                                                onClick={() => setMobileMenuOpen(false)}
+                                            >
+                                                <Tag className="h-5 w-5 mr-3 text-blue-600" />
+                                                <span className="text-base font-medium">Моите билети</span>
+                                            </Link>
+                                        </motion.div>
+
+                                        {/* Admin link in mobile menu - only visible to admins */}
+                                        {isAdmin && (
+                                            <motion.div variants={itemVariants}>
+                                                <Link
+                                                    href="/admin/categories"
+                                                    className="flex items-center py-2 px-3 rounded-md hover:bg-purple-50"
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                >
+                                                    <Settings className="h-5 w-5 mr-3 text-purple-600" />
+                                                    <span className="text-base font-medium">Управление</span>
+                                                </Link>
+                                            </motion.div>
+                                        )}
+                                    </>
                                 )}
 
                                 <motion.div variants={itemVariants} className="border-t my-2"></motion.div>
@@ -190,4 +225,3 @@ export default function Navbar() {
         </header>
     )
 }
-
