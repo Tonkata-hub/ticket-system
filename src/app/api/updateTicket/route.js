@@ -1,3 +1,4 @@
+// app/api/updateTicket/route.js
 import { decrypt } from "@/lib/session"
 import Ticket from "@/models/Ticket"
 import User from "@/models/User"

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
@@ -29,45 +29,21 @@ export default function NewTicketSection() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submissionError, setSubmissionError] = useState(null)
 
-    const issueTypes = [
-        { value: "pc-components", text: "PC компютри, компоненти и мобилни у-ва" },
-        { value: "servers-vms", text: "Сървъри и вирт. машини, достъп до папки" },
-        { value: "printing", text: "Принтиране Копиране Сканиране" },
-        { value: "networks-vpn", text: "Мрежи и Мрежово оборудване, VPN" },
-        { value: "security-gdpr", text: "Сигурност и Сертифициране, GDPR" },
-        { value: "windows-db", text: "Windows, OS, Users, Share, база данни" },
-        { value: "accounting-software", text: "Приложения, Счетоводен софтуер" },
-        { value: "office-apps", text: "Офис приложения, ms365" },
-        { value: "digital-signatures", text: "Електронни подписи и сертификати" },
-        { value: "hosting", text: "Хостинг, сайт, имейли, акаунти" },
-        { value: "other", text: "Др." },
-    ]
+    const [ticketOptions, setTicketOptions] = useState({
+        issueType: [],
+        condition: [],
+        priority: [],
+        event: [],
+    })
 
-    const conditions = [
-        { value: "not-working", text: "Не работи, спря: устройство, услуга" },
-        { value: "review-hardware", text: "За преглед hardware, [или фабрични настройки]" },
-        { value: "review-software", text: "За преглед software, [или преинсталация]" },
-        { value: "slow-issues", text: "Работи бавно, забива, дава грешки" },
-        { value: "change-device", text: "Промяна на у-во, потребител, приложение" },
-        { value: "replace-supply", text: "За смяна на консуматив" },
-        { value: "project-discussion", text: "Проект (изисква обсъждане)" },
-        { value: "other", text: "Др." },
-    ]
-
-    const priorities = [
-        { value: "urgent", text: "Спешен" },
-        { value: "standard", text: "Стандартен" },
-        { value: "low-priority", text: "Нисък приоритет" },
-    ]
-
-    const events = [
-        { value: "it-support", text: "IT поддръжка" },
-        { value: "it-archive", text: "IT архив" },
-        { value: "pc-preparation", text: "PC подготовка за офис работа" },
-        { value: "equipment-management", text: "Взимане/даване ИТ оборудване / ремонт / консуматив" },
-        { value: "ticket-review", text: "Преглед и анализ на ticket" },
-        { value: "it-consultation", text: "IT консултация" },
-    ]
+    useEffect(() => {
+        const loadOptions = async () => {
+            const res = await fetch("/api/ticket-options");
+            const data = await res.json();
+            setTicketOptions(data);
+        }
+        loadOptions();
+    }, []);
 
     const handleChange = (field, value) => {
         setFormData((prev) => ({
@@ -210,10 +186,10 @@ export default function NewTicketSection() {
 
                     <CardContent className="space-y-6 pt-6">
                         {[
-                            { label: "Избор на запитване", options: issueTypes, field: "issueType", extraField: "otherIssue" },
-                            { label: "Състояние", options: conditions, field: "condition", extraField: "otherCondition" },
-                            { label: "Приоритет", options: priorities, field: "priority" },
-                            { label: "Действие", options: events, field: "event" },
+                            { label: "Избор на запитване", options: ticketOptions.issueType, field: "issueType", extraField: "otherIssue" },
+                            { label: "Състояние", options: ticketOptions.condition, field: "condition", extraField: "otherCondition" },
+                            { label: "Приоритет", options: ticketOptions.priority, field: "priority" },
+                            { label: "Действие", options: ticketOptions.event, field: "event" },
                         ].map(({ label, options, field, extraField }, index) => (
                             <div key={index} className="space-y-2">
                                 <label className="text-md font-medium text-gray-700">
