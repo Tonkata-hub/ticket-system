@@ -8,16 +8,20 @@ const TicketCategory = sequelize.define("TicketCategory", {
         primaryKey: true,
     },
     type: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     value: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     label: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
+    },
+    description: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
     },
 }, {
     tableName: "ticket_categories",

@@ -7,7 +7,11 @@ export async function GET() {
 
         const grouped = records.reduce((acc, item) => {
             acc[item.type] = acc[item.type] || [];
-            acc[item.type].push({ value: item.value, text: item.label });
+            acc[item.type].push({
+                value: item.value,
+                text: item.label,
+                description: item.description || "",
+            });
             return acc;
         }, {});
 

@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useAuth } from "../context/AuthContext"
-import { AlertCircle, Loader2 } from "lucide-react"
+import { AlertCircle, Info, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 
 export default function NewTicketSection() {
     const { isLoggedIn } = useAuth()
@@ -141,6 +142,20 @@ export default function NewTicketSection() {
         }
     }
 
+    const renderSelectValue = (label, field, options) => {
+        if (label === "Приоритет") {
+            return (
+                <SelectValue>
+                    {formData[field]
+                        ? options.find((o) => o.value === formData[field])?.text
+                        : `Изберете ${label.toLowerCase()}`}
+                </SelectValue>
+            )
+        }
+
+        return <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
+    }
+
     return (
         <section className="w-full py-12 md:py-20 lg:py-26 flex justify-center bg-blue-50">
             <div className="container px-4 md:px-6">
@@ -148,8 +163,7 @@ export default function NewTicketSection() {
                     Изпратете билет за поддръжка
                 </h1>
                 <p className="text-lg text-center mb-12 text-gray-600 max-w-2xl mx-auto">
-                    Нуждаете се от помощ? Попълнете формуляра по-долу и нашият екип за поддръжка ще се свърже с вас възможно
-                    най-скоро.
+                    Нуждаете се от помощ? Попълнете формуляра по-долу и нашият екип за поддръжка ще се свърже с вас възможно най-скоро.
                 </p>
 
                 <Card className="max-w-3xl mx-auto border-blue-100 shadow-lg">
@@ -184,47 +198,91 @@ export default function NewTicketSection() {
                         </div>
                     )}
 
-                    <CardContent className="space-y-6 pt-6">
-                        {[
-                            { label: "Избор на запитване", options: ticketOptions.issueType, field: "issueType", extraField: "otherIssue" },
-                            { label: "Състояние", options: ticketOptions.condition, field: "condition", extraField: "otherCondition" },
-                            { label: "Приоритет", options: ticketOptions.priority, field: "priority" },
-                            { label: "Действие", options: ticketOptions.event, field: "event" },
-                        ].map(({ label, options, field, extraField }, index) => (
-                            <div key={index} className="space-y-2">
-                                <label className="text-md font-medium text-gray-700">
-                                    {label} {errors[field] && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
-                                </label>
-                                <Select
-                                    key={formKey + field}
-                                    onValueChange={(value) => handleChange(field, value)}
-                                    disabled={!isLoggedIn || isSubmitting}
-                                >
-                                    <SelectTrigger
-                                        className={`w-full ${errors[field] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                    <TooltipProvider>
+                        <CardContent className="space-y-6 pt-6">
+                            {[
+                                { label: "Избор на запитване", options: ticketOptions.issueType, field: "issueType", extraField: "otherIssue" },
+                                { label: "Състояние", options: ticketOptions.condition, field: "condition", extraField: "otherCondition" },
+                                { label: "Приоритет", options: ticketOptions.priority, field: "priority" },
+                                { label: "Действие", options: ticketOptions.event, field: "event" },
+                            ].map(({ label, options, field, extraField }, index) => (
+                                <div key={index} className="space-y-2">
+                                    <label className="text-md font-medium text-gray-700">
+                                        {label} {errors[field] && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
+                                    </label>
+                                    <Select
+                                        key={formKey + field}
+                                        onValueChange={(value) => handleChange(field, value)}
+                                        disabled={!isLoggedIn || isSubmitting}
                                     >
-                                        <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {options.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.text}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {formData[field] === "other" && extraField && (
-                                    <Input
-                                        value={formData[extraField]}
-                                        onChange={(e) => handleChange(extraField, e.target.value)}
-                                        placeholder={`Моля, уточнете ${label.toLowerCase()}`}
-                                        className={`mt-2 ${errors[extraField] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
-                                        disabled={isSubmitting}
-                                    />
-                                )}
-                            </div>
-                        ))}
-                    </CardContent>
+                                        <SelectTrigger
+                                            className={`w-full ${errors[field] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                                        >
+                                            {label === "Приоритет" ? (
+                                                <SelectValue placeholder="Изберете приоритет">
+                                                    <span>
+                                                        {formData.priority
+                                                            ? ticketOptions.priority.find((p) => p.value === formData.priority)?.text
+                                                            : null}
+                                                    </span>
+                                                </SelectValue>
+                                            ) : (
+                                                <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
+                                            )}
+                                        </SelectTrigger>
+
+                                        {label === "Приоритет" ? (
+                                            <SelectContent>
+                                                {options.map((option) => (
+                                                    <SelectItem key={option.value} value={option.value}>
+                                                        <div className="flex items-center gap-2">
+                                                            <span>{option.text}</span>
+                                                            {option.description && formData.priority !== option.value && (
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <div className="relative group flex items-center justify-center" tabIndex={-1}>
+                                                                            <Info
+                                                                                className="h-[16px] w-[16px] text-blue-400 group-hover:text-blue-600 transition-colors duration-200 ease-in-out"
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                        </div>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent
+                                                                        side="right"
+                                                                        className="max-w-[200px] bg-white text-sm text-gray-700 border shadow-md rounded-md px-3 py-2"
+                                                                    >
+                                                                        {option.description}
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            )}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        ) : (
+                                            <SelectContent>
+                                                {options.map((option) => (
+                                                    <SelectItem key={option.value} value={option.value}>
+                                                        {option.text}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        )}
+                                    </Select>
+
+                                    {formData[field] === "other" && extraField && (
+                                        <Input
+                                            value={formData[extraField]}
+                                            onChange={(e) => handleChange(extraField, e.target.value)}
+                                            placeholder={`Моля, уточнете ${label.toLowerCase()}`}
+                                            className={`mt-2 ${errors[extraField] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                                            disabled={isSubmitting}
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </CardContent>
+                    </TooltipProvider>
 
                     <CardFooter>
                         <Button
@@ -246,5 +304,6 @@ export default function NewTicketSection() {
             </div>
         </section>
     )
+
 }
 
