@@ -26,7 +26,7 @@ export async function POST(request) {
         const body = await request.json()
 
         // 4. Validate required fields - removed clientNote from required fields
-        const requiredFields = ["issueType", "condition", "priority", "event"]
+        const requiredFields = ["priority", "shortDescription"]
         const missingFields = requiredFields.filter((field) => !body[field])
 
         if (missingFields.length > 0) {
@@ -52,7 +52,7 @@ export async function POST(request) {
             priority: mapPriorityToDatabase(body.priority),
             status_badge: "Open",
             selected_event: body.event,
-            client_note: body.clientNote || "", // Make clientNote optional with default empty string
+            client_note: body.shortDescription,
             updated_at: new Date(),
             comments: JSON.stringify([]),
         })

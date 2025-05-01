@@ -24,6 +24,7 @@ export default function NewTicketSection() {
         otherIssue: "",
         otherCondition: "",
         clientNote: "",
+        shortDescription: "",
     })
     const [formKey, setFormKey] = useState(0)
     const [errors, setErrors] = useState({})
@@ -63,12 +64,8 @@ export default function NewTicketSection() {
 
     const validateForm = () => {
         const newErrors = {
-            issueType: !formData.issueType,
-            condition: !formData.condition,
             priority: !formData.priority,
-            event: !formData.event,
-            otherIssue: formData.issueType === "other" && !formData.otherIssue,
-            otherCondition: formData.condition === "other" && !formData.otherCondition,
+            shortDescription: !formData.shortDescription,
         }
 
         setErrors(newErrors)
@@ -97,6 +94,7 @@ export default function NewTicketSection() {
                 priority: formData.priority,
                 event: formData.event,
                 clientNote: formData.clientNote || "",
+                shortDescription: formData.shortDescription,
             }
 
             // Submit the data to the API
@@ -126,6 +124,7 @@ export default function NewTicketSection() {
                 otherIssue: "",
                 otherCondition: "",
                 clientNote: "",
+                shortDescription: "",
             })
             setFormKey((prev) => prev + 1)
 
@@ -200,15 +199,77 @@ export default function NewTicketSection() {
 
                     <TooltipProvider>
                         <CardContent className="space-y-6 pt-6">
+                            {/* Кратко описание */}
+                            <div className="space-y-2">
+                                <label className="text-md font-medium text-gray-700">
+                                    Кратко описание <span className="text-red-500 text-sm font-bold ml-1">*</span>
+                                </label>
+                                <Input
+                                    value={formData.shortDescription}
+                                    onChange={(e) => handleChange("shortDescription", e.target.value)}
+                                    placeholder="Въведете кратко описание на проблема"
+                                    className={`w-full ${errors.shortDescription ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+
+                            {/* Приоритет (moved here) */}
+                            <div className="space-y-2">
+                                <label className="text-md font-medium text-gray-700">
+                                    Приоритет <span className="text-red-500 text-sm font-bold ml-1">*</span>
+                                </label>
+                                <Select
+                                    key={formKey + "priority"}
+                                    onValueChange={(value) => handleChange("priority", value)}
+                                    disabled={!isLoggedIn || isSubmitting}
+                                >
+                                    <SelectTrigger
+                                        className={`w-full ${errors.priority ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                                    >
+                                        <SelectValue placeholder="Изберете приоритет">
+                                            <span>
+                                                {formData.priority
+                                                    ? ticketOptions.priority.find((p) => p.value === formData.priority)?.text
+                                                    : null}
+                                            </span>
+                                        </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {ticketOptions.priority.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                <div className="flex items-center gap-2">
+                                                    <span>{option.text}</span>
+                                                    {option.description && formData.priority !== option.value && (
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <div className="relative group flex items-center justify-center" tabIndex={-1}>
+                                                                    <Info className="h-[16px] w-[16px] text-blue-400 group-hover:text-blue-600 transition-colors duration-200 ease-in-out" />
+                                                                </div>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent
+                                                                side="right"
+                                                                className="max-w-[200px] bg-white text-sm text-gray-700 border shadow-md rounded-md px-3 py-2"
+                                                            >
+                                                                {option.description}
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    )}
+                                                </div>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Remaining optional dropdowns */}
                             {[
                                 { label: "Избор на запитване", options: ticketOptions.issueType, field: "issueType", extraField: "otherIssue" },
                                 { label: "Състояние", options: ticketOptions.condition, field: "condition", extraField: "otherCondition" },
-                                { label: "Приоритет", options: ticketOptions.priority, field: "priority" },
                                 { label: "Действие", options: ticketOptions.event, field: "event" },
                             ].map(({ label, options, field, extraField }, index) => (
                                 <div key={index} className="space-y-2">
                                     <label className="text-md font-medium text-gray-700">
-                                        {label} {errors[field] && <span className="text-red-500 text-sm font-bold ml-1">Required</span>}
+                                        {label}
                                     </label>
                                     <Select
                                         key={formKey + field}
@@ -218,56 +279,15 @@ export default function NewTicketSection() {
                                         <SelectTrigger
                                             className={`w-full ${errors[field] ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                                         >
-                                            {label === "Приоритет" ? (
-                                                <SelectValue placeholder="Изберете приоритет">
-                                                    <span>
-                                                        {formData.priority
-                                                            ? ticketOptions.priority.find((p) => p.value === formData.priority)?.text
-                                                            : null}
-                                                    </span>
-                                                </SelectValue>
-                                            ) : (
-                                                <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
-                                            )}
+                                            <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
                                         </SelectTrigger>
-
-                                        {label === "Приоритет" ? (
-                                            <SelectContent>
-                                                {options.map((option) => (
-                                                    <SelectItem key={option.value} value={option.value}>
-                                                        <div className="flex items-center gap-2">
-                                                            <span>{option.text}</span>
-                                                            {option.description && formData.priority !== option.value && (
-                                                                <Tooltip>
-                                                                    <TooltipTrigger asChild>
-                                                                        <div className="relative group flex items-center justify-center" tabIndex={-1}>
-                                                                            <Info
-                                                                                className="h-[16px] w-[16px] text-blue-400 group-hover:text-blue-600 transition-colors duration-200 ease-in-out"
-                                                                                aria-hidden="true"
-                                                                            />
-                                                                        </div>
-                                                                    </TooltipTrigger>
-                                                                    <TooltipContent
-                                                                        side="right"
-                                                                        className="max-w-[200px] bg-white text-sm text-gray-700 border shadow-md rounded-md px-3 py-2"
-                                                                    >
-                                                                        {option.description}
-                                                                    </TooltipContent>
-                                                                </Tooltip>
-                                                            )}
-                                                        </div>
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        ) : (
-                                            <SelectContent>
-                                                {options.map((option) => (
-                                                    <SelectItem key={option.value} value={option.value}>
-                                                        {option.text}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        )}
+                                        <SelectContent>
+                                            {options.map((option) => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.text}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
                                     </Select>
 
                                     {formData[field] === "other" && extraField && (
