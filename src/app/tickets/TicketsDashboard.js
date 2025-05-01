@@ -78,6 +78,7 @@ export default function TicketsDashboard() {
                     relatedTickets: t.related_tickets ? t.related_tickets.split(",") : [],
                     attachments: t.attachments ? t.attachments.split(",") : [],
                     comments: t.comments ? JSON.parse(t.comments) : [],
+                    communicationChannel: t.communication_channel,
                     updatedAt: t.updated_at,
                 }))
 

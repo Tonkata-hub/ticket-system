@@ -181,6 +181,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                 actionTaken: editedTicket.actionTaken,
                 timeTakenToSolve: editedTicket.timeTakenToSolve,
                 comments: editedTicket.comments,
+                communicationChannel: editedTicket.communicationChannel,
                 relatedTickets: editedTicket.relatedTickets.join(","), // Convert array to comma-separated string
             }
 
@@ -497,6 +498,24 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                         </div>
                                     ) : (
                                         <p className="text-gray-700">{editedTicket.assignee || "Not assigned"}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-semibold text-gray-500">Communication Channel</h3>
+                                    {editMode ? (
+                                        <Input
+                                            name="communicationChannel"
+                                            value={safeValue(editedTicket.communicationChannel)}
+                                            onChange={handleInputChange}
+                                            placeholder="e.g. Yankov phone"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-700">
+                                            {editedTicket.communicationChannel || "Not specified"}
+                                        </p>
+                                    )}
+                                    {editMode && changedFields.communicationChannel && (
+                                        <ChangeIndicator show={true} />
                                     )}
                                 </div>
                                 <div>

@@ -53,6 +53,7 @@ export async function POST(request) {
             status_badge: "Open",
             selected_event: body.event,
             client_note: body.shortDescription,
+            communication_channel: body.communicationChannel || null,
             updated_at: new Date(),
             comments: JSON.stringify([]),
         })

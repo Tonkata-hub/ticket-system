@@ -86,6 +86,10 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false,
         defaultValue: DataTypes.NOW,
     },
+    communication_channel: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 }, {
     tableName: 'tickets',
     timestamps: false,

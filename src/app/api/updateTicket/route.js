@@ -50,6 +50,7 @@ export async function PUT(request) {
             time_taken_to_solve: body.timeTakenToSolve,
             related_tickets: body.relatedTickets || "",
             comments: body.comments ? JSON.stringify(body.comments) : ticket.comments,
+            communication_channel: body.communicationChannel,
             updated_at: new Date(),
         }
 
