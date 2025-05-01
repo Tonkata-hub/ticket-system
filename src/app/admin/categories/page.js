@@ -50,9 +50,10 @@ export default function CategoriesPage() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [currentCategory, setCurrentCategory] = useState(null)
     const [formData, setFormData] = useState({
-        type: "issueType", // Default to first category type
+        type: "issueType",
         value: "",
         label: "",
+        description: "",
     })
 
     // Fetch categories on component mount
@@ -90,7 +91,10 @@ export default function CategoriesPage() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    description: formData.type === "priority" ? formData.description : null,
+                }),
             })
 
             if (!res.ok) {
@@ -122,7 +126,10 @@ export default function CategoriesPage() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    description: formData.type === "priority" ? formData.description : null,
+                }),
             })
 
             if (!res.ok) {
@@ -170,6 +177,7 @@ export default function CategoriesPage() {
             type: category.type,
             value: category.value,
             label: category.label,
+            description: category.description || "",
         })
         setIsEditDialogOpen(true)
     }
@@ -267,6 +275,7 @@ export default function CategoriesPage() {
                                             <TableRow>
                                                 <TableHead>Value</TableHead>
                                                 <TableHead>Label</TableHead>
+                                                {activeTab === "priority" && <TableHead>Description</TableHead>}
                                                 <TableHead className="text-right w-[120px]">Actions</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -275,6 +284,13 @@ export default function CategoriesPage() {
                                                 <TableRow key={category.id}>
                                                     <TableCell className="font-medium">{category.value}</TableCell>
                                                     <TableCell>{category.label}</TableCell>
+
+                                                    {activeTab === "priority" && (
+                                                        <TableCell className="text-sm text-gray-700 italic">
+                                                            {category.description || <span className="text-gray-400">No description</span>}
+                                                        </TableCell>
+                                                    )}
+
                                                     <TableCell className="text-right">
                                                         <div className="flex justify-end gap-2">
                                                             <Button
@@ -365,6 +381,23 @@ export default function CategoriesPage() {
                                 <p className="text-xs text-gray-500 mt-1">The text displayed to users</p>
                             </div>
                         </div>
+
+                        {formData.type === "priority" && (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <label htmlFor="description" className="text-right text-sm font-medium">
+                                    Description
+                                </label>
+                                <div className="col-span-3">
+                                    <Input
+                                        id="description"
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Optional description (tooltip info)"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">Shown as tooltip on (i) icon for priorities</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <DialogFooter>
@@ -413,6 +446,21 @@ export default function CategoriesPage() {
                                 />
                             </div>
                         </div>
+
+                        {formData.type === "priority" && (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <label htmlFor="edit-description" className="text-right text-sm font-medium">
+                                    Description
+                                </label>
+                                <div className="col-span-3">
+                                    <Input
+                                        id="edit-description"
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <DialogFooter>
@@ -447,4 +495,5 @@ export default function CategoriesPage() {
             </AlertDialog>
         </div>
     )
+
 }

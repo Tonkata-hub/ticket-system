@@ -1,3 +1,4 @@
+// app/api/admin/categories/[id]/route.js
 import { NextResponse } from "next/server"
 import { decrypt } from "@/lib/session"
 import { cookies } from "next/headers"
