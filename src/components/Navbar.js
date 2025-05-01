@@ -5,16 +5,18 @@ import Link from "next/link"
 import { MessageSquare, User, LogOut, LogIn, Tag, Menu, X, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { logout } from "@/app/login/actions"
 import { useAuth } from "@/app/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function Navbar() {
-    const { isLoggedIn, setIsLoggedIn, role } = useAuth()
+    const { isLoggedIn, setIsLoggedIn, role, userEmail } = useAuth()
     const isAdmin = role === "admin"
     const router = useRouter()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [dropdownHovered, setDropdownHovered] = useState(false)
 
     const handleLogOut = async () => {
         const res = await logout()
@@ -27,6 +29,16 @@ export default function Navbar() {
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen)
+    }
+
+    // Get initials from email for avatar
+    const getInitials = (email) => {
+        if (!email) return isAdmin ? "AD" : "US"
+        const parts = email.split("@")[0].split(".")
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase()
+        }
+        return email.substring(0, 2).toUpperCase()
     }
 
     // Animation variants
@@ -89,26 +101,67 @@ export default function Navbar() {
                             )}
                         </>
                     )}
-                    <DropdownMenu>
+                    <DropdownMenu onOpenChange={(open) => setDropdownHovered(open)}>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-10 w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                className={`h-10 w-10 rounded-full transition-all duration-200 ${dropdownHovered ? "bg-blue-100" : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"}`}
+                                onMouseEnter={() => setDropdownHovered(true)}
+                                onMouseLeave={() => setDropdownHovered(false)}
                             >
-                                <User style={{ height: "1.5rem", width: "1.5rem" }} className="h-5 w-5" />
+                                {isLoggedIn ? (
+                                    <Avatar className="h-8 w-8 border border-blue-100">
+                                        <AvatarImage
+                                            src={`https://api.dicebear.com/7.x/initials/svg?seed=${userEmail || role}`}
+                                            alt="User avatar"
+                                        />
+                                        <AvatarFallback className="bg-blue-100 text-blue-600">{getInitials(userEmail)}</AvatarFallback>
+                                    </Avatar>
+                                ) : (
+                                    <User style={{ height: "1.5rem", width: "1.5rem" }} className="h-5 w-5" />
+                                )}
                                 <span className="sr-only">Account menu</span>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuContent align="end" className="w-64">
                             {isLoggedIn ? (
-                                <DropdownMenuItem
-                                    onClick={handleLogOut}
-                                    className="py-3 text-base text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                                >
-                                    <LogOut style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
-                                    <span>Log out</span>
-                                </DropdownMenuItem>
+                                <>
+                                    <div className="p-4 border-b border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="h-10 w-10 border border-blue-100">
+                                                <AvatarImage
+                                                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${userEmail || role}`}
+                                                    alt="User avatar"
+                                                />
+                                                <AvatarFallback className="bg-blue-100 text-blue-600">{getInitials(userEmail)}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium text-gray-900">
+                                                    {userEmail || (role === "admin" ? "Administrator" : "Client User")}
+                                                </span>
+                                                <span className="text-xs text-gray-500 truncate">{userEmail || role}</span>
+                                            </div>
+                                        </div>
+                                        <div className="mt-3 pt-2 border-t border-dashed border-gray-100">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs text-gray-500">Account type:</span>
+                                                <span
+                                                    className={`text-xs font-medium px-2 py-1 rounded-full ${role === "admin" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}`}
+                                                >
+                                                    {role === "admin" ? "Administrator" : "Client"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <DropdownMenuItem
+                                        onClick={handleLogOut}
+                                        className="py-3 text-base text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                                    >
+                                        <LogOut style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
+                                        <span>Log out</span>
+                                    </DropdownMenuItem>
+                                </>
                             ) : (
                                 <Link href="/login">
                                     <DropdownMenuItem className="py-3 text-base text-green-600 focus:text-green-600 focus:bg-green-50 cursor-pointer">
@@ -196,15 +249,42 @@ export default function Navbar() {
                                 <motion.div variants={itemVariants} className="border-t my-2"></motion.div>
 
                                 {isLoggedIn ? (
-                                    <motion.div variants={itemVariants}>
-                                        <button
-                                            onClick={handleLogOut}
-                                            className="flex items-center py-2 px-3 rounded-md text-red-600 hover:bg-red-50 w-full text-left"
-                                        >
-                                            <LogOut className="h-5 w-5 mr-3" />
-                                            <span className="text-base font-medium">Log out</span>
-                                        </button>
-                                    </motion.div>
+                                    <>
+                                        <motion.div variants={itemVariants} className="px-3 py-3 bg-gray-50 rounded-md mb-2">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-10 w-10 border border-blue-100">
+                                                    <AvatarImage
+                                                        src={`https://api.dicebear.com/7.x/initials/svg?seed=${userEmail || role}`}
+                                                        alt="User avatar"
+                                                    />
+                                                    <AvatarFallback className="bg-blue-100 text-blue-600">
+                                                        {getInitials(userEmail)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium text-gray-900">
+                                                        {userEmail || (role === "admin" ? "Administrator" : "Client User")}
+                                                    </span>
+                                                    <div className="flex items-center gap-1">
+                                                        <span
+                                                            className={`text-xs px-2 py-0.5 rounded-full ${role === "admin" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}`}
+                                                        >
+                                                            {role === "admin" ? "Administrator" : "Client"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                        <motion.div variants={itemVariants}>
+                                            <button
+                                                onClick={handleLogOut}
+                                                className="flex items-center py-2 px-3 rounded-md text-red-600 hover:bg-red-50 w-full text-left"
+                                            >
+                                                <LogOut className="h-5 w-5 mr-3" />
+                                                <span className="text-base font-medium">Log out</span>
+                                            </button>
+                                        </motion.div>
+                                    </>
                                 ) : (
                                     <motion.div variants={itemVariants}>
                                         <Link
