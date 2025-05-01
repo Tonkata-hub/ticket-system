@@ -96,6 +96,7 @@ export async function PUT(request, { params }) {
             type: body.type,
             value: body.value,
             label: body.label,
+            description: body.type === "priority" ? body.description || null : null,
         })
 
         return NextResponse.json({ success: true, category })
