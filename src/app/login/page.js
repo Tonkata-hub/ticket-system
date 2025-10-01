@@ -26,7 +26,7 @@ export default function LoginPage() {
         const res = await login(null, formData);
         if (res.success) {
             setIsLoggedIn(true); // Update global login state immediately
-            router.push("/tickets");
+            router.push("/");
         } else {
             setErrors(res.errors || null);
             setServerError(res.error || null);

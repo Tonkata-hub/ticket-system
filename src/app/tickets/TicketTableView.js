@@ -242,12 +242,12 @@ export default function TicketTableView({
                     </div>
 
                     {/* Pagination controls */}
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center justify-between my-4">
                         <div className="flex items-center gap-2">
                             <span className="text-sm text-muted-foreground">Rows per page:</span>
                             <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
                                 <SelectTrigger className="w-[80px] h-8">
-                                    <SelectValue placeholder="10" />
+                                    <SelectValue placeholder="50" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="5">5</SelectItem>

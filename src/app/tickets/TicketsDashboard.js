@@ -38,9 +38,10 @@ export default function TicketsDashboard() {
         }
     }, [])
 
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: "ascending" })
+    const [sortConfig, setSortConfig] = useState({ key: "updatedAt", direction: "descending" })
+    const [sortBy, setSortBy] = useState("updatedAt")
     const [currentPage, setCurrentPage] = useState(1)
-    const [itemsPerPage, setItemsPerPage] = useState(10)
+    const [itemsPerPage, setItemsPerPage] = useState(50)
 
     // Fetch tickets on component mount
     useEffect(() => {
@@ -50,6 +51,10 @@ export default function TicketsDashboard() {
     useEffect(() => {
         localStorage.setItem("ticketsViewMode", viewMode)
     }, [viewMode])
+
+    useEffect(() => {
+        setSortConfig({ key: sortBy, direction: sortBy === "selectedEvent" ? "ascending" : "descending" })
+    }, [sortBy])
 
     const fetchTickets = async () => {
         setLoading(true)
@@ -115,13 +120,22 @@ export default function TicketsDashboard() {
                 (filters.createdBy === "" || filters.createdBy === "all" || ticket.createdBy === filters.createdBy),
         )
         .sort((a, b) => {
-            if (a.statusBadge === "Closed" && b.statusBadge !== "Closed") {
-                return 1
+            // Always push Closed tickets after non-Closed
+            if (a.statusBadge === "Closed" && b.statusBadge !== "Closed") return 1
+            if (a.statusBadge !== "Closed" && b.statusBadge === "Closed") return -1
+
+            // Selected sort criteria
+            if (sortBy === "selectedEvent") {
+                const aName = (a.selectedEvent || "").toLowerCase()
+                const bName = (b.selectedEvent || "").toLowerCase()
+                if (aName < bName) return -1
+                if (aName > bName) return 1
+                return 0
+            } else {
+                const aTime = new Date(a[sortBy]).getTime()
+                const bTime = new Date(b[sortBy]).getTime()
+                return bTime - aTime // Newest first
             }
-            if (a.statusBadge !== "Closed" && b.statusBadge === "Closed") {
-                return -1
-            }
-            return 0
         })
 
     // Get unique values for filters from the loaded tickets
@@ -145,7 +159,8 @@ export default function TicketsDashboard() {
             createdBy: "all",
         })
         setSearchTerm("")
-        setSortConfig({ key: null, direction: "ascending" })
+        setSortBy("updatedAt")
+        setSortConfig({ key: "updatedAt", direction: "descending" })
         setCurrentPage(1)
     }
 
@@ -220,6 +235,17 @@ export default function TicketsDashboard() {
                     <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
                 </div>
                 <div className="grid grid-cols-2 gap-4 items-center sm:flex sm:flex-wrap w-full sm:w-auto">
+                    <Select value={sortBy} onValueChange={(value) => setSortBy(value)} disabled={loading}>
+                        <SelectTrigger className="w-full sm:w-[180px]">
+                            <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="updatedAt">Last updated</SelectItem>
+                            <SelectItem value="createdAt">Date created</SelectItem>
+                            <SelectItem value="selectedEvent">Event name</SelectItem>
+                        </SelectContent>
+                    </Select>
+
                     <Select
                         value={filters.statusBadge}
                         onValueChange={(value) => setFilters({ ...filters, statusBadge: value })}
