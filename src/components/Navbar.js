@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { logout } from "@/app/login/actions"
-import { useAuth } from "@/app/context/AuthContext"
+import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { login } from "./actions";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";

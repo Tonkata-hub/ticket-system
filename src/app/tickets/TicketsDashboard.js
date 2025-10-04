@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { motion, AnimatePresence } from "framer-motion"
 import RefreshButton from "./RefreshButton"
 import AdminBadge from "@/app/tickets/AdminBadge"
-import { useAuth } from "../context/AuthContext"
+import { useAuth } from "../../context/AuthContext"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import TicketTableView from "./TicketTableView"

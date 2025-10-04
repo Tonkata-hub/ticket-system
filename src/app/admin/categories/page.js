@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { useAuth } from "@/app/context/AuthContext"
+import { useAuth } from "@/context/AuthContext"
 import { Plus, Trash2, Edit, Save, RefreshCw, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
