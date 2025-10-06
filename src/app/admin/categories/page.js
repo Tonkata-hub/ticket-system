@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { useAuth } from "@/context/AuthContext"
-import { Plus, Trash2, Edit, Save, RefreshCw, AlertTriangle } from "lucide-react"
+import { Plus, Trash2, Edit, Save, RefreshCw, AlertTriangle, GripVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -30,6 +30,9 @@ import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import AdminBadge from "@/app/tickets/AdminBadge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DndContext, closestCenter } from "@dnd-kit/core"
+import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 // Predefined category types with friendly names
 const CATEGORY_TYPES = {
@@ -49,6 +52,8 @@ export default function CategoriesPage() {
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [currentCategory, setCurrentCategory] = useState(null)
+    const [isSavingOrder, setIsSavingOrder] = useState(false)
+    const [isOrderDirty, setIsOrderDirty] = useState(false)
     const [formData, setFormData] = useState({
         type: "issueType",
         value: "",
@@ -196,6 +201,73 @@ export default function CategoriesPage() {
         setIsAddDialogOpen(true)
     }
 
+    // Drag & Drop helpers
+    function SortableRow({ category, children }) {
+        const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: category.id })
+        const style = {
+            transform: CSS.Transform.toString(transform),
+            transition,
+        }
+        return (
+            <TableRow ref={setNodeRef} style={style} className={isDragging ? "opacity-50" : ""}>
+                <TableCell className="w-[36px]">
+                    <button
+                        aria-label="Drag handle"
+                        {...attributes}
+                        {...listeners}
+                        className="cursor-grab p-1 text-gray-400 hover:text-gray-600"
+                        onMouseDown={(e) => e.preventDefault()}
+                    >
+                        <GripVertical className="h-4 w-4" />
+                    </button>
+                </TableCell>
+                {children}
+            </TableRow>
+        )
+    }
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+
+        setCategories((prev) => {
+            const currentType = activeTab
+            const withinType = prev.filter((c) => c.type === currentType)
+            const otherTypes = prev.filter((c) => c.type !== currentType)
+            const oldIndex = withinType.findIndex((c) => c.id === active.id)
+            const newIndex = withinType.findIndex((c) => c.id === over.id)
+            const moved = arrayMove(withinType, oldIndex, newIndex)
+            setIsOrderDirty(true)
+            return [...otherTypes, ...moved]
+        })
+    }
+
+    const handleSaveOrder = async () => {
+        try {
+            setIsSavingOrder(true)
+            const orderedIds = categories
+                .filter((c) => c.type === activeTab)
+                .map((c) => c.id)
+            const res = await fetch("/api/admin/categories", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: activeTab, orderedIds }),
+            })
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}))
+                throw new Error(err.error || "Failed to save order")
+            }
+            toast.success("Order saved")
+            setIsOrderDirty(false)
+            fetchCategories()
+        } catch (e) {
+            console.error(e)
+            toast.error(e.message)
+        } finally {
+            setIsSavingOrder(false)
+        }
+    }
+
     // Filter categories based on the active tab
     const filteredCategories = categories.filter((cat) => cat.type === activeTab)
 
@@ -252,14 +324,21 @@ export default function CategoriesPage() {
                                 </TabsTrigger>
                             ))}
                         </TabsList>
-
-                        <Button
-                            onClick={() => openAddDialog(activeTab)}
-                            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700"
-                        >
-                            <Plus className="h-4 w-4" />
-                            <span>Add {CATEGORY_TYPES[activeTab].slice(0, -1)}</span>
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            {isOrderDirty && (
+                                <Button onClick={handleSaveOrder} disabled={isSavingOrder} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+                                    <Save className="h-4 w-4" />
+                                    <span>{isSavingOrder ? "Saving..." : "Save Order"}</span>
+                                </Button>
+                            )}
+                            <Button
+                                onClick={() => openAddDialog(activeTab)}
+                                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700"
+                            >
+                                <Plus className="h-4 w-4" />
+                                <span>Add {CATEGORY_TYPES[activeTab].slice(0, -1)}</span>
+                            </Button>
+                        </div>
                     </div>
 
                     {Object.keys(CATEGORY_TYPES).map((type) => (
@@ -269,55 +348,58 @@ export default function CategoriesPage() {
                                     <RefreshCw className="h-8 w-8 text-purple-600 animate-spin" />
                                 </div>
                             ) : filteredCategories.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Value</TableHead>
-                                                <TableHead>Label</TableHead>
-                                                {activeTab === "priority" && <TableHead>Description</TableHead>}
-                                                <TableHead className="text-right w-[120px]">Actions</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {filteredCategories.map((category) => (
-                                                <TableRow key={category.id}>
-                                                    <TableCell className="font-medium">{category.value}</TableCell>
-                                                    <TableCell>{category.label}</TableCell>
-
-                                                    {activeTab === "priority" && (
-                                                        <TableCell className="text-sm text-gray-700 italic">
-                                                            {category.description || <span className="text-gray-400">No description</span>}
-                                                        </TableCell>
-                                                    )}
-
-                                                    <TableCell className="text-right">
-                                                        <div className="flex justify-end gap-2">
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => openEditDialog(category)}
-                                                                className="h-8 w-8 p-0 text-blue-600"
-                                                            >
-                                                                <Edit className="h-4 w-4" />
-                                                                <span className="sr-only">Edit</span>
-                                                            </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => openDeleteDialog(category)}
-                                                                className="h-8 w-8 p-0 text-red-600"
-                                                            >
-                                                                <Trash2 className="h-4 w-4" />
-                                                                <span className="sr-only">Delete</span>
-                                                            </Button>
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
+                                <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                                    <SortableContext items={filteredCategories.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+                                        <div className="overflow-x-auto">
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead className="w-[36px]"></TableHead>
+                                                        <TableHead>Value</TableHead>
+                                                        <TableHead>Label</TableHead>
+                                                        {activeTab === "priority" && <TableHead>Description</TableHead>}
+                                                        <TableHead className="text-right w-[120px]">Actions</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {filteredCategories.map((category) => (
+                                                        <SortableRow key={category.id} category={category}>
+                                                            <TableCell className="font-medium">{category.value}</TableCell>
+                                                            <TableCell>{category.label}</TableCell>
+                                                            {activeTab === "priority" && (
+                                                                <TableCell className="text-sm text-gray-700 italic">
+                                                                    {category.description || <span className="text-gray-400">No description</span>}
+                                                                </TableCell>
+                                                            )}
+                                                            <TableCell className="text-right">
+                                                                <div className="flex justify-end gap-2">
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={() => openEditDialog(category)}
+                                                                        className="h-8 w-8 p-0 text-blue-600"
+                                                                    >
+                                                                        <Edit className="h-4 w-4" />
+                                                                        <span className="sr-only">Edit</span>
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={() => openDeleteDialog(category)}
+                                                                        className="h-8 w-8 p-0 text-red-600"
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                        <span className="sr-only">Delete</span>
+                                                                    </Button>
+                                                                </div>
+                                                            </TableCell>
+                                                        </SortableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </SortableContext>
+                                </DndContext>
                             ) : (
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
                                     <div className="bg-gray-100 rounded-full p-3 mb-4">

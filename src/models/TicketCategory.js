@@ -23,6 +23,10 @@ const TicketCategory = sequelize.define("TicketCategory", {
         type: DataTypes.STRING(255),
         allowNull: true,
     },
+    order: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
 }, {
     tableName: "ticket_categories",
     timestamps: false,
