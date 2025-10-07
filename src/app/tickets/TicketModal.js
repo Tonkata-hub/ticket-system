@@ -66,6 +66,19 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
         setChangedFields({})
     }, [ticket])
 
+    // Auto-enable edit mode when an admin opens a ticket or switches tickets
+    useEffect(() => {
+        if (isOpen && isAdmin) {
+            setEditMode(true)
+        }
+    }, [isOpen, isAdmin])
+
+    useEffect(() => {
+        if (isAdmin) {
+            setEditMode(true)
+        }
+    }, [ticket?.uid, isAdmin])
+
     // Check for changes between original and edited ticket
     const checkForChanges = (updatedTicket) => {
         const newChangedFields = {}
@@ -356,6 +369,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                                 value={safeValue(editedTicket.selectedEvent)}
                                                 onChange={handleInputChange}
                                                 className="font-bold text-2xl"
+                                                disabled={isAdmin}
                                             />
                                         ) : (
                                             editedTicket.selectedEvent || "No Event Specified"
@@ -399,6 +413,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                                 <Select
                                                     value={editedTicket.priority}
                                                     onValueChange={(value) => handleSelectChange("priority", value)}
+                                                    disabled={isAdmin}
                                                 >
                                                     <SelectTrigger className="w-[140px]">
                                                         <SelectValue placeholder="Priority" />
@@ -439,6 +454,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                             onChange={handleInputChange}
                                             className="mb-1"
                                             placeholder="No description provided"
+                                            disabled={isAdmin}
                                         />
                                         <div className="flex justify-end">
                                             <ChangeIndicator show={changedFields.clientNote} />
@@ -461,7 +477,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                     <h3 className="text-sm font-semibold text-gray-500">Issue Type</h3>
                                     {editMode ? (
                                         <div className="flex flex-col">
-                                            <Input name="issueType" value={safeValue(editedTicket.issueType)} onChange={handleInputChange} />
+                                            <Input name="issueType" value={safeValue(editedTicket.issueType)} onChange={handleInputChange} disabled={isAdmin} />
                                             <div className="flex justify-end mt-1">
                                                 <ChangeIndicator show={changedFields.issueType} />
                                             </div>
@@ -478,6 +494,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                                 name="currentCondition"
                                                 value={safeValue(editedTicket.currentCondition)}
                                                 onChange={handleInputChange}
+                                                disabled={isAdmin}
                                             />
                                             <div className="flex justify-end mt-1">
                                                 <ChangeIndicator show={changedFields.currentCondition} />
@@ -564,6 +581,7 @@ export default function TicketModal({ ticket, onClose, isOpen, isAdmin, onUpdate
                                             <Select
                                                 value={editedTicket.problemSolvedAt || ""}
                                                 onValueChange={(value) => handleSelectChange("problemSolvedAt", value)}
+                                                disabled={false}
                                             >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select location" />
