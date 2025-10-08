@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import MultiSelectFilter from "./MultiSelectFilter"
 
 export default function TicketFilters({
     searchTerm,
@@ -48,59 +49,29 @@ export default function TicketFilters({
                     </SelectContent>
                 </Select>
 
-                <Select
-                    value={filters.statusBadge}
-                    onValueChange={(value) => onFilterChange({ ...filters, statusBadge: value })}
+                <MultiSelectFilter
+                    label="Statuses"
+                    options={uniqueStatuses}
+                    selected={filters.statusBadge}
+                    onChange={(value) => onFilterChange({ ...filters, statusBadge: value })}
                     disabled={loading}
-                >
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="All Statuses" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        {uniqueStatuses.map((status) => (
-                            <SelectItem key={status} value={status}>
-                                {status}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                />
 
-                <Select
-                    value={filters.priority}
-                    onValueChange={(value) => onFilterChange({ ...filters, priority: value })}
+                <MultiSelectFilter
+                    label="Priorities"
+                    options={uniquePriorities}
+                    selected={filters.priority}
+                    onChange={(value) => onFilterChange({ ...filters, priority: value })}
                     disabled={loading}
-                >
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="All Priorities" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Priorities</SelectItem>
-                        {uniquePriorities.map((priority) => (
-                            <SelectItem key={priority} value={priority}>
-                                {priority}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                />
 
-                <Select
-                    value={filters.createdBy}
-                    onValueChange={(value) => onFilterChange({ ...filters, createdBy: value })}
+                <MultiSelectFilter
+                    label="Creators"
+                    options={uniqueCreators}
+                    selected={filters.createdBy}
+                    onChange={(value) => onFilterChange({ ...filters, createdBy: value })}
                     disabled={loading}
-                >
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="All Creators" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Creators</SelectItem>
-                        {uniqueCreators.map((creator) => (
-                            <SelectItem key={creator} value={creator}>
-                                {creator}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                />
 
                 <motion.div whileHover={{ scale: loading ? 1 : 1.05 }} whileTap={{ scale: loading ? 1 : 0.95 }}>
                     <Button

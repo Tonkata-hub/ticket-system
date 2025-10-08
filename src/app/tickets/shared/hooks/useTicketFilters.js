@@ -6,16 +6,16 @@ export function useTicketFilters(tickets) {
     const [searchTerm, setSearchTerm] = useState("")
     const [sortBy, setSortBy] = useState("updatedAt")
     const [filters, setFilters] = useState({
-        statusBadge: "all",
-        priority: "all",
-        createdBy: "all",
+        statusBadge: [],
+        priority: [],
+        createdBy: [],
     })
 
     const resetFilters = () => {
         setFilters({
-            statusBadge: "all",
-            priority: "all",
-            createdBy: "all",
+            statusBadge: [],
+            priority: [],
+            createdBy: [],
         })
         setSearchTerm("")
         setSortBy("updatedAt")
@@ -28,9 +28,9 @@ export function useTicketFilters(tickets) {
                 (ticket) =>
                     (ticket.selectedEvent?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         ticket.uid?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-                    (filters.statusBadge === "" || filters.statusBadge === "all" || ticket.statusBadge === filters.statusBadge) &&
-                    (filters.priority === "" || filters.priority === "all" || ticket.priority === filters.priority) &&
-                    (filters.createdBy === "" || filters.createdBy === "all" || ticket.createdBy === filters.createdBy),
+                    (filters.statusBadge.length === 0 || filters.statusBadge.includes(ticket.statusBadge)) &&
+                    (filters.priority.length === 0 || filters.priority.includes(ticket.priority)) &&
+                    (filters.createdBy.length === 0 || filters.createdBy.includes(ticket.createdBy)),
             )
             .sort((a, b) => {
                 // Always push Closed tickets after non-Closed
