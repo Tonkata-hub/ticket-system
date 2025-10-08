@@ -59,4 +59,3 @@ export default function RefreshButton({ onRefresh, disabled = false }) {
         </motion.button>
     )
 }
-

@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import AdminBadge from "@/app/tickets/AdminBadge"
+import AdminBadge from "@/app/tickets/shared/components/AdminBadge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DndContext, closestCenter } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable"
