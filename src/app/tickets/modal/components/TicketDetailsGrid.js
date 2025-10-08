@@ -110,7 +110,7 @@ export function TicketDetailsGrid({ editMode, editedTicket, isAdmin, changedFiel
                 <h3 className="text-sm font-semibold text-gray-500">Current Condition by Admin</h3>
                 {editMode ? (
                     <div className="flex flex-col">
-                        <Input
+                        <Textarea
                             name="currentConditionByAdmin"
                             value={safeValue(editedTicket.currentConditionByAdmin)}
                             onChange={onInputChange}
