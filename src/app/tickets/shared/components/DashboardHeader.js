@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button"
 import { TableIcon, LayoutGridIcon } from "lucide-react"
 import RefreshButton from "./RefreshButton"
 import AdminBadge from "./AdminBadge"
+import { useI18n } from "@/context/I18nContext"
 
 export default function DashboardHeader({ isAdmin, loading, onRefresh, viewMode, onToggleView }) {
+    const { t } = useI18n()
     return (
         <div className="flex justify-between items-center mb-8">
             <div className="flex items-center">
@@ -16,7 +18,7 @@ export default function DashboardHeader({ isAdmin, loading, onRefresh, viewMode,
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    Tickets Dashboard
+                    {t("tickets.dashboardTitle")}
                 </motion.h1>
                 {isAdmin && <AdminBadge className="ml-3" />}
             </div>
@@ -28,12 +30,12 @@ export default function DashboardHeader({ isAdmin, loading, onRefresh, viewMode,
                         {viewMode === "card" ? (
                             <>
                                 <TableIcon className="h-4 w-4" />
-                                <span>Table View</span>
+                                <span>{t("tickets.tableView")}</span>
                             </>
                         ) : (
                             <>
                                 <LayoutGridIcon className="h-4 w-4" />
-                                <span>Card View</span>
+                                <span>{t("tickets.cardView")}</span>
                             </>
                         )}
                     </Button>

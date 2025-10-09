@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useI18n } from "@/context/I18nContext";
 
 export default function LoginPage() {
     const { setIsLoggedIn } = useAuth();
+    const { t } = useI18n();
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
@@ -37,22 +39,13 @@ export default function LoginPage() {
         <div className="w-full min-h-[calc(100vh-64px-69px)] bg-blue-50 flex items-center justify-center">
             <main className="container mx-auto px-4 py-12">
                 <div className="max-w-lg mx-auto bg-white rounded-lg shadow-lg p-8">
-                    <h1 className="text-2xl font-bold text-center text-[#3056d3] mb-8">
-                        Вход в системата
-                    </h1>
+                    <h1 className="text-2xl font-bold text-center text-[#3056d3] mb-8">{t("login.title")}</h1>
 
-                    <p className="text-center text-gray-600 mb-8">
-                        Въведете вашите данни за достъп до системата за билети
-                    </p>
+                    <p className="text-center text-gray-600 mb-8">{t("login.subtitle")}</p>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
-                            <label
-                                htmlFor="email"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Имейл адрес
-                            </label>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">{t("login.email")}</label>
                             <input
                                 id="email"
                                 name="email"
@@ -68,18 +61,8 @@ export default function LoginPage() {
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <label
-                                    htmlFor="password"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Парола
-                                </label>
-                                <Link
-                                    href="/forgot-password"
-                                    className="text-sm text-[#3056d3] hover:underline"
-                                >
-                                    Забравена парола?
-                                </Link>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">{t("login.password")}</label>
+                                <Link href="/forgot-password" className="text-sm text-[#3056d3] hover:underline">{t("login.forgotPassword")}</Link>
                             </div>
                             <div className="relative">
                                 <input
@@ -133,13 +116,8 @@ export default function LoginPage() {
 
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
-                            Нямате акаунт?{" "}
-                            <Link
-                                href="/register"
-                                className="text-[#3056d3] hover:underline"
-                            >
-                                Регистрирайте се
-                            </Link>
+                            {t("login.noAccount")} {" "}
+                            <Link href="/register" className="text-[#3056d3] hover:underline">{t("login.register")}</Link>
                         </p>
                     </div>
                 </div>
@@ -173,7 +151,8 @@ function SubmitButton() {
             type="submit"
             className="w-full bg-[#3056d3] text-white py-2 px-4 rounded-md hover:bg-[#2045c0] transition-colors"
         >
-            Вход
+            {/* Using a hook in nested component is awkward; keep static label, main button uses form submit */}
+            Log in
         </button>
     );
 }

@@ -3,6 +3,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AnimatePresence, motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
+import { useI18n } from "@/context/I18nContext"
 
 export default function OptionSelect({
     label,
@@ -18,6 +19,7 @@ export default function OptionSelect({
     disabled = false,
     extraFieldError,
 }) {
+    const { t } = useI18n()
     return (
         <div className="space-y-2">
             <label className="text-md font-medium text-gray-700">{label}</label>
@@ -32,7 +34,7 @@ export default function OptionSelect({
                     }}
                     className={`w-full ${error ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                 >
-                    <SelectValue placeholder={`Изберете ${label.toLowerCase()}`} />
+                    <SelectValue placeholder={t("home.select", { label: label.toLowerCase() })} />
                 </SelectTrigger>
                 <SelectContent>
                     {options.map((option) => (
@@ -54,7 +56,7 @@ export default function OptionSelect({
                         <Input
                             value={extraFieldValue}
                             onChange={(e) => onExtraChange(e.target.value)}
-                            placeholder={`Моля, уточнете ${label.toLowerCase()}`}
+                            placeholder={t("home.pleaseSpecify", { label: label.toLowerCase() })}
                             className={`mt-2 ${extraFieldError ? "border-red-500" : "border-blue-300"} bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                             disabled={disabled}
                         />

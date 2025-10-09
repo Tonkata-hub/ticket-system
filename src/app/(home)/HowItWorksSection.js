@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
+import { useI18n } from "@/context/I18nContext"
 
 // Animation variants
 const containerVariants = {
@@ -52,6 +53,7 @@ const titleVariants = {
 }
 
 export default function HowItWorksSection() {
+    const { t } = useI18n()
     return (
         <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center bg-orange-50">
             <div className="container px-4 md:px-6">
@@ -62,7 +64,7 @@ export default function HowItWorksSection() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                 >
-                    Как работи
+                    {t("howItWorks.title")}
                 </motion.h2>
                 <motion.div
                     className="grid gap-8 md:grid-cols-3"
@@ -71,20 +73,16 @@ export default function HowItWorksSection() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                 >
-                    <StepCard
-                        number="1"
-                        title="Подайте билет"
-                        description="Попълнете формуляра за билет с подробности за вашия проблем или запитване."
-                    />
+                    <StepCard number="1" title={t("howItWorks.steps.one.title")} description={t("howItWorks.steps.one.description")} />
                     <StepCard
                         number="2"
-                        title="Получете потвърждение"
-                        description="Получете незабавно потвърждение с номера на вашия билет за справка."
+                        title={t("howItWorks.steps.two.title")}
+                        description={t("howItWorks.steps.two.description")}
                     />
                     <StepCard
                         number="3"
-                        title="Очаквайте съдействие"
-                        description="Нашият екип преглежда вашия билет и осигурява навременна помощ за разрешаване на проблема."
+                        title={t("howItWorks.steps.three.title")}
+                        description={t("howItWorks.steps.three.description")}
                     />
                 </motion.div>
             </div>

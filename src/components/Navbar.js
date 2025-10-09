@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { logout } from "@/app/login/actions"
+import { useI18n } from "@/context/I18nContext"
+import LanguageSwitcher from "@/components/LanguageSwitcher"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -17,6 +19,7 @@ export default function Navbar() {
     const router = useRouter()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [dropdownHovered, setDropdownHovered] = useState(false)
+    const { t } = useI18n()
 
     const handleLogOut = async () => {
         const res = await logout()
@@ -76,7 +79,7 @@ export default function Navbar() {
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
                 <Link className="flex items-center justify-center" href="/">
                     <MessageSquare className="h-8 w-8 text-blue-600" />
-                    <span className="ml-2 text-xl font-bold text-blue-600">TicketSystem</span>
+                    <span className="ml-2 text-xl font-bold text-blue-600">{t("common.appName")}</span>
                 </Link>
 
                 {/* Desktop Navigation */}
@@ -86,7 +89,7 @@ export default function Navbar() {
                             <Link href="/tickets">
                                 <Button variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 lg:mr-4">
                                     <Tag style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
-                                    <span className="text-sm md:text-lg">Моите билети</span>
+                                    <span className="text-sm md:text-lg">{t("common.myTickets")}</span>
                                 </Button>
                             </Link>
 
@@ -95,12 +98,13 @@ export default function Navbar() {
                                 <Link href="/admin/categories">
                                     <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 lg:mr-4">
                                         <Settings style={{ height: "1.5rem", width: "1.5rem" }} className="mr-2 h-5 w-5" />
-                                        <span className="text-sm md:text-lg">Управление</span>
+                                        <span className="text-sm md:text-lg">{t("common.management")}</span>
                                     </Button>
                                 </Link>
                             )}
                         </>
                     )}
+                    <LanguageSwitcher />
                     <DropdownMenu onOpenChange={(open) => setDropdownHovered(open)}>
                         <DropdownMenuTrigger asChild>
                             <Button
@@ -121,7 +125,7 @@ export default function Navbar() {
                                 ) : (
                                     <User style={{ height: "1.5rem", width: "1.5rem" }} className="h-5 w-5" />
                                 )}
-                                <span className="sr-only">Account menu</span>
+                                <span className="sr-only">{t("common.accountMenu")}</span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-64">
@@ -137,19 +141,17 @@ export default function Navbar() {
                                                 <AvatarFallback className="bg-blue-100 text-blue-600">{getInitials(userEmail)}</AvatarFallback>
                                             </Avatar>
                                             <div className="flex flex-col">
-                                                <span className="font-medium text-gray-900">
-                                                    {userEmail || (role === "admin" ? "Administrator" : "Client User")}
-                                                </span>
+                                                <span className="font-medium text-gray-900">{userEmail || (role === "admin" ? t("common.administrator") : "Client User")}</span>
                                                 <span className="text-xs text-gray-500 truncate">{userEmail || role}</span>
                                             </div>
                                         </div>
                                         <div className="mt-3 pt-2 border-t border-dashed border-gray-100">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-xs text-gray-500">Account type:</span>
+                                                <span className="text-xs text-gray-500">{t("common.accountType")}</span>
                                                 <span
                                                     className={`text-xs font-medium px-2 py-1 rounded-full ${role === "admin" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}`}
                                                 >
-                                                    {role === "admin" ? "Administrator" : "Client"}
+                                                    {role === "admin" ? t("common.administrator") : t("common.client")}
                                                 </span>
                                             </div>
                                         </div>
@@ -159,14 +161,14 @@ export default function Navbar() {
                                         className="py-3 text-base text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
                                     >
                                         <LogOut style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
-                                        <span>Log out</span>
+                                        <span>{t("common.logout")}</span>
                                     </DropdownMenuItem>
                                 </>
                             ) : (
                                 <Link href="/login">
                                     <DropdownMenuItem className="py-3 text-base text-green-600 focus:text-green-600 focus:bg-green-50 cursor-pointer">
                                         <LogIn style={{ height: "1.2rem", width: "1.2rem" }} className="mr-3 h-5 w-5" />
-                                        <span>Log in</span>
+                                        <span>{t("common.login")}</span>
                                     </DropdownMenuItem>
                                 </Link>
                             )}
@@ -213,7 +215,7 @@ export default function Navbar() {
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
                                         <MessageSquare className="h-5 w-5 mr-3 text-blue-600" />
-                                        <span className="text-base font-medium">Home</span>
+                                        <span className="text-base font-medium">{t("common.home")}</span>
                                     </Link>
                                 </motion.div>
 
@@ -226,7 +228,7 @@ export default function Navbar() {
                                                 onClick={() => setMobileMenuOpen(false)}
                                             >
                                                 <Tag className="h-5 w-5 mr-3 text-blue-600" />
-                                                <span className="text-base font-medium">Моите билети</span>
+                                                <span className="text-base font-medium">{t("common.myTickets")}</span>
                                             </Link>
                                         </motion.div>
 
@@ -239,7 +241,7 @@ export default function Navbar() {
                                                     onClick={() => setMobileMenuOpen(false)}
                                                 >
                                                     <Settings className="h-5 w-5 mr-3 text-purple-600" />
-                                                    <span className="text-base font-medium">Управление</span>
+                                                    <span className="text-base font-medium">{t("common.management")}</span>
                                                 </Link>
                                             </motion.div>
                                         )}
@@ -281,7 +283,7 @@ export default function Navbar() {
                                                 className="flex items-center py-2 px-3 rounded-md text-red-600 hover:bg-red-50 w-full text-left"
                                             >
                                                 <LogOut className="h-5 w-5 mr-3" />
-                                                <span className="text-base font-medium">Log out</span>
+                                                <span className="text-base font-medium">{t("common.logout")}</span>
                                             </button>
                                         </motion.div>
                                     </>
@@ -293,7 +295,7 @@ export default function Navbar() {
                                             onClick={() => setMobileMenuOpen(false)}
                                         >
                                             <LogIn className="h-5 w-5 mr-3" />
-                                            <span className="text-base font-medium">Log in</span>
+                                            <span className="text-base font-medium">{t("common.login")}</span>
                                         </Link>
                                     </motion.div>
                                 )}

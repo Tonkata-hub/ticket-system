@@ -10,6 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
+import { useI18n } from "@/context/I18nContext"
 
 export default function MultiSelectFilter({
     label,
@@ -18,6 +19,7 @@ export default function MultiSelectFilter({
     onChange,
     disabled
 }) {
+    const { t } = useI18n()
     const toggleOption = (option) => {
         if (selected.includes(option)) {
             onChange(selected.filter(item => item !== option))
@@ -27,7 +29,7 @@ export default function MultiSelectFilter({
     }
 
     const displayText = selected.length === 0
-        ? `All ${label}`
+        ? t("tickets.allWithLabel", { label: label.toLowerCase() })
         : selected.length === 1
             ? selected[0]
             : `${selected.length} ${label}`
@@ -54,7 +56,7 @@ export default function MultiSelectFilter({
                             onCheckedChange={() => onChange([])}
                             className="font-medium text-red-600 hover:bg-red-50 hover:text-red-700 focus:bg-red-50 focus:text-red-700"
                         >
-                            Clear all
+                            {t("tickets.clearAll")}
                         </DropdownMenuCheckboxItem>
                         <DropdownMenuSeparator />
                     </>

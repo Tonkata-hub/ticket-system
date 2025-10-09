@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { useI18n } from "@/context/I18nContext"
 
 export function useNewTicketForm({ isLoggedIn }) {
+    const { t } = useI18n()
     const [formKey, setFormKey] = useState(0)
     const [formData, setFormData] = useState({
         issueType: "",
@@ -35,7 +37,7 @@ export function useNewTicketForm({ isLoggedIn }) {
                 if (isMounted) setTicketOptions(data)
             } catch (e) {
                 // Show a toast but avoid crashing the UI
-                toast.error("Неуспешно зареждане на опциите за билет")
+                toast.error(t("home.loadOptionsError"))
             }
         }
         loadOptions()
@@ -70,12 +72,12 @@ export function useNewTicketForm({ isLoggedIn }) {
 
     const handleSubmit = async () => {
         if (!isLoggedIn) {
-            toast.error("Please log in to submit a ticket")
+            toast.error(t("home.mustLoginToast"))
             return
         }
 
         if (!validateForm()) {
-            toast.error("Please complete all required fields")
+            toast.error(t("home.completeRequiredToast"))
             return
         }
 
@@ -106,7 +108,7 @@ export function useNewTicketForm({ isLoggedIn }) {
                 throw new Error(result.error || "Failed to create ticket")
             }
 
-            toast.success(`Ticket ${result.ticket.uid} created successfully!`)
+            toast.success(t("home.createdSuccess", { uid: result.ticket.uid }))
 
             setFormData({
                 issueType: "",
@@ -123,7 +125,7 @@ export function useNewTicketForm({ isLoggedIn }) {
             // eslint-disable-next-line no-console
             console.error("Error submitting ticket:", error)
             setSubmissionError(error.message)
-            toast.error(`Failed to create ticket: ${error.message}`)
+            toast.error(t("home.createFailed", { message: error.message }))
         } finally {
             setIsSubmitting(false)
         }

@@ -5,6 +5,7 @@ import { Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import MultiSelectFilter from "./MultiSelectFilter"
+import { useI18n } from "@/context/I18nContext"
 
 export default function TicketFilters({
     searchTerm,
@@ -19,6 +20,7 @@ export default function TicketFilters({
     uniqueCreators,
     loading,
 }) {
+    const { t } = useI18n()
     return (
         <motion.div
             className="flex flex-col sm:flex-row justify-between items-center mb-6"
@@ -29,7 +31,7 @@ export default function TicketFilters({
             <div className="relative w-full sm:w-64 mb-4 sm:mb-0">
                 <input
                     type="text"
-                    placeholder="Search tickets..."
+                    placeholder={t("tickets.searchPlaceholder")}
                     className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={searchTerm}
                     onChange={(e) => onSearchChange(e.target.value)}
@@ -40,17 +42,17 @@ export default function TicketFilters({
             <div className="grid grid-cols-2 gap-4 items-center sm:flex sm:flex-wrap w-full sm:w-auto">
                 <Select value={sortBy} onValueChange={onSortChange} disabled={loading}>
                     <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Sort by" />
+                        <SelectValue placeholder={t("tickets.sortBy")} />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="updatedAt">Last updated</SelectItem>
-                        <SelectItem value="createdAt">Date created</SelectItem>
-                        <SelectItem value="selectedEvent">Event name</SelectItem>
+                        <SelectItem value="updatedAt">{t("tickets.sortOptions.updatedAt")}</SelectItem>
+                        <SelectItem value="createdAt">{t("tickets.sortOptions.createdAt")}</SelectItem>
+                        <SelectItem value="selectedEvent">{t("tickets.sortOptions.selectedEvent")}</SelectItem>
                     </SelectContent>
                 </Select>
 
                 <MultiSelectFilter
-                    label="Statuses"
+                    label={t("tickets.statuses")}
                     options={uniqueStatuses}
                     selected={filters.statusBadge}
                     onChange={(value) => onFilterChange({ ...filters, statusBadge: value })}
@@ -58,7 +60,7 @@ export default function TicketFilters({
                 />
 
                 <MultiSelectFilter
-                    label="Priorities"
+                    label={t("tickets.priorities")}
                     options={uniquePriorities}
                     selected={filters.priority}
                     onChange={(value) => onFilterChange({ ...filters, priority: value })}
@@ -66,7 +68,7 @@ export default function TicketFilters({
                 />
 
                 <MultiSelectFilter
-                    label="Creators"
+                    label={t("tickets.creators")}
                     options={uniqueCreators}
                     selected={filters.createdBy}
                     onChange={(value) => onFilterChange({ ...filters, createdBy: value })}
@@ -82,7 +84,7 @@ export default function TicketFilters({
                         disabled={loading}
                     >
                         <X className="mr-2 h-4 w-4" />
-                        Reset Filters
+                        {t("tickets.resetFilters")}
                     </Button>
                 </motion.div>
             </div>
