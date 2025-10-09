@@ -14,11 +14,13 @@ import { formVariants, itemVariants, titleVariants, buttonVariants } from "./new
 import { useNewTicketForm } from "./new-ticket/useNewTicketForm"
 import PrioritySelect from "./new-ticket/PrioritySelect"
 import OptionSelect from "./new-ticket/OptionSelect"
+import { useI18n } from "@/context/I18nContext"
 
 // Animation variants moved to ./new-ticket/variants
 
 export default function NewTicketSection() {
     const { isLoggedIn } = useAuth()
+    const { t } = useI18n()
 
     const shortDescriptionRef = useRef(null)
     const priorityTriggerRef = useRef(null)
@@ -27,16 +29,8 @@ export default function NewTicketSection() {
     const eventTriggerRef = useRef(null)
     const submitButtonRef = useRef(null)
 
-    const {
-        formKey,
-        formData,
-        errors,
-        isSubmitting,
-        submissionError,
-        ticketOptions,
-        handleChange,
-        handleSubmit,
-    } = useNewTicketForm({ isLoggedIn })
+    const { formKey, formData, errors, isSubmitting, submissionError, ticketOptions, handleChange, handleSubmit } =
+        useNewTicketForm({ isLoggedIn })
 
     useEffect(() => {
         shortDescriptionRef.current?.focus()
@@ -54,7 +48,7 @@ export default function NewTicketSection() {
                                 initial="hidden"
                                 animate="visible"
                             >
-                                Изпратете нов билет за поддръжка
+                                {t("home.submitNewTicket")}
                             </motion.h1>
                         ) : (
                             <>
@@ -64,7 +58,7 @@ export default function NewTicketSection() {
                                     initial="hidden"
                                     animate="visible"
                                 >
-                                    Изпратете билет за поддръжка
+                                    {t("home.submitTicket")}
                                 </motion.h1>
                                 <motion.p
                                     className="text-lg text-center mb-12 text-gray-600 max-w-2xl mx-auto"
@@ -72,8 +66,7 @@ export default function NewTicketSection() {
                                     animate={{ opacity: 1 }}
                                     transition={{ delay: 0.2 }}
                                 >
-                                    Нуждаете се от помощ? Попълнете формуляра по-долу и нашият екип за поддръжка ще се свърже с вас
-                                    възможно най-скоро.
+                                    {t("home.helpText")}
                                 </motion.p>
                             </>
                         ))}
@@ -85,10 +78,8 @@ export default function NewTicketSection() {
 
                         <CardHeader className="bg-blue-100 border-b border-blue-100">
                             <motion.div variants={itemVariants}>
-                                <CardTitle className="text-2xl text-center text-blue-800">Нов билет за поддръжка</CardTitle>
-                                <CardDescription className="text-center text-blue-600">
-                                    Моля, предоставете подробности за вашия проблем
-                                </CardDescription>
+                                <CardTitle className="text-2xl text-center text-blue-800">{t("home.cardTitle")}</CardTitle>
+                                <CardDescription className="text-center text-blue-600">{t("home.cardDescription")}</CardDescription>
                             </motion.div>
                         </CardHeader>
 
@@ -96,19 +87,20 @@ export default function NewTicketSection() {
                             {isLoggedIn === false && (
                                 <motion.div
                                     className="flex flex-col sm:flex-row items-center justify-center gap-3 bg-red-50 p-4 rounded-md my-3 border border-red-200"
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: "auto" }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                    variants={itemVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
                                 >
-                                    <p className="text-center text-md text-red-600">Моля, влезте в системата, за да изпратите билет!</p>
+                                    <p className="text-center text-md text-red-600">{t("home.pleaseLogin")}</p>
                                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                         <Button
                                             variant="outline"
-                                            className="border-red-500 text-red-600 hover:bg-red-100 hover:text-red-700"
+                                            className="border-red-500 text-red-600 hover:bg-red-100 hover:text-red-700 bg-transparent"
                                             onClick={() => (window.location.href = "/login")}
                                         >
-                                            Вход в системата
+                                            {t("home.loginCta")}
                                         </Button>
                                     </motion.div>
                                 </motion.div>
@@ -134,16 +126,15 @@ export default function NewTicketSection() {
 
                         <TooltipProvider>
                             <CardContent className="space-y-6 pt-6">
-                                {/* Кратко описание */}
                                 <motion.div className="space-y-2" variants={itemVariants}>
                                     <label className="text-md font-medium text-gray-700">
-                                        Кратко описание <span className="text-red-500 text-sm font-bold ml-1">*</span>
+                                        {t("home.shortDescription")} <span className="text-red-500 text-sm font-bold ml-1">*</span>
                                     </label>
                                     <Input
                                         ref={shortDescriptionRef}
                                         value={formData.shortDescription}
                                         onChange={(e) => handleChange("shortDescription", e.target.value)}
-                                        placeholder="Въведете кратко описание на проблема"
+                                        placeholder={t("home.shortDescriptionPlaceholder")}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
                                                 e.preventDefault()
@@ -155,7 +146,6 @@ export default function NewTicketSection() {
                                     />
                                 </motion.div>
 
-                                {/* Приоритет (moved here) */}
                                 <motion.div className="space-y-2" variants={itemVariants}>
                                     <PrioritySelect
                                         key={formKey + "priority"}
@@ -173,7 +163,7 @@ export default function NewTicketSection() {
                                 <motion.div className="space-y-2" variants={itemVariants}>
                                     <OptionSelect
                                         key={formKey + "issueType"}
-                                        label="Избор на запитване"
+                                        label={t("home.issueType")}
                                         options={ticketOptions.issueType}
                                         value={formData.issueType}
                                         onChange={(value) => handleChange("issueType", value)}
@@ -190,7 +180,7 @@ export default function NewTicketSection() {
                                 <motion.div className="space-y-2" variants={itemVariants}>
                                     <OptionSelect
                                         key={formKey + "condition"}
-                                        label="Състояние"
+                                        label={t("home.condition")}
                                         options={ticketOptions.condition}
                                         value={formData.condition}
                                         onChange={(value) => handleChange("condition", value)}
@@ -207,7 +197,7 @@ export default function NewTicketSection() {
                                 <motion.div className="space-y-2" variants={itemVariants}>
                                     <OptionSelect
                                         key={formKey + "event"}
-                                        label="Действие"
+                                        label={t("home.event")}
                                         options={ticketOptions.event}
                                         value={formData.event}
                                         onChange={(value) => handleChange("event", value)}
@@ -222,7 +212,12 @@ export default function NewTicketSection() {
                         </TooltipProvider>
 
                         <CardFooter>
-                            <motion.div className="w-full" variants={buttonVariants} whileHover="hover" whileTap="tap">
+                            <motion.div
+                                className="w-full"
+                                variants={buttonVariants}
+                                whileTap={!(!isLoggedIn || isSubmitting) ? "tap" : false}
+                                whileHover={!(!isLoggedIn || isSubmitting) ? "hover" : false}
+                            >
                                 <Button
                                     ref={submitButtonRef}
                                     onClick={handleSubmit}
@@ -232,10 +227,10 @@ export default function NewTicketSection() {
                                     {isSubmitting ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Submitting...
+                                            {t("home.submitting")}
                                         </>
                                     ) : (
-                                        "Submit Ticket"
+                                        t("home.submitTicketCta")
                                     )}
                                 </Button>
                             </motion.div>

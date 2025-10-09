@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { MessageSquare, Star, CheckCircle, Shield, Clock, Headphones } from "lucide-react"
+import { useI18n } from "@/context/I18nContext"
 
 // Animation variants
 const containerVariants = {
@@ -75,6 +76,7 @@ const iconVariants = {
 }
 
 export default function WhyUsSection() {
+    const { t } = useI18n()
     return (
         <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center">
             <div className="container px-4 md:px-6">
@@ -85,7 +87,7 @@ export default function WhyUsSection() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                 >
-                    Защо да изберете нашата система за билети?
+                    {t("whyUs.title")}
                 </motion.h2>
                 <motion.div
                     className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
@@ -94,35 +96,31 @@ export default function WhyUsSection() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.1 }}
                 >
-                    <FeatureCard
-                        icon={MessageSquare}
-                        title="Лесно подаване на билети"
-                        description="Създавайте и подавайте билети за поддръжка бързо и лесно с нашия потребителски интерфейс."
-                    />
+                    <FeatureCard icon={MessageSquare} title={t("whyUs.features.easy.title")} description={t("whyUs.features.easy.description")} />
                     <FeatureCard
                         icon={Clock}
-                        title="Бързо време за отговор"
-                        description="Нашият екип за поддръжка осигурява бързи отговори на всички подадени билети."
+                        title={t("whyUs.features.fast.title")}
+                        description={t("whyUs.features.fast.description")}
                     />
                     <FeatureCard
                         icon={Shield}
-                        title="Сигурност и конфиденциалност"
-                        description="Вашите данни са защитени с най-модерни мерки за сигурност и криптиране."
+                        title={t("whyUs.features.security.title")}
+                        description={t("whyUs.features.security.description")}
                     />
                     <FeatureCard
                         icon={Star}
-                        title="Приоритетна обработка"
-                        description="Билетите се обработват по приоритетни нива, осигурявайки бързо решение на критични проблеми."
+                        title={t("whyUs.features.priority.title")}
+                        description={t("whyUs.features.priority.description")}
                     />
                     <FeatureCard
                         icon={Headphones}
-                        title="Персонализирани решения"
-                        description="Индивидуален подход към всеки клиент, за да гарантираме оптимални резултати и удовлетворение."
+                        title={t("whyUs.features.personalized.title")}
+                        description={t("whyUs.features.personalized.description")}
                     />
                     <FeatureCard
                         icon={CheckCircle}
-                        title="Проследяване на проблемите"
-                        description="Проследявайте статуса на вашите билети в реално време с нашата система за проследяване."
+                        title={t("whyUs.features.tracking.title")}
+                        description={t("whyUs.features.tracking.description")}
                     />
                 </motion.div>
             </div>

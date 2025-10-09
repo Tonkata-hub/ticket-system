@@ -3,6 +3,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip"
 import { Info } from "lucide-react"
+import { useI18n } from "@/context/I18nContext"
 
 export default function PrioritySelect({
     value,
@@ -13,10 +14,11 @@ export default function PrioritySelect({
     onEnter,
     disabled = false,
 }) {
+    const { t } = useI18n()
     return (
         <div className="space-y-2">
             <label className="text-md font-medium text-gray-700">
-                Приоритет <span className="text-red-500 text-sm font-bold ml-1">*</span>
+                {t("home.priority")} <span className="text-red-500 text-sm font-bold ml-1">*</span>
             </label>
             <Select onValueChange={onChange} disabled={disabled}>
                 <SelectTrigger
@@ -29,7 +31,7 @@ export default function PrioritySelect({
                         }
                     }}
                 >
-                    <SelectValue placeholder="Изберете приоритет">
+                    <SelectValue placeholder={t("home.select", { label: t("home.priority").toLowerCase() })}>
                         <span>{value ? options.find((p) => p.value === value)?.text : null}</span>
                     </SelectValue>
                 </SelectTrigger>

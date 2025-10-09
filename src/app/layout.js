@@ -3,6 +3,9 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "../context/AuthContext";
+import { I18nProvider } from "../context/I18nContext";
+import { cookies } from "next/headers";
+import { getDictionary, getFallbackLocale } from "@/lib/i18n";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -55,14 +58,21 @@ export const metadata = {
     },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+    const cookieStore = await cookies();
+    const cookieLocale = cookieStore.get("locale")?.value;
+    const locale = cookieLocale || getFallbackLocale();
+    const dictionary = getDictionary(locale);
+
     return (
-        <html lang="en">
+        <html lang={locale}>
             <body>
                 <AuthProvider>
-                    <Navbar />
-                    {children}
-                    <Footer />
+                    <I18nProvider locale={locale} dictionary={dictionary}>
+                        <Navbar />
+                        {children}
+                        <Footer />
+                    </I18nProvider>
                 </AuthProvider>
             </body>
         </html>
