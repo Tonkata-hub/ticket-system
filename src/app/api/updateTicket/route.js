@@ -1,41 +1,27 @@
 // app/api/updateTicket/route.js
-import { decrypt } from "@/lib/session"
+import { requireAdmin, handleAuthError } from "@/lib/auth"
 import Ticket from "@/models/Ticket"
-import User from "@/models/User"
-import { cookies } from "next/headers"
 
 export async function PUT(request) {
     try {
         // 1. Authenticate user and verify admin role
-        const cookieStore = await cookies()
-        const sessionCookie = cookieStore.get("session")?.value
-        const session = sessionCookie && (await decrypt(sessionCookie))
+        await requireAdmin()
 
-        if (!session?.userId) {
-            return Response.json({ error: "Unauthorized" }, { status: 401 })
-        }
-
-        // 2. Verify user is an admin
-        const user = await User.findByPk(session.userId)
-        if (!user || user.role !== "admin") {
-            return Response.json({ error: "Forbidden: Admin access required" }, { status: 403 })
-        }
-
-        // 3. Parse request body
+        // 2. Parse request body
         const body = await request.json()
 
-        // 4. Validate required fields
+        // 3. Validate required fields
         if (!body.uid) {
             return Response.json({ error: "Ticket UID is required" }, { status: 400 })
         }
 
-        // 5. Find the ticket
+        // 4. Find the ticket
         const ticket = await Ticket.findOne({ where: { uid: body.uid } })
         if (!ticket) {
             return Response.json({ error: "Ticket not found" }, { status: 404 })
         }
 
-        // 6. Update ticket fields
+        // 5. Update ticket fields
         const updatableFields = {
             issue_type: body.issueType,
             current_condition: body.currentCondition,
@@ -61,7 +47,7 @@ export async function PUT(request) {
             }
         })
 
-        // 7. Save the updated ticket
+        // 6. Save the updated ticket
         await ticket.update(updatableFields)
 
         return Response.json({
@@ -74,12 +60,6 @@ export async function PUT(request) {
         })
     } catch (error) {
         console.error("Error updating ticket:", error)
-        return Response.json(
-            {
-                error: "Failed to update ticket",
-                details: error.message,
-            },
-            { status: 500 },
-        )
+        return handleAuthError(error)
     }
 }

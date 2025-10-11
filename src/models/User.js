@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+import { DataTypes } from 'sequelize';
 import sequelize from '@/lib/db';
 
 const User = sequelize.define('User', {
@@ -33,4 +33,4 @@ const User = sequelize.define('User', {
     timestamps: false, // You can set this true if you want Sequelize to manage `createdAt/updatedAt`
 });
 
-module.exports = User;
+export default User;

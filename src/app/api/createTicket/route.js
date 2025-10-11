@@ -1,31 +1,17 @@
 // app/api/createTicket/route.js
-import { decrypt } from "@/lib/session"
+import { requireAuth, handleAuthError } from "@/lib/auth"
 import Ticket from "@/models/Ticket"
-import User from "@/models/User"
-import { cookies } from "next/headers"
 import { nanoid } from "nanoid"
 
 export async function POST(request) {
     try {
         // 1. Authenticate user
-        const cookieStore = await cookies()
-        const sessionCookie = cookieStore.get("session")?.value
-        const session = sessionCookie && (await decrypt(sessionCookie))
+        const user = await requireAuth()
 
-        if (!session?.userId) {
-            return Response.json({ error: "Unauthorized" }, { status: 401 })
-        }
-
-        // 2. Get user information
-        const user = await User.findByPk(session.userId)
-        if (!user) {
-            return Response.json({ error: "User not found" }, { status: 404 })
-        }
-
-        // 3. Parse request body
+        // 2. Parse request body
         const body = await request.json()
 
-        // 4. Validate required fields - removed clientNote from required fields
+        // 3. Validate required fields - removed clientNote from required fields
         const requiredFields = ["priority", "shortDescription"]
         const missingFields = requiredFields.filter((field) => !body[field])
 
@@ -39,10 +25,10 @@ export async function POST(request) {
             )
         }
 
-        // 5. Generate a random ticket ID using nanoid
+        // 4. Generate a random ticket ID using nanoid
         const ticketId = `T-${nanoid(8).toUpperCase()}`
 
-        // 6. Create ticket with random ID
+        // 5. Create ticket with random ID
         const ticket = await Ticket.create({
             uid: ticketId,
             created_by: user.email,
@@ -70,13 +56,7 @@ export async function POST(request) {
         )
     } catch (error) {
         console.error("Error creating ticket:", error)
-        return Response.json(
-            {
-                error: "Failed to create ticket",
-                details: error.message,
-            },
-            { status: 500 },
-        )
+        return handleAuthError(error)
     }
 }
 

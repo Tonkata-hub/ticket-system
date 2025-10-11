@@ -1,8 +1,6 @@
 // app/api/admin/categories/route.js
 import { NextResponse } from "next/server"
-import { decrypt } from "@/lib/session"
-import { cookies } from "next/headers"
-import User from "@/models/User"
+import { requireAdmin, handleAuthError } from "@/lib/auth"
 import TicketCategory from "@/models/TicketCategory"
 import sequelize from "@/lib/db"
 
@@ -23,32 +21,11 @@ async function ensureOrderColumn() {
     }
 }
 
-// Helper function to verify admin access
-async function verifyAdminAccess() {
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get("session")?.value
-    const session = sessionCookie && (await decrypt(sessionCookie))
-
-    if (!session?.userId) {
-        return { authorized: false, error: "Unauthorized", status: 401 }
-    }
-
-    const user = await User.findByPk(session.userId)
-    if (!user || user.role !== "admin") {
-        return { authorized: false, error: "Forbidden: Admin access required", status: 403 }
-    }
-
-    return { authorized: true, user }
-}
-
 // GET - Fetch all categories
 export async function GET() {
     try {
         await ensureOrderColumn()
-        const auth = await verifyAdminAccess()
-        if (!auth.authorized) {
-            return NextResponse.json({ error: auth.error }, { status: auth.status })
-        }
+        await requireAdmin()
 
         const categories = await TicketCategory.findAll({
             order: [
@@ -63,7 +40,7 @@ export async function GET() {
         return NextResponse.json({ categories })
     } catch (error) {
         console.error("Error fetching categories:", error)
-        return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 })
+        return handleAuthError(error)
     }
 }
 
@@ -71,10 +48,7 @@ export async function GET() {
 export async function POST(request) {
     try {
         await ensureOrderColumn()
-        const auth = await verifyAdminAccess()
-        if (!auth.authorized) {
-            return NextResponse.json({ error: auth.error }, { status: auth.status })
-        }
+        await requireAdmin()
 
         const body = await request.json()
 
@@ -119,7 +93,7 @@ export async function POST(request) {
         return NextResponse.json({ success: true, category: newCategory }, { status: 201 })
     } catch (error) {
         console.error("Error creating category:", error)
-        return NextResponse.json({ error: "Failed to create category" }, { status: 500 })
+        return handleAuthError(error)
     }
 }
 
@@ -127,10 +101,7 @@ export async function POST(request) {
 export async function PUT(request) {
     try {
         await ensureOrderColumn()
-        const auth = await verifyAdminAccess()
-        if (!auth.authorized) {
-            return NextResponse.json({ error: auth.error }, { status: auth.status })
-        }
+        await requireAdmin()
 
         const body = await request.json()
         const { type, orderedIds } = body || {}
@@ -161,6 +132,6 @@ export async function PUT(request) {
         return NextResponse.json({ success: true })
     } catch (error) {
         console.error("Error bulk reordering categories:", error)
-        return NextResponse.json({ error: "Failed to reorder categories" }, { status: 500 })
+        return handleAuthError(error)
     }
 }
