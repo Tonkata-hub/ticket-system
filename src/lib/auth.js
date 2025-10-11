@@ -1,4 +1,14 @@
-// /src/lib/auth.js
+/**
+ * Authentication and Authorization Utilities
+ * 
+ * CSRF Protection:
+ * Next.js 15 Server Actions have built-in CSRF protection through Origin header checking.
+ * The framework automatically validates that requests originate from the same domain,
+ * preventing Cross-Site Request Forgery attacks without requiring additional CSRF tokens.
+ * 
+ * For API routes that require CSRF protection, consider implementing additional token-based
+ * validation if they accept requests from external sources.
+ */
 import "server-only";
 import { cookies } from "next/headers";
 import { decrypt } from "./session";

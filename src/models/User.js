@@ -20,6 +20,18 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         defaultValue: 'client',
     },
+    failed_login_attempts: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
+    locked_until: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    last_failed_login: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
