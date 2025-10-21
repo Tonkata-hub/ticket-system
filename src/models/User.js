@@ -1,48 +1,68 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '@/lib/db';
+import { DataTypes } from "sequelize";
+import sequelize from "@/lib/db";
 
-const User = sequelize.define('User', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+const User = sequelize.define(
+    "User",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        role: {
+            type: DataTypes.STRING,
+            defaultValue: "client",
+        },
+        failed_login_attempts: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+        },
+        locked_until: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        last_failed_login: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        email_verified: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        verification_code: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        verification_code_expires: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        verification_code_sent_at: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        created_at: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
+        },
+        updated_at: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
+        },
     },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    role: {
-        type: DataTypes.STRING,
-        defaultValue: 'client',
-    },
-    failed_login_attempts: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-    },
-    locked_until: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
-    last_failed_login: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
-    created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+    {
+        tableName: "users",
+        timestamps: false, // You can set this true if you want Sequelize to manage `createdAt/updatedAt`
     }
-}, {
-    tableName: 'users',
-    timestamps: false, // You can set this true if you want Sequelize to manage `createdAt/updatedAt`
-});
+);
 
 export default User;

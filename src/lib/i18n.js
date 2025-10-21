@@ -1,16 +1,16 @@
-export const locales = ["en", "bg"]
+export const locales = ["en", "bg"];
 
 export function getFallbackLocale() {
-    return "en"
+    return "bg";
 }
 
 export function getDictionary(locale) {
     switch (locale) {
         case "bg":
-            return bg
+            return bg;
         case "en":
         default:
-            return en
+            return en;
     }
 }
 
@@ -79,20 +79,47 @@ export const en = {
     whyUs: {
         title: "Why choose our ticket system?",
         features: {
-            easy: { title: "Easy ticket submission", description: "Create and submit tickets quickly and easily with our user-friendly interface." },
-            fast: { title: "Fast response time", description: "Our support team provides quick responses to all submitted tickets." },
-            security: { title: "Security and privacy", description: "Your data is protected with state-of-the-art security and encryption." },
-            priority: { title: "Priority processing", description: "Tickets are processed by priority levels, ensuring fast resolution of critical issues." },
-            personalized: { title: "Personalized solutions", description: "An individual approach to each client to ensure optimal results and satisfaction." },
-            tracking: { title: "Issue tracking", description: "Track the status of your tickets in real time with our tracking system." },
+            easy: {
+                title: "Easy ticket submission",
+                description: "Create and submit tickets quickly and easily with our user-friendly interface.",
+            },
+            fast: {
+                title: "Fast response time",
+                description: "Our support team provides quick responses to all submitted tickets.",
+            },
+            security: {
+                title: "Security and privacy",
+                description: "Your data is protected with state-of-the-art security and encryption.",
+            },
+            priority: {
+                title: "Priority processing",
+                description: "Tickets are processed by priority levels, ensuring fast resolution of critical issues.",
+            },
+            personalized: {
+                title: "Personalized solutions",
+                description: "An individual approach to each client to ensure optimal results and satisfaction.",
+            },
+            tracking: {
+                title: "Issue tracking",
+                description: "Track the status of your tickets in real time with our tracking system.",
+            },
         },
     },
     howItWorks: {
         title: "How it works",
         steps: {
-            one: { title: "Submit a ticket", description: "Fill out the ticket form with details about your issue or inquiry." },
-            two: { title: "Receive confirmation", description: "Receive instant confirmation with your ticket number for reference." },
-            three: { title: "Expect assistance", description: "Our team reviews your ticket and provides timely help to resolve the issue." },
+            one: {
+                title: "Submit a ticket",
+                description: "Fill out the ticket form with details about your issue or inquiry.",
+            },
+            two: {
+                title: "Receive confirmation",
+                description: "Receive instant confirmation with your ticket number for reference.",
+            },
+            three: {
+                title: "Expect assistance",
+                description: "Our team reviews your ticket and provides timely help to resolve the issue.",
+            },
         },
     },
     tickets: {
@@ -113,7 +140,7 @@ export const en = {
         allWithLabel: "All {label}",
         clearAll: "Clear all",
     },
-}
+};
 
 export const bg = {
     common: {
@@ -156,7 +183,8 @@ export const bg = {
     home: {
         submitNewTicket: "Изпратете нов билет за поддръжка",
         submitTicket: "Изпратете билет за поддръжка",
-        helpText: "Нуждаете се от помощ? Попълнете формуляра по-долу и нашият екип за поддръжка ще се свърже с вас възможно най-скоро.",
+        helpText:
+            "Нуждаете се от помощ? Попълнете формуляра по-долу и нашият екип за поддръжка ще се свърже с вас възможно най-скоро.",
         cardTitle: "Нов билет за поддръжка",
         cardDescription: "Моля, предоставете подробности за вашия проблем",
         pleaseLogin: "Моля, влезте в системата, за да изпратите билет!",
@@ -180,20 +208,51 @@ export const bg = {
     whyUs: {
         title: "Защо да изберете нашата система за билети?",
         features: {
-            easy: { title: "Лесно подаване на билети", description: "Създавайте и подавайте билети за поддръжка бързо и лесно с нашия потребителски интерфейс." },
-            fast: { title: "Бързо време за отговор", description: "Нашият екип за поддръжка осигурява бързи отговори на всички подадени билети." },
-            security: { title: "Сигурност и конфиденциалност", description: "Вашите данни са защитени с най-модерни мерки за сигурност и криптиране." },
-            priority: { title: "Приоритетна обработка", description: "Билетите се обработват по приоритетни нива, осигурявайки бързо решение на критични проблеми." },
-            personalized: { title: "Персонализирани решения", description: "Индивидуален подход към всеки клиент, за да гарантираме оптимални резултати и удовлетворение." },
-            tracking: { title: "Проследяване на проблемите", description: "Проследявайте статуса на вашите билети в реално време с нашата система за проследяване." },
+            easy: {
+                title: "Лесно подаване на билети",
+                description:
+                    "Създавайте и подавайте билети за поддръжка бързо и лесно с нашия потребителски интерфейс.",
+            },
+            fast: {
+                title: "Бързо време за отговор",
+                description: "Нашият екип за поддръжка осигурява бързи отговори на всички подадени билети.",
+            },
+            security: {
+                title: "Сигурност и конфиденциалност",
+                description: "Вашите данни са защитени с най-модерни мерки за сигурност и криптиране.",
+            },
+            priority: {
+                title: "Приоритетна обработка",
+                description:
+                    "Билетите се обработват по приоритетни нива, осигурявайки бързо решение на критични проблеми.",
+            },
+            personalized: {
+                title: "Персонализирани решения",
+                description:
+                    "Индивидуален подход към всеки клиент, за да гарантираме оптимални резултати и удовлетворение.",
+            },
+            tracking: {
+                title: "Проследяване на проблемите",
+                description: "Проследявайте статуса на вашите билети в реално време с нашата система за проследяване.",
+            },
         },
     },
     howItWorks: {
         title: "Как работи",
         steps: {
-            one: { title: "Подайте билет", description: "Попълнете формуляра за билет с подробности за вашия проблем или запитване." },
-            two: { title: "Получете потвърждение", description: "Получете незабавно потвърждение с номера на вашия билет за справка." },
-            three: { title: "Очаквайте съдействие", description: "Нашият екип преглежда вашия билет и осигурява навременна помощ за разрешаване на проблема." },
+            one: {
+                title: "Подайте билет",
+                description: "Попълнете формуляра за билет с подробности за вашия проблем или запитване.",
+            },
+            two: {
+                title: "Получете потвърждение",
+                description: "Получете незабавно потвърждение с номера на вашия билет за справка.",
+            },
+            three: {
+                title: "Очаквайте съдействие",
+                description:
+                    "Нашият екип преглежда вашия билет и осигурява навременна помощ за разрешаване на проблема.",
+            },
         },
     },
     tickets: {
@@ -214,6 +273,4 @@ export const bg = {
         allWithLabel: "Всички {label}",
         clearAll: "Изчисти всички",
     },
-}
-
-
+};

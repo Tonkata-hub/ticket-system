@@ -9,10 +9,7 @@ import loginRateLimiter from "@/lib/rateLimit";
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }).trim(),
-    password: z
-        .string()
-        .min(8, { message: "Password must be at least 8 characters" })
-        .trim(),
+    password: z.string().min(8, { message: "Password must be at least 8 characters" }).trim(),
 });
 
 export async function login(prevState, formData) {
@@ -46,11 +43,20 @@ export async function login(prevState, formData) {
         };
     }
 
+    // Check if email is verified
+    if (!user.email_verified) {
+        return {
+            error: "Please verify your email before logging in. Check your inbox for the verification code.",
+        };
+    }
+
     // Check if account is locked
     if (user.locked_until && new Date(user.locked_until) > new Date()) {
         const minutesRemaining = Math.ceil((new Date(user.locked_until) - new Date()) / 60000);
         return {
-            error: `Account temporarily locked due to multiple failed login attempts. Please try again in ${minutesRemaining} minute${minutesRemaining > 1 ? 's' : ''}.`,
+            error: `Account temporarily locked due to multiple failed login attempts. Please try again in ${minutesRemaining} minute${
+                minutesRemaining > 1 ? "s" : ""
+            }.`,
         };
     }
 

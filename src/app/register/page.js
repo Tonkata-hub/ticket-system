@@ -6,6 +6,8 @@ import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useI18n } from "@/context/I18nContext";
+import { register } from "./actions";
+import VerificationModal from "./VerificationModal";
 
 export default function RegisterPage() {
     const { t } = useI18n();
@@ -20,6 +22,9 @@ export default function RegisterPage() {
     });
     const [errors, setErrors] = useState(null);
     const [serverError, setServerError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showVerificationModal, setShowVerificationModal] = useState(false);
+    const [registeredUserId, setRegisteredUserId] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,8 +36,27 @@ export default function RegisterPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // UI only - no actual registration logic
-        console.log("Register form submitted:", formData);
+        setIsSubmitting(true);
+        setErrors(null);
+        setServerError(null);
+
+        const formDataObj = new FormData();
+        formDataObj.append("name", formData.name);
+        formDataObj.append("email", formData.email);
+        formDataObj.append("password", formData.password);
+        formDataObj.append("confirmPassword", formData.confirmPassword);
+
+        const result = await register(null, formDataObj);
+
+        if (result.success) {
+            setRegisteredUserId(result.userId);
+            setShowVerificationModal(true);
+        } else {
+            setErrors(result.errors || null);
+            setServerError(result.error || null);
+        }
+
+        setIsSubmitting(false);
     };
 
     return (
@@ -161,9 +185,10 @@ export default function RegisterPage() {
 
                         <button
                             type="submit"
-                            className="w-full bg-[#3056d3] text-white py-2 px-4 rounded-md hover:bg-[#2045c0] transition-colors"
+                            disabled={isSubmitting}
+                            className="w-full bg-[#3056d3] text-white py-2 px-4 rounded-md hover:bg-[#2045c0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {t("register.submit") || "Create Account"}
+                            {isSubmitting ? "Creating Account..." : t("register.submit") || "Create Account"}
                         </button>
                     </form>
 
@@ -177,6 +202,14 @@ export default function RegisterPage() {
                     </div>
                 </div>
             </main>
+
+            {/* Verification Modal */}
+            <VerificationModal
+                isOpen={showVerificationModal}
+                onClose={() => setShowVerificationModal(false)}
+                userId={registeredUserId}
+                userEmail={formData.email}
+            />
         </div>
     );
 }
