@@ -150,16 +150,19 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 
 	return (
 		<AnimatePresence>
-			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+			<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
 				<motion.div
-					initial={{ opacity: 0, scale: 0.95 }}
-					animate={{ opacity: 1, scale: 1 }}
-					exit={{ opacity: 0, scale: 0.95 }}
-					className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+					initial={{ opacity: 0, scale: 0.95, y: 20 }}
+					animate={{ opacity: 1, scale: 1, y: 0 }}
+					exit={{ opacity: 0, scale: 0.95, y: 20 }}
+					transition={{ duration: 0.2, ease: "easeOut" }}
+					className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-100"
 				>
 					{success ? (
 						<div className="text-center">
-							<CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+							<div className="bg-green-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+								<CheckCircle className="h-12 w-12 text-green-500" />
+							</div>
 							<h2 className="text-2xl font-bold text-gray-900 mb-2">Email Verified!</h2>
 							<p className="text-gray-600 mb-4">
 								Your email has been successfully verified and you are now logged in.
@@ -168,14 +171,29 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 						</div>
 					) : (
 						<>
-							<div className="text-center mb-6">
-								<h2 className="text-2xl font-bold text-[#3056d3] mb-2">Verify Your Email</h2>
-								<p className="text-gray-600">We sent a 6-digit code to</p>
-								<p className="font-medium text-gray-900">{userEmail}</p>
+							<div className="text-center mb-8">
+								<div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+									<svg
+										className="w-8 h-8 text-[#3056d3]"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+										/>
+									</svg>
+								</div>
+								<h2 className="text-2xl font-bold text-gray-900 mb-3">Verify Your Email</h2>
+								<p className="text-gray-600 text-sm">We sent a 6-digit code to</p>
+								<p className="font-semibold text-gray-900 mt-1">{userEmail}</p>
 							</div>
 
 							<form onSubmit={handleSubmit} className="space-y-6">
-								<div className="flex justify-center space-x-2">
+								<div className="flex justify-center gap-3">
 									{code.map((digit, index) => (
 										<input
 											key={index}
@@ -187,7 +205,7 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 											onChange={(e) => handleCodeChange(index, e.target.value)}
 											onKeyDown={(e) => handleKeyDown(index, e)}
 											onPaste={handlePaste}
-											className="w-12 h-12 text-center text-2xl font-bold border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3056d3] focus:border-transparent"
+											className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3056d3] focus:border-[#3056d3] transition-all shadow-sm hover:border-gray-300"
 										/>
 									))}
 								</div>
@@ -198,7 +216,7 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 											initial={{ opacity: 0, height: 0 }}
 											animate={{ opacity: 1, height: "auto" }}
 											exit={{ opacity: 0, height: 0 }}
-											className="bg-red-50 border border-red-200 rounded-md p-3"
+											className="bg-red-50 border border-red-200 rounded-lg p-3 shadow-sm"
 										>
 											<div className="flex items-center">
 												<AlertCircle className="h-4 w-4 text-red-500 mr-2 flex-shrink-0" />
@@ -211,7 +229,7 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 								<button
 									type="submit"
 									disabled={isSubmitting || code.join("").length !== 6}
-									className="w-full bg-[#3056d3] text-white py-3 px-4 rounded-md hover:bg-[#2045c0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									className="w-full bg-[#3056d3] text-white py-3.5 px-4 rounded-lg hover:bg-[#2045c0] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 active:scale-[0.98]"
 								>
 									{isSubmitting ? (
 										<div className="flex items-center justify-center">
@@ -223,24 +241,24 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 									)}
 								</button>
 
-								<div className="text-center">
-									<p className="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
+								<div className="text-center pt-2 border-t border-gray-100">
+									<p className="text-sm text-gray-600 mb-3 mt-4">Didn't receive the code?</p>
 									<button
 										type="button"
 										onClick={handleResend}
 										disabled={resendCooldown > 0 || isResending}
-										className="text-[#3056d3] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+										className="text-[#3056d3] hover:underline disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm inline-flex items-center"
 									>
 										{isResending ? (
-											<div className="flex items-center justify-center">
+											<>
 												<RefreshCw className="h-4 w-4 animate-spin mr-1" />
 												Sending...
-											</div>
+											</>
 										) : resendCooldown > 0 ? (
-											<div className="flex items-center justify-center">
+											<>
 												<Clock className="h-4 w-4 mr-1" />
 												Resend in {resendCooldown}s
-											</div>
+											</>
 										) : (
 											"Resend Code"
 										)}
