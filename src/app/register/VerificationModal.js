@@ -4,9 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function VerificationModal({ isOpen, onClose, userId, userEmail }) {
 	const router = useRouter();
+	const { setIsLoggedIn, setRole, setUserEmail } = useAuth();
 	const [code, setCode] = useState(["", "", "", "", "", ""]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState("");
@@ -85,9 +87,14 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 			const data = await response.json();
 
 			if (data.success) {
+				// Update authentication state
+				setIsLoggedIn(true);
+				setRole(data.user.role);
+				setUserEmail(data.user.email);
+
 				setSuccess(true);
 				setTimeout(() => {
-					router.push("/login");
+					router.push("/");
 				}, 2000);
 			} else {
 				setError(data.error || "Verification failed");
@@ -154,8 +161,10 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 						<div className="text-center">
 							<CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
 							<h2 className="text-2xl font-bold text-gray-900 mb-2">Email Verified!</h2>
-							<p className="text-gray-600 mb-4">Your email has been successfully verified.</p>
-							<p className="text-sm text-gray-500">Redirecting to login page...</p>
+							<p className="text-gray-600 mb-4">
+								Your email has been successfully verified and you are now logged in.
+							</p>
+							<p className="text-sm text-gray-500">Redirecting to home page...</p>
 						</div>
 					) : (
 						<>

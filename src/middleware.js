@@ -26,9 +26,9 @@ export default async function middleware(req) {
 		return NextResponse.redirect(new URL("/tickets", req.nextUrl));
 	}
 
-	// Redirect to tickets if already logged in and trying to access public route
+	// Redirect to home if already logged in and trying to access public route
 	if (isPublicRoute && session?.userId) {
-		return NextResponse.redirect(new URL("/tickets", req.nextUrl));
+		return NextResponse.redirect(new URL("/", req.nextUrl));
 	}
 
 	return NextResponse.next();

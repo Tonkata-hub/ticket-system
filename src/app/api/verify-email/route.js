@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import User from "@/models/User";
+import { createSession } from "@/lib/session";
 
 export async function POST(request) {
 	try {
@@ -50,9 +51,17 @@ export async function POST(request) {
 			verification_code_sent_at: null,
 		});
 
+		// Create session for the user
+		await createSession(user.id, user.role);
+
 		return NextResponse.json({
 			success: true,
-			message: "Email verified successfully! You can now log in.",
+			message: "Email verified successfully! You are now logged in.",
+			user: {
+				id: user.id,
+				email: user.email,
+				role: user.role,
+			},
 		});
 	} catch (error) {
 		console.error("Email verification error:", error);
