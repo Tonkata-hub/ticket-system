@@ -2,17 +2,20 @@ import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
 
 export async function GET() {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("session")?.value;
+	const cookieStore = await cookies();
+	const sessionCookie = cookieStore.get("session")?.value;
 
-    if (!sessionCookie) {
-        return Response.json({ isLoggedIn: false }, { status: 200 });
-    }
+	if (!sessionCookie) {
+		return Response.json({ isLoggedIn: false }, { status: 200 });
+	}
 
-    const session = await decrypt(sessionCookie);
+	const session = await decrypt(sessionCookie);
 
-    return Response.json({
-        isLoggedIn: !!session?.userId,
-        role: session?.role || "client"
-    }, { status: 200 });
+	return Response.json(
+		{
+			isLoggedIn: !!session?.userId,
+			role: session?.role || "client",
+		},
+		{ status: 200 }
+	);
 }
