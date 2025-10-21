@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { login } from "./actions";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useI18n } from "@/context/I18nContext";
@@ -18,20 +18,31 @@ export default function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [errors, setErrors] = useState(null);
 	const [serverError, setServerError] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setIsLoading(true);
+		setErrors(null);
+		setServerError(null);
+
 		const formData = new FormData();
 		formData.append("email", email);
 		formData.append("password", password);
 
-		const res = await login(null, formData);
-		if (res.success) {
-			setIsLoggedIn(true); // Update global login state immediately
-			router.push("/");
-		} else {
-			setErrors(res.errors || null);
-			setServerError(res.error || null);
+		try {
+			const res = await login(null, formData);
+			if (res.success) {
+				setIsLoggedIn(true); // Update global login state immediately
+				router.push("/");
+			} else {
+				setErrors(res.errors || null);
+				setServerError(res.error || null);
+			}
+		} catch (error) {
+			setServerError("An unexpected error occurred. Please try again.");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -115,7 +126,7 @@ export default function LoginPage() {
 							)}
 						</AnimatePresence>
 
-						<SubmitButton />
+						<SubmitButton isLoading={isLoading} />
 					</form>
 
 					<div className="mt-6 text-center">
@@ -151,14 +162,23 @@ function ErrorMessage({ error }) {
 	);
 }
 
-function SubmitButton() {
+function SubmitButton({ isLoading }) {
 	return (
 		<button
 			type="submit"
-			className="w-full bg-[#3056d3] text-white py-2 px-4 rounded-md hover:bg-[#2045c0] transition-colors"
+			disabled={isLoading}
+			className={`w-full text-white py-2 px-4 rounded-md transition-colors flex items-center justify-center ${
+				isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-[#3056d3] hover:bg-[#2045c0]"
+			}`}
 		>
-			{/* Using a hook in nested component is awkward; keep static label, main button uses form submit */}
-			Log in
+			{isLoading ? (
+				<>
+					<Loader2 className="h-4 w-4 animate-spin mr-2" />
+					Logging in...
+				</>
+			) : (
+				"Log in"
+			)}
 		</button>
 	);
 }

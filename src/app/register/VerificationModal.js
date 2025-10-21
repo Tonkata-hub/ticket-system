@@ -213,9 +213,9 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 								<AnimatePresence>
 									{error && (
 										<motion.div
-											initial={{ opacity: 0, height: 0 }}
-											animate={{ opacity: 1, height: "auto" }}
-											exit={{ opacity: 0, height: 0 }}
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											exit={{ opacity: 0 }}
 											className="bg-red-50 border border-red-200 rounded-lg p-3 shadow-sm"
 										>
 											<div className="flex items-center">
