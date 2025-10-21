@@ -188,7 +188,9 @@ export default function RegisterPage() {
                             disabled={isSubmitting}
                             className="w-full bg-[#3056d3] text-white py-2 px-4 rounded-md hover:bg-[#2045c0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isSubmitting ? "Creating Account..." : t("register.submit") || "Create Account"}
+                            {isSubmitting
+                                ? t("register.submitting") || "Creating Account..."
+                                : t("register.submit") || "Create Account"}
                         </button>
                     </form>
 
