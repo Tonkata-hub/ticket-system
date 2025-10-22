@@ -47,6 +47,9 @@ export async function login(prevState, formData) {
 	if (!user.email_verified) {
 		return {
 			error: "Please verify your email before logging in. Check your inbox for the verification code.",
+			needsVerification: true,
+			userId: user.id,
+			userEmail: user.email,
 		};
 	}
 

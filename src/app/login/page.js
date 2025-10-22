@@ -8,6 +8,7 @@ import { Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useI18n } from "@/context/I18nContext";
+import VerificationModal from "../../components/VerificationModal";
 
 export default function LoginPage() {
 	const { setIsLoggedIn } = useAuth();
@@ -19,6 +20,9 @@ export default function LoginPage() {
 	const [errors, setErrors] = useState(null);
 	const [serverError, setServerError] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [showVerificationModal, setShowVerificationModal] = useState(false);
+	const [verificationUserId, setVerificationUserId] = useState(null);
+	const [verificationUserEmail, setVerificationUserEmail] = useState(null);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -35,6 +39,12 @@ export default function LoginPage() {
 			if (res.success) {
 				setIsLoggedIn(true); // Update global login state immediately
 				router.push("/");
+			} else if (res.needsVerification) {
+				// Show verification modal for unverified users
+				setVerificationUserId(res.userId);
+				setVerificationUserEmail(res.userEmail);
+				setShowVerificationModal(true);
+				setServerError(null); // Clear any previous errors
 			} else {
 				setErrors(res.errors || null);
 				setServerError(res.error || null);
@@ -139,6 +149,14 @@ export default function LoginPage() {
 					</div>
 				</div>
 			</main>
+
+			{/* Verification Modal */}
+			<VerificationModal
+				isOpen={showVerificationModal}
+				onClose={() => setShowVerificationModal(false)}
+				userId={verificationUserId}
+				userEmail={verificationUserEmail}
+			/>
 		</div>
 	);
 }

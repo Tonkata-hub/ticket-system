@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useI18n } from "@/context/I18nContext";
 import { register } from "./actions";
-import VerificationModal from "./VerificationModal";
+import VerificationModal from "../../components/VerificationModal";
 
 export default function RegisterPage() {
 	const { t } = useI18n();
