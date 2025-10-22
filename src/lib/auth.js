@@ -1,4 +1,14 @@
-// /src/lib/auth.js
+/**
+ * Authentication and Authorization Utilities
+ *
+ * CSRF Protection:
+ * Next.js 15 Server Actions have built-in CSRF protection through Origin header checking.
+ * The framework automatically validates that requests originate from the same domain,
+ * preventing Cross-Site Request Forgery attacks without requiring additional CSRF tokens.
+ *
+ * For API routes that require CSRF protection, consider implementing additional token-based
+ * validation if they accept requests from external sources.
+ */
 import "server-only";
 import { cookies } from "next/headers";
 import { decrypt } from "./session";
@@ -9,29 +19,29 @@ import User from "@/models/User";
  * @returns {Promise<User|null>} User object or null if not authenticated
  */
 export async function getCurrentUser() {
-    try {
-        const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+	try {
+		const cookieStore = await cookies();
+		const sessionCookie = cookieStore.get("session")?.value;
 
-        if (!sessionCookie) {
-            return null;
-        }
+		if (!sessionCookie) {
+			return null;
+		}
 
-        const session = await decrypt(sessionCookie);
+		const session = await decrypt(sessionCookie);
 
-        if (!session?.userId) {
-            return null;
-        }
+		if (!session?.userId) {
+			return null;
+		}
 
-        const user = await User.findByPk(session.userId, {
-            attributes: ["id", "email", "role", "created_at", "updated_at"],
-        });
+		const user = await User.findByPk(session.userId, {
+			attributes: ["id", "email", "role", "created_at", "updated_at"],
+		});
 
-        return user;
-    } catch (error) {
-        console.error("Error getting current user:", error);
-        return null;
-    }
+		return user;
+	} catch (error) {
+		console.error("Error getting current user:", error);
+		return null;
+	}
 }
 
 /**
@@ -39,20 +49,20 @@ export async function getCurrentUser() {
  * @returns {Promise<{userId: number, role: string}|null>} Session payload or null
  */
 export async function getSession() {
-    try {
-        const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+	try {
+		const cookieStore = await cookies();
+		const sessionCookie = cookieStore.get("session")?.value;
 
-        if (!sessionCookie) {
-            return null;
-        }
+		if (!sessionCookie) {
+			return null;
+		}
 
-        const session = await decrypt(sessionCookie);
-        return session || null;
-    } catch (error) {
-        console.error("Error getting session:", error);
-        return null;
-    }
+		const session = await decrypt(sessionCookie);
+		return session || null;
+	} catch (error) {
+		console.error("Error getting session:", error);
+		return null;
+	}
 }
 
 /**
@@ -61,15 +71,15 @@ export async function getSession() {
  * @throws {AuthError} If user is not authenticated
  */
 export async function requireAuth() {
-    const user = await getCurrentUser();
+	const user = await getCurrentUser();
 
-    if (!user) {
-        const error = new Error("Unauthorized");
-        error.status = 401;
-        throw error;
-    }
+	if (!user) {
+		const error = new Error("Unauthorized");
+		error.status = 401;
+		throw error;
+	}
 
-    return user;
+	return user;
 }
 
 /**
@@ -78,15 +88,15 @@ export async function requireAuth() {
  * @throws {AuthError} If user is not authenticated or not admin
  */
 export async function requireAdmin() {
-    const user = await requireAuth();
+	const user = await requireAuth();
 
-    if (user.role !== "admin") {
-        const error = new Error("Forbidden: Admin access required");
-        error.status = 403;
-        throw error;
-    }
+	if (user.role !== "admin") {
+		const error = new Error("Forbidden: Admin access required");
+		error.status = 403;
+		throw error;
+	}
 
-    return user;
+	return user;
 }
 
 /**
@@ -94,8 +104,8 @@ export async function requireAdmin() {
  * @returns {Promise<boolean>} True if user is admin, false otherwise
  */
 export async function isAdmin() {
-    const user = await getCurrentUser();
-    return user?.role === "admin";
+	const user = await getCurrentUser();
+	return user?.role === "admin";
 }
 
 /**
@@ -104,8 +114,8 @@ export async function isAdmin() {
  * @returns {Promise<boolean>} True if current user owns the resource
  */
 export async function ownsResource(resourceOwnerEmail) {
-    const user = await getCurrentUser();
-    return user?.email === resourceOwnerEmail;
+	const user = await getCurrentUser();
+	return user?.email === resourceOwnerEmail;
 }
 
 /**
@@ -115,18 +125,18 @@ export async function ownsResource(resourceOwnerEmail) {
  * @throws {AuthError} If user doesn't own resource and is not admin
  */
 export async function requireOwnershipOrAdmin(resourceOwnerEmail) {
-    const user = await requireAuth();
+	const user = await requireAuth();
 
-    const isOwner = user.email === resourceOwnerEmail;
-    const isUserAdmin = user.role === "admin";
+	const isOwner = user.email === resourceOwnerEmail;
+	const isUserAdmin = user.role === "admin";
 
-    if (!isOwner && !isUserAdmin) {
-        const error = new Error("Forbidden: You don't have permission to access this resource");
-        error.status = 403;
-        throw error;
-    }
+	if (!isOwner && !isUserAdmin) {
+		const error = new Error("Forbidden: You don't have permission to access this resource");
+		error.status = 403;
+		throw error;
+	}
 
-    return user;
+	return user;
 }
 
 /**
@@ -135,9 +145,8 @@ export async function requireOwnershipOrAdmin(resourceOwnerEmail) {
  * @returns {Response} JSON response with appropriate status code
  */
 export function handleAuthError(error) {
-    const status = error.status || 500;
-    const message = status === 500 ? "Internal server error" : error.message;
+	const status = error.status || 500;
+	const message = status === 500 ? "Internal server error" : error.message;
 
-    return Response.json({ error: message }, { status });
+	return Response.json({ error: message }, { status });
 }
-
