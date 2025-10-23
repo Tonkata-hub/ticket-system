@@ -45,10 +45,17 @@ export const buttonVariants = {
 		opacity: 1,
 		scale: 1,
 		transition: {
-			type: "spring",
-			stiffness: 200,
-			damping: 15,
-			delay: 0.3,
+			opacity: {
+				type: "spring",
+				stiffness: 200,
+				damping: 15,
+				delay: 0.3,
+			},
+			scale: {
+				type: "spring",
+				stiffness: 400,
+				damping: 10,
+			},
 		},
 	},
 	hover: {
@@ -61,5 +68,10 @@ export const buttonVariants = {
 	},
 	tap: {
 		scale: 0.95,
+		transition: {
+			type: "spring",
+			stiffness: 400,
+			damping: 10,
+		},
 	},
 };
