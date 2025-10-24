@@ -1,7 +1,8 @@
 import { toast } from "react-toastify";
+import { updateTicket } from "@/lib/actions/ticketActions";
 
 export function useTicketUpdate() {
-	const updateTicket = async (editedTicket, onUpdate, setIsUpdating, resetChanges) => {
+	const updateTicketAction = async (editedTicket, onUpdate, setIsUpdating, resetChanges) => {
 		setIsUpdating(true);
 
 		try {
@@ -24,18 +25,10 @@ export function useTicketUpdate() {
 				relatedTickets: editedTicket.relatedTickets.join(","), // Convert array to comma-separated string
 			};
 
-			// Submit the data to the API
-			const response = await fetch("/api/updateTicket", {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(ticketData),
-			});
+			// Submit the data using server action
+			const result = await updateTicket(ticketData);
 
-			const result = await response.json();
-
-			if (!response.ok) {
+			if (!result.success) {
 				throw new Error(result.error || "Failed to update ticket");
 			}
 
@@ -59,5 +52,5 @@ export function useTicketUpdate() {
 		}
 	};
 
-	return { updateTicket };
+	return { updateTicket: updateTicketAction };
 }

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { resendVerification, verifyEmail } from "@/lib/actions/verificationActions";
 
 export default function VerificationModal({ isOpen, onClose, userId, userEmail }) {
 	const router = useRouter();
@@ -73,31 +74,20 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 		setError("");
 
 		try {
-			const response = await fetch("/api/verify-email", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					userId,
-					code: fullCode,
-				}),
-			});
+			const result = await verifyEmail(userId, fullCode);
 
-			const data = await response.json();
-
-			if (data.success) {
+			if (result.success) {
 				// Update authentication state
 				setIsLoggedIn(true);
-				setRole(data.user.role);
-				setUserEmail(data.user.email);
+				setRole(result.user.role);
+				setUserEmail(result.user.email);
 
 				setSuccess(true);
 				setTimeout(() => {
 					router.push("/");
 				}, 2000);
 			} else {
-				setError(data.error || "Verification failed");
+				setError(result.error || "Verification failed");
 			}
 		} catch (err) {
 			setError("Network error. Please try again.");
@@ -114,17 +104,9 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 		setError("");
 
 		try {
-			const response = await fetch("/api/resend-verification", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ userId }),
-			});
+			const result = await resendVerification(userId);
 
-			const data = await response.json();
-
-			if (data.success) {
+			if (result.success) {
 				// Start cooldown timer
 				setResendCooldown(60);
 				const timer = setInterval(() => {
@@ -137,7 +119,7 @@ export default function VerificationModal({ isOpen, onClose, userId, userEmail }
 					});
 				}, 1000);
 			} else {
-				setError(data.error || "Failed to resend code");
+				setError(result.error || "Failed to resend code");
 			}
 		} catch (err) {
 			setError("Network error. Please try again.");

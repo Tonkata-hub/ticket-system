@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { getUser, getSession } from "@/lib/actions/userActions";
 
 const AuthContext = createContext({
 	isLoggedIn: null,
@@ -21,19 +22,24 @@ export function AuthProvider({ children }) {
 	useEffect(() => {
 		async function fetchSession() {
 			try {
-				const res = await fetch("/api/session");
-				const data = await res.json();
-				setIsLoggedIn(data.isLoggedIn);
-				setRole(data.role);
+				const sessionResult = await getSession();
 
-				// If logged in, fetch user details
-				if (data.isLoggedIn) {
-					const userRes = await fetch("/api/user");
-					if (userRes.ok) {
-						const userData = await userRes.json();
-						setUserEmail(userData.email);
+				if (sessionResult.success) {
+					setIsLoggedIn(sessionResult.session.isLoggedIn);
+					setRole(sessionResult.session.role);
+
+					// If logged in, fetch user details
+					if (sessionResult.session.isLoggedIn) {
+						const userResult = await getUser();
+						if (userResult.success) {
+							setUserEmail(userResult.user.email);
+						}
+					} else {
+						setUserEmail(null);
 					}
 				} else {
+					setIsLoggedIn(false);
+					setRole(null);
 					setUserEmail(null);
 				}
 			} catch (err) {

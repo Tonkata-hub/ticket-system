@@ -33,6 +33,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {
+	getCategories,
+	createCategory,
+	updateCategory,
+	deleteCategory,
+	reorderCategories,
+} from "@/lib/actions/adminActions";
 
 // Predefined category types with friendly names
 const CATEGORY_TYPES = {
@@ -69,12 +76,12 @@ export default function CategoriesPage() {
 	const fetchCategories = async () => {
 		setLoading(true);
 		try {
-			const res = await fetch("/api/admin/categories");
-			if (!res.ok) {
-				throw new Error("Failed to fetch categories");
+			const result = await getCategories();
+			if (result.success) {
+				setCategories(result.categories);
+			} else {
+				throw new Error(result.error || "Failed to fetch categories");
 			}
-			const data = await res.json();
-			setCategories(data.categories);
 		} catch (error) {
 			console.error("Error fetching categories:", error);
 			toast.error("Failed to load categories");
@@ -91,27 +98,20 @@ export default function CategoriesPage() {
 				return;
 			}
 
-			const res = await fetch("/api/admin/categories", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					...formData,
-					description: formData.type === "priority" ? formData.description : null,
-				}),
+			const result = await createCategory({
+				...formData,
+				description: formData.type === "priority" ? formData.description : null,
 			});
 
-			if (!res.ok) {
-				const errorData = await res.json();
-				throw new Error(errorData.error || "Failed to add category");
+			if (result.success) {
+				// Success
+				toast.success("Category item added successfully");
+				setIsAddDialogOpen(false);
+				setFormData({ ...formData, value: "", label: "" });
+				fetchCategories();
+			} else {
+				throw new Error(result.error || "Failed to add category");
 			}
-
-			// Success
-			toast.success("Category item added successfully");
-			setIsAddDialogOpen(false);
-			setFormData({ ...formData, value: "", label: "" });
-			fetchCategories();
 		} catch (error) {
 			console.error("Error adding category:", error);
 			toast.error(error.message);
@@ -126,28 +126,21 @@ export default function CategoriesPage() {
 				return;
 			}
 
-			const res = await fetch(`/api/admin/categories/${currentCategory.id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					...formData,
-					description: formData.type === "priority" ? formData.description : null,
-				}),
+			const result = await updateCategory(currentCategory.id, {
+				...formData,
+				description: formData.type === "priority" ? formData.description : null,
 			});
 
-			if (!res.ok) {
-				const errorData = await res.json();
-				throw new Error(errorData.error || "Failed to update category");
+			if (result.success) {
+				// Success
+				toast.success("Category item updated successfully");
+				setIsEditDialogOpen(false);
+				setCurrentCategory(null);
+				setFormData({ ...formData, value: "", label: "" });
+				fetchCategories();
+			} else {
+				throw new Error(result.error || "Failed to update category");
 			}
-
-			// Success
-			toast.success("Category item updated successfully");
-			setIsEditDialogOpen(false);
-			setCurrentCategory(null);
-			setFormData({ ...formData, value: "", label: "" });
-			fetchCategories();
 		} catch (error) {
 			console.error("Error updating category:", error);
 			toast.error(error.message);
@@ -156,20 +149,17 @@ export default function CategoriesPage() {
 
 	const handleDeleteCategory = async () => {
 		try {
-			const res = await fetch(`/api/admin/categories/${currentCategory.id}`, {
-				method: "DELETE",
-			});
+			const result = await deleteCategory(currentCategory.id);
 
-			if (!res.ok) {
-				const errorData = await res.json();
-				throw new Error(errorData.error || "Failed to delete category");
+			if (result.success) {
+				// Success
+				toast.success("Category item deleted successfully");
+				setIsDeleteDialogOpen(false);
+				setCurrentCategory(null);
+				fetchCategories();
+			} else {
+				throw new Error(result.error || "Failed to delete category");
 			}
-
-			// Success
-			toast.success("Category item deleted successfully");
-			setIsDeleteDialogOpen(false);
-			setCurrentCategory(null);
-			fetchCategories();
 		} catch (error) {
 			console.error("Error deleting category:", error);
 			toast.error(error.message);
@@ -248,18 +238,15 @@ export default function CategoriesPage() {
 		try {
 			setIsSavingOrder(true);
 			const orderedIds = categories.filter((c) => c.type === activeTab).map((c) => c.id);
-			const res = await fetch("/api/admin/categories", {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ type: activeTab, orderedIds }),
-			});
-			if (!res.ok) {
-				const err = await res.json().catch(() => ({}));
-				throw new Error(err.error || "Failed to save order");
+			const result = await reorderCategories(activeTab, orderedIds);
+
+			if (result.success) {
+				toast.success("Order saved");
+				setIsOrderDirty(false);
+				fetchCategories();
+			} else {
+				throw new Error(result.error || "Failed to save order");
 			}
-			toast.success("Order saved");
-			setIsOrderDirty(false);
-			fetchCategories();
 		} catch (e) {
 			console.error(e);
 			toast.error(e.message);

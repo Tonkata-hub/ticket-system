@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useI18n } from "@/context/I18nContext";
+import { setLocale } from "@/lib/actions/localeActions";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -15,16 +16,14 @@ export default function LanguageSwitcher() {
 	const [pending, startTransition] = useTransition();
 	const [open, setOpen] = useState(false);
 
-	const setLocale = async (nextLocale) => {
+	const setLocaleAction = async (nextLocale) => {
 		if (pending || nextLocale === locale) return;
 		startTransition(async () => {
 			try {
-				await fetch("/api/locale", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ locale: nextLocale }),
-				});
-				window.location.reload();
+				const result = await setLocale(nextLocale);
+				if (result.success) {
+					window.location.reload();
+				}
 			} catch (e) {
 				// noop
 			}
@@ -39,10 +38,10 @@ export default function LanguageSwitcher() {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem onClick={() => setLocale("en")} className="cursor-pointer">
+				<DropdownMenuItem onClick={() => setLocaleAction("en")} className="cursor-pointer">
 					EN — English
 				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setLocale("bg")} className="cursor-pointer">
+				<DropdownMenuItem onClick={() => setLocaleAction("bg")} className="cursor-pointer">
 					BG — Български
 				</DropdownMenuItem>
 			</DropdownMenuContent>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useI18n } from "@/context/I18nContext";
+import { createTicket, getTicketOptions } from "@/lib/actions/ticketActions";
 
 export function useNewTicketForm({ isLoggedIn }) {
 	const { t } = useI18n();
@@ -32,12 +33,17 @@ export function useNewTicketForm({ isLoggedIn }) {
 		let isMounted = true;
 		const loadOptions = async () => {
 			try {
-				const res = await fetch("/api/ticket-options");
-				const data = await res.json();
-				if (isMounted) setTicketOptions(data);
+				const result = await getTicketOptions();
+				if (isMounted && result.success) {
+					setTicketOptions(result.options);
+				} else if (isMounted) {
+					toast.error(t("home.loadOptionsError"));
+				}
 			} catch (e) {
 				// Show a toast but avoid crashing the UI
-				toast.error(t("home.loadOptionsError"));
+				if (isMounted) {
+					toast.error(t("home.loadOptionsError"));
+				}
 			}
 		};
 		loadOptions();
@@ -94,17 +100,9 @@ export function useNewTicketForm({ isLoggedIn }) {
 				shortDescription: formData.shortDescription,
 			};
 
-			const response = await fetch("/api/createTicket", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(ticketData),
-			});
+			const result = await createTicket(ticketData);
 
-			const result = await response.json();
-
-			if (!response.ok) {
+			if (!result.success) {
 				throw new Error(result.error || "Failed to create ticket");
 			}
 
@@ -122,7 +120,6 @@ export function useNewTicketForm({ isLoggedIn }) {
 			});
 			setFormKey((prev) => prev + 1);
 		} catch (error) {
-			// eslint-disable-next-line no-console
 			console.error("Error submitting ticket:", error);
 			setSubmissionError(error.message);
 			toast.error(t("home.createFailed", { message: error.message }));
