@@ -5,6 +5,7 @@ import Ticket from "@/models/Ticket";
 import TicketCategory from "@/models/TicketCategory";
 import sequelize from "@/lib/db";
 import { nanoid } from "nanoid";
+import { sendNewTicketEmail } from "@/lib/email";
 
 // Helper function to map priority values from the form to database values
 function mapPriorityToDatabase(priority) {
@@ -78,6 +79,18 @@ export async function createTicket(ticketData) {
 			communication_channel: ticketData.communicationChannel || null,
 			updated_at: new Date(),
 			comments: JSON.stringify([]),
+		});
+
+		// 5. Send notification emails (non-blocking)
+		const minimal = { id: ticket.uid, title: ticket.client_note || ticket.issue_type || "New Ticket" };
+		const emailResults = await Promise.allSettled([
+			sendNewTicketEmail(user.email, minimal),
+			sendNewTicketEmail("niki@stil2000.com", minimal),
+		]);
+		emailResults.forEach((res, idx) => {
+			if (res.status === "rejected") {
+				console.error(`New ticket email ${idx + 1} failed:`, res.reason);
+			}
 		});
 
 		return {

@@ -164,3 +164,67 @@ export async function sendPasswordResetEmail(email, resetToken) {
 		return true;
 	}
 }
+
+/**
+ * Send new ticket notification email with minimal content
+ * Includes ONLY: ticket id (uid) and title (issue_type)
+ * @param {string} email - Recipient email
+ * @param {{ id: string, title: string }} data - Ticket minimal data
+ * @returns {Promise<boolean>} Success status
+ */
+export async function sendNewTicketEmail(email, data) {
+    try {
+        const { id, title } = data || {};
+
+        // Check if email configuration is available
+        if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+            console.log(`\n🧾 NEW TICKET NOTIFICATION → ${email}`);
+            console.log(`ID: ${id}`);
+            console.log(`Title: ${title}`);
+            console.log(`📧 Email configuration missing - check your .env.local file\n`);
+            return true; // Do not block on missing config
+        }
+
+        // Create transporter with SMTP configuration
+        const transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: parseInt(process.env.EMAIL_PORT) || 587,
+            secure: process.env.EMAIL_SECURE === "true",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+        // Minimal email content (no descriptions or sensitive text)
+        const mailOptions = {
+            from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+            to: email,
+            subject: `New Ticket Created: ${id}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background-color: #3056d3; color: white; padding: 16px; text-align: center; border-radius: 8px 8px 0 0;">
+                        <h2 style="margin: 0; font-size: 20px;">IT Support Ticket System</h2>
+                    </div>
+                    <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #e9ecef; border-top: none; border-radius: 0 0 8px 8px;">
+                        <p style="margin: 0 0 12px; color: #333;">A new ticket was created.</p>
+                        <p style="margin: 4px 0; color: #333;"><strong>ID:</strong> ${id}</p>
+                        <p style="margin: 4px 0; color: #333;"><strong>Title:</strong> ${title}</p>
+                        <div style="margin-top: 16px;">
+                            <a href="${appUrl}/tickets" style="background-color: #3056d3; color: #fff; padding: 10px 16px; text-decoration: none; border-radius: 6px; display: inline-block;">View Tickets</a>
+                        </div>
+                    </div>
+                </div>
+            `,
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ New ticket email sent to ${email} (ID: ${id})`);
+        return true;
+    } catch (error) {
+        console.error("Error sending new ticket email:", error);
+        return false;
+    }
+}
