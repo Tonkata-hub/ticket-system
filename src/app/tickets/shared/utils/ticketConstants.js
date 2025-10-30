@@ -10,8 +10,3 @@ export const priorityColor = {
 	Medium: "bg-orange-100 text-orange-800 hover:bg-orange-200",
 	Low: "bg-green-100 text-green-800 hover:bg-green-200",
 };
-
-export function formatDate(isoDate) {
-	const date = new Date(isoDate);
-	return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}

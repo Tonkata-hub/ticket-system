@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { statusColor, priorityColor, formatDate } from "./utils/ticketTableConstants";
+import { statusColor, priorityColor } from "../shared/utils/ticketConstants";
+import { formatDate, formatOptionalDate, truncateText } from "./utils/tableFormatters";
 
 export default function TicketTableRow({ ticket, onClick }) {
 	const isClosed = ticket.statusBadge === "Closed";
@@ -20,29 +21,71 @@ export default function TicketTableRow({ ticket, onClick }) {
 			onClick={() => onClick(ticket)}
 		>
 			<td className="px-4 py-3 font-medium">
-				<span className={closedStyles}>{ticket.uid}</span>
+				<span className={closedStyles} title={ticket.uid}>
+					{truncateText(ticket.uid)}
+				</span>
 			</td>
-			<td className="px-4 py-3 max-w-[200px]">
-				<div className={`truncate ${closedStyles}`}>{ticket.selectedEvent}</div>
+			<td className="px-4 py-3">
+				<div className={`${closedStyles}`} title={ticket.selectedEvent}>
+					{truncateText(ticket.selectedEvent)}
+				</div>
 			</td>
 			<td className="px-4 py-3">
 				<Badge className={`${statusColor[ticket.statusBadge]} capitalize ${isClosed ? "opacity-60" : ""}`}>
-					{ticket.statusBadge}
+					{truncateText(ticket.statusBadge)}
 				</Badge>
 			</td>
 			<td className="px-4 py-3">
 				<Badge className={`${priorityColor[ticket.priority]} capitalize ${isClosed ? "opacity-60" : ""}`}>
-					{ticket.priority}
+					{truncateText(ticket.priority)}
 				</Badge>
 			</td>
 			<td className="px-4 py-3">
-				<span className={isClosed ? "text-gray-500" : ""}>{ticket.createdBy}</span>
+				<span className={isClosed ? "text-gray-500" : ""} title={ticket.createdBy}>
+					{truncateText(ticket.createdBy)}
+				</span>
 			</td>
 			<td className="px-4 py-3 whitespace-nowrap">
-				<span className={isClosed ? "text-gray-500" : ""}>{formatDate(ticket.createdAt)}</span>
+				<span className={isClosed ? "text-gray-500" : ""} title={formatDate(ticket.createdAt)}>
+					{truncateText(formatDate(ticket.createdAt))}
+				</span>
 			</td>
 			<td className="px-4 py-3 whitespace-nowrap">
-				<span className={isClosed ? "text-gray-500" : ""}>{formatDate(ticket.updatedAt)}</span>
+				<span className={isClosed ? "text-gray-500" : ""} title={formatDate(ticket.updatedAt)}>
+					{truncateText(formatDate(ticket.updatedAt))}
+				</span>
+			</td>
+			<td className="px-4 py-3">
+				<div title={ticket.clientNote}>{truncateText(ticket.clientNote || "")}</div>
+			</td>
+			<td className="px-4 py-3">
+				<span title={ticket.issueType}>{truncateText(ticket.issueType || "")}</span>
+			</td>
+			<td className="px-4 py-3">
+				<div title={ticket.currentCondition}>{truncateText(ticket.currentCondition || "")}</div>
+			</td>
+			<td className="px-4 py-3">
+				<span title={ticket.assignee}>{truncateText(ticket.assignee || "")}</span>
+			</td>
+			<td className="px-4 py-3">
+				<span title={ticket.communicationChannel}>{truncateText(ticket.communicationChannel || "")}</span>
+			</td>
+			<td className="px-4 py-3 whitespace-nowrap">
+				<span title={formatOptionalDate(ticket.dateOfStartingWork)}>
+					{truncateText(formatOptionalDate(ticket.dateOfStartingWork))}
+				</span>
+			</td>
+			<td className="px-4 py-3">
+				<div title={ticket.currentConditionByAdmin}>{truncateText(ticket.currentConditionByAdmin || "")}</div>
+			</td>
+			<td className="px-4 py-3">
+				<span title={ticket.problemSolvedAt}>{truncateText(ticket.problemSolvedAt || "")}</span>
+			</td>
+			<td className="px-4 py-3">
+				<div title={ticket.actionTaken}>{truncateText(ticket.actionTaken || "")}</div>
+			</td>
+			<td className="px-4 py-3">
+				<span title={ticket.timeTakenToSolve}>{truncateText(ticket.timeTakenToSolve || "")}</span>
 			</td>
 		</motion.tr>
 	);
