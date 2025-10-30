@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { statusColor, priorityColor, formatDate, formatOptionalDate, truncateText } from "./utils/ticketTableConstants";
+import { statusColor, priorityColor } from "../shared/utils/ticketConstants";
+import { formatDate, formatOptionalDate, truncateText } from "./utils/tableFormatters";
 
 export default function TicketTableRow({ ticket, onClick }) {
 	const isClosed = ticket.statusBadge === "Closed";

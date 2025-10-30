@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChangeIndicator } from "./ChangeIndicator";
-import { statusColor, priorityColor } from "../utils/ticketModalConstants";
+import { statusColor, priorityColor } from "../../shared/utils/ticketConstants";
 
 export function TicketStatusBadges({ editMode, editedTicket, isAdmin, changedFields, onSelectChange }) {
 	return (
