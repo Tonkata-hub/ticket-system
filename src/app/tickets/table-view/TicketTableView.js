@@ -37,7 +37,7 @@ export default function TicketTableView({
 			{tickets.length > 0 ? (
 				<>
 					<div className="rounded-md border shadow-sm overflow-x-auto">
-						<table className="w-full text-sm">
+						<table className="w-full min-w-max table-auto text-sm">
 							<TableHeader sortConfig={sortConfig} onSort={requestSort} />
 							<tbody>
 								<AnimatePresence mode="wait">

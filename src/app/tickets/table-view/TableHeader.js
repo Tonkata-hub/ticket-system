@@ -20,6 +20,19 @@ export default function TableHeader({ sortConfig, onSort }) {
 		{ key: "createdBy", label: "Created By" },
 		{ key: "createdAt", label: "Created At" },
 		{ key: "updatedAt", label: "Updated At" },
+		{ key: "clientNote", label: "Client Note" },
+		{ key: "issueType", label: "Issue Type" },
+		{ key: "currentCondition", label: "Current Condition" },
+		{ key: "assignee", label: "Assignee" },
+		{ key: "communicationChannel", label: "Communication Channel" },
+		{ key: "dateOfStartingWork", label: "Date of Starting Work" },
+		{ key: "currentConditionByAdmin", label: "Condition by Admin" },
+		{ key: "problemSolvedAt", label: "Solved At" },
+		{ key: "actionTaken", label: "Action Taken" },
+		{ key: "timeTakenToSolve", label: "Time to Solve" },
+		{ key: "relatedTicketsCount", label: "Related Tickets" },
+		{ key: "attachmentsCount", label: "Attachments" },
+		{ key: "commentsCount", label: "Comments" },
 	];
 
 	return (
