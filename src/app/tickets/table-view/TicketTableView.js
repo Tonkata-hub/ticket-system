@@ -29,14 +29,14 @@ export default function TicketTableView({
 
 	return (
 		<motion.div
-			className="w-full overflow-hidden"
+			className="w-full overflow-x-hidden"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.3 }}
 		>
 			{tickets.length > 0 ? (
 				<>
-					<div className="rounded-md border shadow-sm overflow-x-auto">
+					<div className="rounded-md border shadow-sm overflow-auto max-h-[70vh]">
 						<table className="w-full min-w-max table-auto text-sm">
 							<TableHeader sortConfig={sortConfig} onSort={requestSort} />
 							<tbody>

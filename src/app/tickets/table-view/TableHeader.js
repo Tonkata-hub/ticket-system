@@ -30,16 +30,16 @@ export default function TableHeader({ sortConfig, onSort }) {
 		{ key: "problemSolvedAt", label: "Solved At" },
 		{ key: "actionTaken", label: "Action Taken" },
 		{ key: "timeTakenToSolve", label: "Time to Solve" },
-		{ key: "relatedTicketsCount", label: "Related Tickets" },
-		{ key: "attachmentsCount", label: "Attachments" },
-		{ key: "commentsCount", label: "Comments" },
 	];
 
 	return (
 		<thead>
 			<tr className="bg-muted/50">
 				{columns.map((column) => (
-					<th key={column.key} className="px-4 py-3 text-left font-medium text-muted-foreground">
+					<th
+						key={column.key}
+						className="px-4 py-3 text-left font-medium text-muted-foreground sticky top-0 z-10 bg-background"
+					>
 						<button
 							className="flex items-center gap-1 hover:text-foreground"
 							onClick={() => onSort(column.key)}

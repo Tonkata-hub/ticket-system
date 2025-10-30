@@ -86,15 +86,6 @@ export default function TicketTableRow({ ticket, onClick }) {
 			<td className="px-4 py-3">
 				<span title={ticket.timeTakenToSolve}>{truncateText(ticket.timeTakenToSolve || "")}</span>
 			</td>
-			<td className="px-4 py-3">
-				<span>{Array.isArray(ticket.relatedTickets) ? ticket.relatedTickets.length : 0}</span>
-			</td>
-			<td className="px-4 py-3">
-				<span>{Array.isArray(ticket.attachments) ? ticket.attachments.length : 0}</span>
-			</td>
-			<td className="px-4 py-3">
-				<span>{Array.isArray(ticket.comments) ? ticket.comments.length : 0}</span>
-			</td>
 		</motion.tr>
 	);
 }
