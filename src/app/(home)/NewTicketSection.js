@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../context/AuthContext";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, Upload, X, ImageIcon } from "lucide-react";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { formVariants, itemVariants, titleVariants, buttonVariants } from "./new-ticket/variants";
 import { useNewTicketForm } from "./new-ticket/useNewTicketForm";
@@ -28,13 +28,83 @@ export default function NewTicketSection() {
 	const conditionTriggerRef = useRef(null);
 	const eventTriggerRef = useRef(null);
 	const submitButtonRef = useRef(null);
+	const filesRef = useRef([]);
+	const fileInputRef = useRef(null);
 
-	const { formKey, formData, errors, isSubmitting, submissionError, ticketOptions, handleChange, handleSubmit } =
+	const { formKey, formData, errors, isSubmitting, isUploading, submissionError, ticketOptions, files, setFiles, handleChange, handleSubmit } =
 		useNewTicketForm({ isLoggedIn });
 
 	useEffect(() => {
 		shortDescriptionRef.current?.focus();
 	}, []);
+
+	// Keep filesRef in sync with files
+	useEffect(() => {
+		filesRef.current = files;
+	}, [files]);
+
+	// Cleanup object URLs when component unmounts
+	useEffect(() => {
+		return () => {
+			filesRef.current.forEach((fileData) => {
+				URL.revokeObjectURL(fileData.preview);
+			});
+		};
+	}, []);
+
+	const handleFileSelect = (e) => {
+		const selectedFiles = Array.from(e.target.files);
+		
+		// Validate files
+		const validFiles = selectedFiles.filter((file) => {
+			// Check file type
+			const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
+			if (!validTypes.includes(file.type)) {
+				toast.error(`${file.name} is not a valid image type. Only PNG, JPG, JPEG, GIF, and WEBP are allowed.`);
+				return false;
+			}
+			
+			// Check file size (5MB)
+			const maxSize = 5 * 1024 * 1024;
+			if (file.size > maxSize) {
+				toast.error(`${file.name} is too large. Maximum size is 5MB.`);
+				return false;
+			}
+			
+			return true;
+		});
+
+		// Check if adding these files would exceed the limit
+		if (files.length + validFiles.length > 5) {
+			toast.error("Maximum 5 files allowed");
+			return;
+		}
+
+		// Add files to state
+		const newFiles = validFiles.map((file) => ({
+			file,
+			preview: URL.createObjectURL(file),
+			id: Date.now() + Math.random(),
+		}));
+
+		setFiles([...files, ...newFiles]);
+	};
+
+	const handleRemoveFile = (id) => {
+		const fileToRemove = files.find((f) => f.id === id);
+		if (fileToRemove) {
+			URL.revokeObjectURL(fileToRemove.preview);
+		}
+		setFiles(files.filter((f) => f.id !== id));
+	};
+
+	const formatFileSize = (bytes) => {
+		if (bytes === 0) return "0 Bytes";
+		const k = 1024;
+		const sizes = ["Bytes", "KB", "MB"];
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+		return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+	};
 
 	return (
 		<section className="w-full py-12 md:py-20 lg:py-26 flex justify-center bg-blue-50">
@@ -213,6 +283,79 @@ export default function NewTicketSection() {
 										disabled={!isLoggedIn || isSubmitting}
 									/>
 								</motion.div>
+
+								{/* File Upload Section */}
+								<motion.div className="space-y-2" variants={itemVariants}>
+									<label className="text-md font-medium text-gray-700">
+										Attachments (Optional)
+									</label>
+									<div className="border-2 border-dashed border-blue-300 rounded-lg p-6 bg-white">
+										<div className="flex flex-col items-center justify-center space-y-4">
+											<ImageIcon className="h-12 w-12 text-blue-400" />
+											<div className="text-center">
+												<p className="text-sm text-gray-600">
+													Upload up to 5 images (PNG, JPG, JPEG, GIF, WEBP)
+												</p>
+												<p className="text-xs text-gray-500 mt-1">Maximum 5MB per file</p>
+											</div>
+											<input
+												ref={fileInputRef}
+												type="file"
+												multiple
+												accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+												onChange={handleFileSelect}
+												className="hidden"
+												disabled={!isLoggedIn || isSubmitting || files.length >= 5}
+											/>
+											<Button
+												type="button"
+												variant="outline"
+												className="bg-white hover:bg-blue-50 border-blue-400 text-blue-600"
+												disabled={!isLoggedIn || isSubmitting || files.length >= 5}
+												onClick={() => fileInputRef.current?.click()}
+											>
+												<Upload className="mr-2 h-4 w-4" />
+												Select Images
+											</Button>
+											{files.length > 0 && (
+												<div className="w-full">
+													<p className="text-xs text-gray-500 mb-2">
+														{files.length} of 5 files selected
+													</p>
+													<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+														{files.map((fileData) => (
+															<div
+																key={fileData.id}
+																className="relative group rounded-lg overflow-hidden border border-gray-200"
+															>
+																<img
+																	src={fileData.preview}
+																	alt="Preview"
+																	className="w-full h-24 object-cover"
+																/>
+																<div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity flex items-center justify-center">
+																	<Button
+																		type="button"
+																		variant="ghost"
+																		size="sm"
+																		className="opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 hover:bg-red-600 text-white"
+																		onClick={() => handleRemoveFile(fileData.id)}
+																		disabled={isSubmitting}
+																	>
+																		<X className="h-4 w-4" />
+																	</Button>
+																</div>
+																<div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1">
+																	{formatFileSize(fileData.file.size)}
+																</div>
+															</div>
+														))}
+													</div>
+												</div>
+											)}
+										</div>
+									</div>
+								</motion.div>
 							</CardContent>
 						</TooltipProvider>
 
@@ -232,7 +375,7 @@ export default function NewTicketSection() {
 									{isSubmitting ? (
 										<>
 											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-											{t("home.submitting")}
+											{isUploading ? "Uploading files..." : t("home.submitting")}
 										</>
 									) : (
 										t("home.submitTicketCta")

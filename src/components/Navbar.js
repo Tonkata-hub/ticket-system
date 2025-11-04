@@ -144,12 +144,12 @@ export default function Navbar() {
 								<span className="sr-only">{t("common.accountMenu")}</span>
 							</Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-64">
+						<DropdownMenuContent align="end" className="w-auto min-w-60">
 							{isLoggedIn ? (
 								<>
 									<div className="p-4 border-b border-gray-100">
 										<div className="flex items-center gap-3">
-											<Avatar className="h-10 w-10 border border-blue-100">
+											<Avatar className="h-10 w-10 border border-blue-100 flex-shrink-0">
 												<AvatarImage
 													src={`https://api.dicebear.com/7.x/initials/svg?seed=${userEmail || role}`}
 													alt="User avatar"
@@ -158,12 +158,12 @@ export default function Navbar() {
 													{getInitials(userEmail)}
 												</AvatarFallback>
 											</Avatar>
-											<div className="flex flex-col">
-												<span className="font-medium text-gray-900">
+											<div className="flex flex-col min-w-0 flex-1">
+												<span className="font-medium text-gray-900 break-words">
 													{userEmail ||
 														(role === "admin" ? t("common.administrator") : "Client User")}
 												</span>
-												<span className="text-xs text-gray-500 truncate">
+												<span className="text-xs text-gray-500 break-words">
 													{userEmail || role}
 												</span>
 											</div>
@@ -289,7 +289,7 @@ export default function Navbar() {
 											className="px-3 py-3 bg-gray-50 rounded-md mb-2"
 										>
 											<div className="flex items-center gap-3">
-												<Avatar className="h-10 w-10 border border-blue-100">
+												<Avatar className="h-10 w-10 border border-blue-100 flex-shrink-0">
 													<AvatarImage
 														src={`https://api.dicebear.com/7.x/initials/svg?seed=${userEmail || role}`}
 														alt="User avatar"
@@ -298,8 +298,8 @@ export default function Navbar() {
 														{getInitials(userEmail)}
 													</AvatarFallback>
 												</Avatar>
-												<div className="flex flex-col">
-													<span className="font-medium text-gray-900">
+												<div className="flex flex-col min-w-0 flex-1">
+													<span className="font-medium text-gray-900 break-words">
 														{userEmail ||
 															(role === "admin" ? "Administrator" : "Client User")}
 													</span>

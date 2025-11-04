@@ -65,7 +65,11 @@ export async function createTicket(ticketData) {
 		// 3. Generate a random ticket ID using nanoid
 		const ticketId = `T-${nanoid(8).toUpperCase()}`;
 
-		// 4. Create ticket with random ID
+		// 4. Handle attachments
+		const attachmentsString =
+			ticketData.attachments && ticketData.attachments.length > 0 ? ticketData.attachments.join(",") : null;
+
+		// 5. Create ticket with random ID
 		const ticket = await Ticket.create({
 			uid: ticketId,
 			created_by: user.email,
@@ -77,15 +81,16 @@ export async function createTicket(ticketData) {
 			selected_event: ticketData.event,
 			client_note: ticketData.shortDescription,
 			communication_channel: ticketData.communicationChannel || null,
+			attachments: attachmentsString,
 			updated_at: new Date(),
 			comments: JSON.stringify([]),
 		});
 
-		// 5. Send notification emails (non-blocking)
+		// 6. Send notification emails (non-blocking)
 		const minimal = { id: ticket.uid, title: ticket.client_note || ticket.issue_type || "New Ticket" };
 		const emailResults = await Promise.allSettled([
 			sendNewTicketEmail(user.email, minimal),
-			sendNewTicketEmail("niki@stil2000.com", minimal),
+			// sendNewTicketEmail("niki@stil2000.com", minimal),
 		]);
 		emailResults.forEach((res, idx) => {
 			if (res.status === "rejected") {
